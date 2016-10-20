@@ -44,7 +44,7 @@ class Landmarks : public TargetData
         //--------------------------------------------------------------------------
         // Overloaded operators
         //--------------------------------------------------------------------------
-    Landmarks& operator = (const Landmarks& shape);
+        Landmarks& operator = (const Landmarks& shape);
 
 };
 
