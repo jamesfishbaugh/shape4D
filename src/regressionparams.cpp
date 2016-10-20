@@ -22,23 +22,23 @@
 //----------------------------------------------------------------
 RegressionParams::RegressionParams()
 {
-	this->_nx = 0;
-	this->_sigmaV = 0.0f;
-	this->_gamma = 0.0f;
-	this->_T = 0;
-	this->_stdV = 0.0f;
-	this->_v0Weight = 0.0f;
-	this->_useInitV0 = false;
-	this->_estimateBaseline = true;
-	this->_kernelType = (char*) "exact";
+    this->_nx = 0;
+    this->_sigmaV = 0.0f;
+    this->_gamma = 0.0f;
+    this->_T = 0;
+    this->_stdV = 0.0f;
+    this->_v0Weight = 0.0f;
+    this->_useInitV0 = false;
+    this->_estimateBaseline = true;
+    this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
-	
+
     this->_grids = new Grid*[this->_T];
-	for (int t=0; t<this->_T; t++)
-	{
-		this->_grids[t] = NULL;
-	}
+    for (int t=0; t<this->_T; t++)
+    {
+        this->_grids[t] = NULL;
+    }
 }
 
 //----------------------------------------------------------------
@@ -56,26 +56,26 @@ RegressionParams::RegressionParams()
 //----------------------------------------------------------------
 RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, double gamma, const Array1D<double>& xtime)
 {
-	this->_nx = x.GetWidth();
-	this->_x = x;
-	this->_sigmaV = sigmaV;
-	this->_gamma = gamma;
-	this->_T = xtime.GetLength();
-	this->_xtime = xtime;
-	this->_stdV = 1.0f;
-	this->_v0Weight = 1.0f;
-	this->_useInitV0 = false;
-	this->_estimateBaseline = true;
-	this->_kernelType = (char*) "exact";
+    this->_nx = x.GetWidth();
+    this->_x = x;
+    this->_sigmaV = sigmaV;
+    this->_gamma = gamma;
+    this->_T = xtime.GetLength();
+    this->_xtime = xtime;
+    this->_stdV = 1.0f;
+    this->_v0Weight = 1.0f;
+    this->_useInitV0 = false;
+    this->_estimateBaseline = true;
+    this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
-	
+
     this->_grids = new Grid*[this->_T];
-	for (int t=0; t<this->_T; t++)
-	{
+    for (int t=0; t<this->_T; t++)
+    {
         this->_grids[t] = new Grid();
-	}
-	
+    }
+
 }
 
 //----------------------------------------------------------------
@@ -94,27 +94,27 @@ RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, doub
 //----------------------------------------------------------------
 RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, double gamma, const Array1D<double>& xtime, const Array2D<double>& initV0)
 {
-	this->_nx = x.GetWidth();
-	this->_x = x;
-	this->_sigmaV = sigmaV;
-	this->_gamma = gamma;
-	this->_T = xtime.GetLength();
-	this->_xtime = xtime;
-	this->_stdV = 1.0f;
-	this->_v0Weight = 0.0f;
-	this->_useInitV0 = false;
-	this->_initV0 = initV0;
-	this->_estimateBaseline = true;
-	this->_kernelType = (char*) "exact";
+    this->_nx = x.GetWidth();
+    this->_x = x;
+    this->_sigmaV = sigmaV;
+    this->_gamma = gamma;
+    this->_T = xtime.GetLength();
+    this->_xtime = xtime;
+    this->_stdV = 1.0f;
+    this->_v0Weight = 0.0f;
+    this->_useInitV0 = false;
+    this->_initV0 = initV0;
+    this->_estimateBaseline = true;
+    this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
-	
+
     this->_grids = new Grid*[this->_T];
-	for (int t=0; t<this->_T; t++)
-	{
+    for (int t=0; t<this->_T; t++)
+    {
         this->_grids[t] = new Grid();
-	}
-	
+    }
+
 }
 
 //----------------------------------------------------------------
@@ -129,27 +129,27 @@ RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, doub
 //----------------------------------------------------------------
 RegressionParams::RegressionParams(const RegressionParams& source)
 {
-	printf("In copy constructor\n");
-	this->_nx = source._nx;
-	this->_x = source._x;
-	this->_sigmaV = source._sigmaV;
-	this->_gamma = source._gamma;
-	this->_T = source._T;
-	this->_xtime = source._xtime;
-	this->_stdV = source._stdV;
-	this->_initV0 = source._initV0;
-	this->_useInitV0 = source._useInitV0;
-	this->_v0Weight = source._v0Weight;
-	this->_estimateBaseline = source._estimateBaseline;
-	this->_kernelType = source._kernelType;
+    printf("In copy constructor\n");
+    this->_nx = source._nx;
+    this->_x = source._x;
+    this->_sigmaV = source._sigmaV;
+    this->_gamma = source._gamma;
+    this->_T = source._T;
+    this->_xtime = source._xtime;
+    this->_stdV = source._stdV;
+    this->_initV0 = source._initV0;
+    this->_useInitV0 = source._useInitV0;
+    this->_v0Weight = source._v0Weight;
+    this->_estimateBaseline = source._estimateBaseline;
+    this->_kernelType = source._kernelType;
     this->_maxIters = source._maxIters;
     this->_breakRatio = source._breakRatio;
-	
+
     this->_grids = new Grid*[this->_T];
-	for (int t=0; t<this->_T; t++)
-	{
-		this->_grids[t] = source._grids[t];
-	}
+    for (int t=0; t<this->_T; t++)
+    {
+        this->_grids[t] = source._grids[t];
+    }
 }
 
 //----------------------------------------------------------------
@@ -163,12 +163,12 @@ RegressionParams::RegressionParams(const RegressionParams& source)
 //----------------------------------------------------------------
 RegressionParams::~RegressionParams()
 {
-  //for (int t=0; t<this->_T; t++)
-	//{
-	//	delete [] this->_grids[t];
-	//}
+    //for (int t=0; t<this->_T; t++)
+    //{
+    //	delete [] this->_grids[t];
+    //}
 
-	delete [] this->_grids;
+    delete [] this->_grids;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -187,8 +187,8 @@ RegressionParams::~RegressionParams()
 //----------------------------------------------------------------
 void RegressionParams::SetX(const Array2D<double>& x)
 {
-	this->_nx = x.GetWidth();
-	this->_x = x;
+    this->_nx = x.GetWidth();
+    this->_x = x;
 }
 
 //----------------------------------------------------------------
@@ -203,7 +203,7 @@ void RegressionParams::SetX(const Array2D<double>& x)
 //----------------------------------------------------------------
 void RegressionParams::SetSigmaV(double sigmaV)
 {
-	this->_sigmaV = sigmaV;
+    this->_sigmaV = sigmaV;
 }
 
 //----------------------------------------------------------------
@@ -218,7 +218,7 @@ void RegressionParams::SetSigmaV(double sigmaV)
 //----------------------------------------------------------------
 void RegressionParams::SetGamma(double gamma)
 {
-	this->_gamma = gamma;
+    this->_gamma = gamma;
 }
 
 //----------------------------------------------------------------
@@ -233,7 +233,7 @@ void RegressionParams::SetGamma(double gamma)
 //----------------------------------------------------------------
 void RegressionParams::SetStdV(double stdV)
 {
-	this->_stdV = stdV;
+    this->_stdV = stdV;
 }
 
 //----------------------------------------------------------------
@@ -248,8 +248,8 @@ void RegressionParams::SetStdV(double stdV)
 //----------------------------------------------------------------
 void RegressionParams::SetXTime(const Array1D<double>& xtime)
 {
-	this->_T = xtime.GetLength();
-	this->_xtime = xtime;
+    this->_T = xtime.GetLength();
+    this->_xtime = xtime;
 }
 
 //----------------------------------------------------------------
@@ -264,9 +264,9 @@ void RegressionParams::SetXTime(const Array1D<double>& xtime)
 //----------------------------------------------------------------
 void RegressionParams::SetInitV0(const Array2D<double>& initV0)
 {
-	this->_useInitV0 = true;
-	this->_initV0 = initV0;
-	this->_v0Weight = 0.0f;
+    this->_useInitV0 = true;
+    this->_initV0 = initV0;
+    this->_v0Weight = 0.0f;
 }
 
 //----------------------------------------------------------------
@@ -281,7 +281,7 @@ void RegressionParams::SetInitV0(const Array2D<double>& initV0)
 //----------------------------------------------------------------
 void RegressionParams::SetV0Weight(double v0Weight)
 {
-	this->_v0Weight = v0Weight;
+    this->_v0Weight = v0Weight;
 }
 
 //----------------------------------------------------------------
@@ -296,7 +296,7 @@ void RegressionParams::SetV0Weight(double v0Weight)
 //----------------------------------------------------------------
 void RegressionParams::SetShouldUseInitV0(bool yesNo)
 {
-	this->_useInitV0 = yesNo;
+    this->_useInitV0 = yesNo;
 }
 
 //----------------------------------------------------------------
@@ -311,7 +311,7 @@ void RegressionParams::SetShouldUseInitV0(bool yesNo)
 //----------------------------------------------------------------
 void RegressionParams::SetShouldEstimateBaseline(bool yesNo)
 {
-	this->_estimateBaseline = yesNo;
+    this->_estimateBaseline = yesNo;
 }
 
 //----------------------------------------------------------------
@@ -356,13 +356,13 @@ void RegressionParams::SetBreakRatio(double breakRatio)
 //----------------------------------------------------------------
 void RegressionParams::SetKernelType(char* kernelType)
 {
-	this->_kernelType=  kernelType;
+    this->_kernelType=  kernelType;
 
-	// If it not a supported kernel type set it to exact
-	if ((strcmp(this->_kernelType,"exact") != 0) && (strcmp(this->_kernelType,"p3m") != 0))
-	{
-		this->_kernelType = (char*) "exact";
-	}
+    // If it not a supported kernel type set it to exact
+    if ((strcmp(this->_kernelType,"exact") != 0) && (strcmp(this->_kernelType,"p3m") != 0))
+    {
+        this->_kernelType = (char*) "exact";
+    }
 }
 
 
@@ -383,7 +383,7 @@ void RegressionParams::SetKernelType(char* kernelType)
 //----------------------------------------------------------------
 const Array2D<double> RegressionParams::GetX() const
 {
-	return this->_x;
+    return this->_x;
 }
 
 //----------------------------------------------------------------
@@ -398,7 +398,7 @@ const Array2D<double> RegressionParams::GetX() const
 //----------------------------------------------------------------
 const int RegressionParams::GetNx() const
 {
-	return this->_nx;
+    return this->_nx;
 }
 
 //----------------------------------------------------------------
@@ -413,7 +413,7 @@ const int RegressionParams::GetNx() const
 //----------------------------------------------------------------
 const double RegressionParams::GetSigmaV() const
 {
-	return this->_sigmaV;
+    return this->_sigmaV;
 }
 
 //----------------------------------------------------------------
@@ -428,7 +428,7 @@ const double RegressionParams::GetSigmaV() const
 //----------------------------------------------------------------
 const double RegressionParams::GetGamma() const
 {
-	return this->_gamma;
+    return this->_gamma;
 }
 
 //----------------------------------------------------------------
@@ -443,7 +443,7 @@ const double RegressionParams::GetGamma() const
 //----------------------------------------------------------------
 const double RegressionParams::GetStdV() const
 {
-	return this->_stdV;
+    return this->_stdV;
 }
 
 //----------------------------------------------------------------
@@ -458,7 +458,7 @@ const double RegressionParams::GetStdV() const
 //----------------------------------------------------------------
 const int RegressionParams::GetT() const
 {
-	return this->_T;
+    return this->_T;
 }
 
 //----------------------------------------------------------------
@@ -473,7 +473,7 @@ const int RegressionParams::GetT() const
 //----------------------------------------------------------------
 const Array1D<double> RegressionParams::GetXTime() const
 {
-	return this->_xtime;
+    return this->_xtime;
 }
 
 //----------------------------------------------------------------
@@ -488,7 +488,7 @@ const Array1D<double> RegressionParams::GetXTime() const
 //----------------------------------------------------------------
 const bool RegressionParams::ShouldUseInitV0() const
 {
-	return this->_useInitV0;
+    return this->_useInitV0;
 }
 
 //----------------------------------------------------------------
@@ -503,7 +503,7 @@ const bool RegressionParams::ShouldUseInitV0() const
 //----------------------------------------------------------------
 const bool RegressionParams::ShouldEstimateBaseline() const
 {
-	return this->_estimateBaseline;
+    return this->_estimateBaseline;
 }
 
 //----------------------------------------------------------------
@@ -518,7 +518,7 @@ const bool RegressionParams::ShouldEstimateBaseline() const
 //----------------------------------------------------------------
 const char* RegressionParams::GetKernelType() const
 {
-	return this->_kernelType;
+    return this->_kernelType;
 }
 
 //----------------------------------------------------------------
@@ -563,7 +563,7 @@ const double RegressionParams::GetBreakRatio() const
 //----------------------------------------------------------------
 const Array2D<double> RegressionParams::GetInitV0() const
 {	
-	return this->_initV0;
+    return this->_initV0;
 }
 
 //----------------------------------------------------------------
@@ -578,7 +578,7 @@ const Array2D<double> RegressionParams::GetInitV0() const
 //----------------------------------------------------------------
 const double RegressionParams::GetV0Weight() const
 {
-	return this->_v0Weight;
+    return this->_v0Weight;
 }
 
 //----------------------------------------------------------------
@@ -594,7 +594,7 @@ const double RegressionParams::GetV0Weight() const
 //----------------------------------------------------------------
 Grid* RegressionParams::GetGridAt(int index)
 {
-	return this->_grids[index];
+    return this->_grids[index];
 }
 
 //----------------------------------------------------------------
@@ -610,7 +610,7 @@ Grid* RegressionParams::GetGridAt(int index)
 //----------------------------------------------------------------
 const Grid* RegressionParams::GetGridAt(int index) const
 {
-	return this->_grids[index];
+    return this->_grids[index];
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -630,33 +630,33 @@ const Grid* RegressionParams::GetGridAt(int index) const
 //----------------------------------------------------------------
 RegressionParams& RegressionParams::operator = (const RegressionParams& source)
 {
-	if (this != &source)
-	{
-		this->_nx = source._nx;
-		this->_x = source._x;
-		this->_sigmaV = source._sigmaV;
-		this->_gamma = source._gamma;
-		this->_T = source._T;
-		this->_xtime = source._xtime;
-		this->_stdV = source._stdV;
-		this->_initV0 = source._initV0;
-		this->_useInitV0 = source._useInitV0;
-		this->_v0Weight = source._v0Weight;
-		this->_estimateBaseline = source._estimateBaseline;
-		this->_kernelType = source._kernelType;
+    if (this != &source)
+    {
+        this->_nx = source._nx;
+        this->_x = source._x;
+        this->_sigmaV = source._sigmaV;
+        this->_gamma = source._gamma;
+        this->_T = source._T;
+        this->_xtime = source._xtime;
+        this->_stdV = source._stdV;
+        this->_initV0 = source._initV0;
+        this->_useInitV0 = source._useInitV0;
+        this->_v0Weight = source._v0Weight;
+        this->_estimateBaseline = source._estimateBaseline;
+        this->_kernelType = source._kernelType;
         this->_maxIters = source._maxIters;
         this->_breakRatio = source._breakRatio;
 
-		if (this->_grids != 0)
-		{
-			delete [] this->_grids;
-		}
+        if (this->_grids != 0)
+        {
+            delete [] this->_grids;
+        }
         this->_grids = new Grid*[this->_T];
-		for (int t=0; t<this->_T; t++)
-		{
-			this->_grids[t] = source._grids[t];
-		}
-	}
-	
-	return *this;
+        for (int t=0; t<this->_T; t++)
+        {
+            this->_grids[t] = source._grids[t];
+        }
+    }
+
+    return *this;
 }

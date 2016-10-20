@@ -21,9 +21,9 @@
 template <class datatype>
 Array1D<datatype>::Array1D()
 {
-	this->_length = 0;
-	
-	this->_array =  0;
+    this->_length = 0;
+
+    this->_array =  0;
 }
 
 //----------------------------------------------------------------
@@ -39,9 +39,9 @@ Array1D<datatype>::Array1D()
 template <class datatype>
 Array1D<datatype>::Array1D(int length)
 {
-	this->_length = length;
+    this->_length = length;
 
-	this->_array = new datatype[length];
+    this->_array = new datatype[length];
 }
 
 //----------------------------------------------------------------
@@ -57,10 +57,10 @@ Array1D<datatype>::Array1D(int length)
 template <class datatype>
 Array1D<datatype>::Array1D(const Array1D& array)
 {
-	this->_length = array._length;
-		
-	this->_array = new datatype[this->_length];
-	memcpy(this->_array, array._array, this->_length*sizeof(datatype));
+    this->_length = array._length;
+
+    this->_array = new datatype[this->_length];
+    memcpy(this->_array, array._array, this->_length*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -75,7 +75,7 @@ Array1D<datatype>::Array1D(const Array1D& array)
 template <class datatype>
 Array1D<datatype>::~Array1D()
 {
-	delete [] this->_array;
+    delete [] this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ Array1D<datatype>::~Array1D()
 template <class datatype>
 const int Array1D<datatype>::GetLength() const
 {
-	return this->_length;
+    return this->_length;
 }
 
 //----------------------------------------------------------------
@@ -111,7 +111,7 @@ const int Array1D<datatype>::GetLength() const
 template <class datatype>
 datatype* Array1D<datatype>::GetArray()
 {
-	return this->_array;
+    return this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ datatype* Array1D<datatype>::GetArray()
 template <class datatype>
 datatype Array1D<datatype>::GetAt(int l)
 {
-	return this->_array[l];
+    return this->_array[l];
 }
 
 //----------------------------------------------------------------
@@ -149,7 +149,7 @@ datatype Array1D<datatype>::GetAt(int l)
 template <class datatype>
 void Array1D<datatype>::SetAt(int l, datatype value)
 {
-	this->_array[l] = value;
+    this->_array[l] = value;
 }	
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ void Array1D<datatype>::SetAt(int l, datatype value)
 template <class datatype>
 void Array1D<datatype>::FillArray(datatype value)
 {
-	memset(this->_array, value, this->_length*sizeof(datatype));
+    memset(this->_array, value, this->_length*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -185,7 +185,7 @@ void Array1D<datatype>::FillArray(datatype value)
 template <class datatype>
 void Array1D<datatype>::FillArray(datatype* array)
 {
-	memcpy(this->_array, array, this->_length*sizeof(datatype));
+    memcpy(this->_array, array, this->_length*sizeof(datatype));
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -205,14 +205,14 @@ void Array1D<datatype>::FillArray(datatype* array)
 template <class datatype>
 datatype Array1D<datatype>::Array1D::Sum()
 {
-	datatype sum = 0;
-	
-	for (int i=0; i<this->_length; i++)
-	{
-		sum += this->_array[i];
-	}
-	
-	return sum;
+    datatype sum = 0;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        sum += this->_array[i];
+    }
+
+    return sum;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -233,19 +233,19 @@ datatype Array1D<datatype>::Array1D::Sum()
 template <class datatype>
 Array1D<datatype>&  Array1D<datatype>::operator = (const Array1D& array)
 {
-	if (this != &array)
-	{
-		this->_length = array._length;
-		
-		if (this->_array != 0)
-		{
-			delete [] this->_array;
-		}
-		this->_array = new datatype[this->_length];
-		memcpy(this->_array, array._array, this->_length*sizeof(datatype));
-	}
-	
-	return *this;
+    if (this != &array)
+    {
+        this->_length = array._length;
+
+        if (this->_array != 0)
+        {
+            delete [] this->_array;
+        }
+        this->_array = new datatype[this->_length];
+        memcpy(this->_array, array._array, this->_length*sizeof(datatype));
+    }
+
+    return *this;
 }
 
 //----------------------------------------------------------------
@@ -262,7 +262,7 @@ Array1D<datatype>&  Array1D<datatype>::operator = (const Array1D& array)
 template <class datatype>
 bool Array1D<datatype>::operator == (const Array1D& array)
 {
-	return (this == &array);
+    return (this == &array);
 }
 
 //----------------------------------------------------------------
@@ -279,7 +279,7 @@ bool Array1D<datatype>::operator == (const Array1D& array)
 template <class datatype>
 bool Array1D<datatype>::operator != (const Array1D& array)
 {
-	return (this != &array);
+    return (this != &array);
 }
 
 //----------------------------------------------------------------
@@ -332,13 +332,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator + (datatype value)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] + value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] + value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -357,13 +357,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator + (const Array1D& array)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] + array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] + array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -381,13 +381,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator - (datatype value)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] - value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] - value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -407,13 +407,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator - (const Array1D& array)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] - array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] - array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -431,13 +431,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator * (datatype value)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] * value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] * value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -457,13 +457,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator * (const Array1D& array)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] * array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] * array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -481,13 +481,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator / (datatype value)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] / value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] / value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -506,13 +506,13 @@ template <class datatype>
 Array1D<datatype> Array1D<datatype>::operator / (const Array1D& array)
 {
     Array1D<datatype> output(this->_length);
-		
-	for (int i=0; i<this->_length; i++)
-	{
-		output._array[i] = this->_array[i] / array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        output._array[i] = this->_array[i] / array._array[i];
+    }
+
+    return output;
 }
 
 

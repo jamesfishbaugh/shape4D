@@ -21,11 +21,11 @@
 template <class datatype>
 Array2D<datatype>::Array2D()
 {
-	this->_length = 0;
-	this->_width = 0;
-	this->_lengthTimesWidth = 0;
-	
-	this->_array =  0;
+    this->_length = 0;
+    this->_width = 0;
+    this->_lengthTimesWidth = 0;
+
+    this->_array =  0;
 }
 
 //----------------------------------------------------------------
@@ -42,11 +42,11 @@ Array2D<datatype>::Array2D()
 template <class datatype>
 Array2D<datatype>::Array2D(int length, int width)
 {
-	this->_length = length;
-	this->_width = width;
-	this->_lengthTimesWidth = length*width;
+    this->_length = length;
+    this->_width = width;
+    this->_lengthTimesWidth = length*width;
 
-	this->_array = new datatype[this->_lengthTimesWidth];
+    this->_array = new datatype[this->_lengthTimesWidth];
 }
 
 //----------------------------------------------------------------
@@ -62,12 +62,12 @@ Array2D<datatype>::Array2D(int length, int width)
 template <class datatype>
 Array2D<datatype>::Array2D(const Array2D& array)
 {
-	this->_length = array._length;
-	this->_width = array._width;
-	this->_lengthTimesWidth = array._lengthTimesWidth;
-	
-	this->_array = new datatype[this->_lengthTimesWidth];
-	memcpy(this->_array, array._array, this->_lengthTimesWidth*sizeof(datatype));
+    this->_length = array._length;
+    this->_width = array._width;
+    this->_lengthTimesWidth = array._lengthTimesWidth;
+
+    this->_array = new datatype[this->_lengthTimesWidth];
+    memcpy(this->_array, array._array, this->_lengthTimesWidth*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -82,7 +82,7 @@ Array2D<datatype>::Array2D(const Array2D& array)
 template <class datatype>
 Array2D<datatype>::~Array2D()
 {
-	delete [] this->_array;
+    delete [] this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ Array2D<datatype>::~Array2D()
 template <class datatype>
 const int Array2D<datatype>::GetLength() const
 {
-	return this->_length;
+    return this->_length;
 }
 
 //----------------------------------------------------------------
@@ -118,7 +118,7 @@ const int Array2D<datatype>::GetLength() const
 template <class datatype>
 const int Array2D<datatype>::GetWidth() const
 {
-	return this->_width;
+    return this->_width;
 }
 
 //----------------------------------------------------------------
@@ -134,7 +134,7 @@ const int Array2D<datatype>::GetWidth() const
 template <class datatype>
 datatype* Array2D<datatype>::GetArray()
 {
-	return this->_array;
+    return this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -156,8 +156,8 @@ datatype* Array2D<datatype>::GetArray()
 template <class datatype>
 datatype Array2D<datatype>::GetAt(int l, int w)
 {
-	int index = l*this->_width + w;
-	return this->_array[index];
+    int index = l*this->_width + w;
+    return this->_array[index];
 }
 
 //----------------------------------------------------------------
@@ -175,8 +175,8 @@ datatype Array2D<datatype>::GetAt(int l, int w)
 template <class datatype>
 void Array2D<datatype>::SetAt(int l, int w, datatype value)
 {
-	int index = l*this->_width + w;
-	this->_array[index] = value;
+    int index = l*this->_width + w;
+    this->_array[index] = value;
 }	
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +196,7 @@ void Array2D<datatype>::SetAt(int l, int w, datatype value)
 template <class datatype>
 void Array2D<datatype>::FillArray(datatype value)
 {
-	memset(this->_array, value, this->_lengthTimesWidth*sizeof(datatype));
+    memset(this->_array, value, this->_lengthTimesWidth*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -212,7 +212,7 @@ void Array2D<datatype>::FillArray(datatype value)
 template <class datatype>
 void Array2D<datatype>::FillArray(datatype* array)
 {
-	memcpy(this->_array, array, this->_lengthTimesWidth*sizeof(datatype));
+    memcpy(this->_array, array, this->_lengthTimesWidth*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -228,14 +228,14 @@ void Array2D<datatype>::FillArray(datatype* array)
 template <class datatype>
 void Array2D<datatype>::FillArray(datatype** array)
 {
-	for (int i=0; i<this->_length; i++)
-	{
-		for (int j=0; j<this->_width; j++)
-		{
-			int index = i*this->_width + j;
-			this->_array[index] = array[i][j];
-		}
-	}
+    for (int i=0; i<this->_length; i++)
+    {
+        for (int j=0; j<this->_width; j++)
+        {
+            int index = i*this->_width + j;
+            this->_array[index] = array[i][j];
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -255,14 +255,14 @@ void Array2D<datatype>::FillArray(datatype** array)
 template <class datatype>
 datatype Array2D<datatype>::Array2D::Sum()
 {
-	datatype sum = 0;
-	
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		sum += this->_array[i];
-	}
-	
-	return sum;
+    datatype sum = 0;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        sum += this->_array[i];
+    }
+
+    return sum;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -283,21 +283,21 @@ datatype Array2D<datatype>::Array2D::Sum()
 template <class datatype>
 Array2D<datatype>&  Array2D<datatype>::operator = (const Array2D& array)
 {
-	if (this != &array)
-	{
-		this->_length = array._length;
-		this->_width = array._width;
-		this->_lengthTimesWidth = array._lengthTimesWidth;
-		
-		if (this->_array != 0)
-		{
-			delete [] this->_array;
-		}
-		this->_array = new datatype[this->_lengthTimesWidth];
-		memcpy(this->_array, array._array, this->_lengthTimesWidth*sizeof(datatype));
-	}
-	
-	return *this;
+    if (this != &array)
+    {
+        this->_length = array._length;
+        this->_width = array._width;
+        this->_lengthTimesWidth = array._lengthTimesWidth;
+
+        if (this->_array != 0)
+        {
+            delete [] this->_array;
+        }
+        this->_array = new datatype[this->_lengthTimesWidth];
+        memcpy(this->_array, array._array, this->_lengthTimesWidth*sizeof(datatype));
+    }
+
+    return *this;
 }
 
 //----------------------------------------------------------------
@@ -314,7 +314,7 @@ Array2D<datatype>&  Array2D<datatype>::operator = (const Array2D& array)
 template <class datatype>
 bool Array2D<datatype>::operator == (const Array2D& array)
 {
-	return (this == &array);
+    return (this == &array);
 }
 
 //----------------------------------------------------------------
@@ -331,7 +331,7 @@ bool Array2D<datatype>::operator == (const Array2D& array)
 template <class datatype>
 bool Array2D<datatype>::operator != (const Array2D& array)
 {
-	return (this != &array);
+    return (this != &array);
 }
 
 
@@ -351,7 +351,7 @@ bool Array2D<datatype>::operator != (const Array2D& array)
 template <class datatype>
 datatype& Array2D<datatype>::operator()(int l, int w)
 {
-	int index = l*this->_width + w;
+    int index = l*this->_width + w;
     return this->_array[index];
 }
 
@@ -370,7 +370,7 @@ datatype& Array2D<datatype>::operator()(int l, int w)
 template <class datatype>
 const datatype& Array2D<datatype>::operator()(int l, int w) const
 {
-	int index = l*this->_width + w;
+    int index = l*this->_width + w;
     return this->_array[index];
 }
 
@@ -389,13 +389,13 @@ template <class datatype>
 Array2D<datatype>  Array2D<datatype>::operator + (datatype value)
 {
     Array2D<datatype> output(this->_length, this->_width);
-	
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] + value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] + value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -414,13 +414,13 @@ template <class datatype>
 Array2D<datatype> Array2D<datatype>::operator + (const Array2D& array)
 {
     Array2D<datatype> output(this->_length, this->_width);
-		
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] + array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] + array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -438,13 +438,13 @@ template <class datatype>
 Array2D<datatype>  Array2D<datatype>::operator - (datatype value)
 {
     Array2D<datatype> output(this->_length, this->_width);
-	
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] - value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] - value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -464,13 +464,13 @@ template <class datatype>
 Array2D<datatype> Array2D<datatype>::operator - (const Array2D& array)
 {
     Array2D<datatype> output(this->_length, this->_width);
-		
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] - array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] - array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -488,13 +488,13 @@ template <class datatype>
 Array2D<datatype>  Array2D<datatype>::operator * (datatype value)
 {
     Array2D<datatype> output(this->_length, this->_width);
-	
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] * value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] * value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -514,13 +514,13 @@ template <class datatype>
 Array2D<datatype> Array2D<datatype>::operator * (const Array2D& array)
 {
     Array2D<datatype> output(this->_length, this->_width);
-		
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] * array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] * array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -538,13 +538,13 @@ template <class datatype>
 Array2D<datatype>  Array2D<datatype>::operator / (datatype value)
 {
     Array2D<datatype> output(this->_length, this->_width);
-	
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] / value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] / value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -563,11 +563,11 @@ template <class datatype>
 Array2D<datatype> Array2D<datatype>::operator / (const Array2D& array)
 {
     Array2D<datatype> output(this->_length, this->_width);
-		
-	for (int i=0; i<this->_lengthTimesWidth; i++)
-	{
-		output._array[i] = this->_array[i] / array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidth; i++)
+    {
+        output._array[i] = this->_array[i] / array._array[i];
+    }
+
+    return output;
 }

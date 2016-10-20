@@ -21,14 +21,14 @@
 template <class datatype>
 Array3D<datatype>::Array3D()
 {
-	this->_length = 0;
-	this->_width = 0;
-	this->_height = 0;
-	this->_lengthTimesWidth = 0;
-	this->_widthTimesHeight = 0;
-	this->_lengthTimesWidthTimesHeight = 0;
+    this->_length = 0;
+    this->_width = 0;
+    this->_height = 0;
+    this->_lengthTimesWidth = 0;
+    this->_widthTimesHeight = 0;
+    this->_lengthTimesWidthTimesHeight = 0;
 
-	this->_array = 0;
+    this->_array = 0;
 }
 
 //----------------------------------------------------------------
@@ -46,14 +46,14 @@ Array3D<datatype>::Array3D()
 template <class datatype>
 Array3D<datatype>::Array3D(int length, int width, int height)
 {
-	this->_length = length;
-	this->_width = width;
-	this->_height = height;
-	this->_lengthTimesWidth = length*width;
-	this->_widthTimesHeight = width*height;
-	this->_lengthTimesWidthTimesHeight = length*width*height;
+    this->_length = length;
+    this->_width = width;
+    this->_height = height;
+    this->_lengthTimesWidth = length*width;
+    this->_widthTimesHeight = width*height;
+    this->_lengthTimesWidthTimesHeight = length*width*height;
 
-	this->_array = new datatype[length*width*height];
+    this->_array = new datatype[length*width*height];
 }
 
 //----------------------------------------------------------------
@@ -69,15 +69,15 @@ Array3D<datatype>::Array3D(int length, int width, int height)
 template <class datatype>
 Array3D<datatype>::Array3D(const Array3D& array)
 {
-	this->_length = array._length;
-	this->_width = array._width;
-	this->_height = array._height;
-	this->_lengthTimesWidth = array._lengthTimesWidth;
-	this->_widthTimesHeight = array._widthTimesHeight;
-	this->_lengthTimesWidthTimesHeight = array._lengthTimesWidthTimesHeight;
-	
-	this->_array = new datatype[this->_lengthTimesWidthTimesHeight];
-	memcpy(this->_array, array._array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));	
+    this->_length = array._length;
+    this->_width = array._width;
+    this->_height = array._height;
+    this->_lengthTimesWidth = array._lengthTimesWidth;
+    this->_widthTimesHeight = array._widthTimesHeight;
+    this->_lengthTimesWidthTimesHeight = array._lengthTimesWidthTimesHeight;
+
+    this->_array = new datatype[this->_lengthTimesWidthTimesHeight];
+    memcpy(this->_array, array._array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -92,7 +92,7 @@ Array3D<datatype>::Array3D(const Array3D& array)
 template <class datatype>
 Array3D<datatype>::~Array3D()
 {
-	delete [] this->_array;
+    delete [] this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ Array3D<datatype>::~Array3D()
 template <class datatype>
 const int Array3D<datatype>::GetLength() const
 {
-	return this->_length;
+    return this->_length;
 }
 
 //----------------------------------------------------------------
@@ -128,7 +128,7 @@ const int Array3D<datatype>::GetLength() const
 template <class datatype>
 const int Array3D<datatype>::GetWidth() const
 {
-	return this->_width;
+    return this->_width;
 }
 
 //----------------------------------------------------------------
@@ -144,7 +144,7 @@ const int Array3D<datatype>::GetWidth() const
 template <class datatype>
 const int Array3D<datatype>::GetHeight() const
 {
-	return this->_height;
+    return this->_height;
 }
 
 //----------------------------------------------------------------
@@ -160,7 +160,7 @@ const int Array3D<datatype>::GetHeight() const
 template <class datatype>
 datatype* Array3D<datatype>::GetArray()
 {
-	return this->_array;
+    return this->_array;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -183,8 +183,8 @@ datatype* Array3D<datatype>::GetArray()
 template <class datatype>
 datatype Array3D<datatype>::GetAt(int l, int w, int h)
 {
-	int index = l*this->_widthTimesHeight + w*this->_height + h;
-	return this->_array[index];
+    int index = l*this->_widthTimesHeight + w*this->_height + h;
+    return this->_array[index];
 }
 
 //----------------------------------------------------------------
@@ -203,8 +203,8 @@ datatype Array3D<datatype>::GetAt(int l, int w, int h)
 template <class datatype>
 void Array3D<datatype>::SetAt(int l, int w, int h, datatype value)
 {
-	int index = l*this->_widthTimesHeight + w*this->_height + h;
-	this->_array[index] = value;
+    int index = l*this->_widthTimesHeight + w*this->_height + h;
+    this->_array[index] = value;
 }	
 
 //----------------------------------------------------------------
@@ -222,16 +222,16 @@ template <class datatype>
 Array2D<datatype> Array3D<datatype>::Get2DSliceAtHeight(int h)
 {
     Array2D<datatype> output(this->_length, this->_width);
-	
-	for (int i=0; i<this->_length; i++)
-	{
-		for (int j=0; j<this->_width; j++)
-		{
-			output(i,j) = this->GetAt(i,j,h);
-		}
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_length; i++)
+    {
+        for (int j=0; j<this->_width; j++)
+        {
+            output(i,j) = this->GetAt(i,j,h);
+        }
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -248,13 +248,13 @@ Array2D<datatype> Array3D<datatype>::Get2DSliceAtHeight(int h)
 template <class datatype>
 void Array3D<datatype>::Set2DSliceAtHeight(const Array2D<datatype>& array, int h)
 {
-	for (int i=0; i<this->_length; i++)
-	{
-		for (int j=0; j<this->_width; j++)
-		{
-			this->SetAt(i,j,h,array(i,j));
-		}
-	}
+    for (int i=0; i<this->_length; i++)
+    {
+        for (int j=0; j<this->_width; j++)
+        {
+            this->SetAt(i,j,h,array(i,j));
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void Array3D<datatype>::Set2DSliceAtHeight(const Array2D<datatype>& array, int h
 template <class datatype>
 void Array3D<datatype>::FillArray(datatype value)
 {
-	memset(this->_array, value, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
+    memset(this->_array, value, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -290,8 +290,8 @@ void Array3D<datatype>::FillArray(datatype value)
 template <class datatype>
 void Array3D<datatype>::FillArray(datatype* array)
 {
-	
-	memcpy(this->_array, array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
+
+    memcpy(this->_array, array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
 }
 
 //----------------------------------------------------------------
@@ -307,17 +307,17 @@ void Array3D<datatype>::FillArray(datatype* array)
 template <class datatype>
 void Array3D<datatype>::FillArray(datatype*** array)
 {
-	for (int l=0; l<this->_length; l++)
-	{
-		for (int w=0; w<this->_width; w++)
-		{
-			for (int h=0; h<this->_height; h++)
-			{
-				int index = l*this->_widthTimesHeight + w*this->_height + h;
-				this->_array[index] = array[l][w][h];
-			}
-		}
-	}
+    for (int l=0; l<this->_length; l++)
+    {
+        for (int w=0; w<this->_width; w++)
+        {
+            for (int h=0; h<this->_height; h++)
+            {
+                int index = l*this->_widthTimesHeight + w*this->_height + h;
+                this->_array[index] = array[l][w][h];
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -337,14 +337,14 @@ void Array3D<datatype>::FillArray(datatype*** array)
 template <class datatype>
 datatype Array3D<datatype>::Array3D::Sum()
 {
-	datatype sum = 0;
-	
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		sum += this->_array[i];
-	}
-	
-	return sum;
+    datatype sum = 0;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        sum += this->_array[i];
+    }
+
+    return sum;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -365,24 +365,24 @@ datatype Array3D<datatype>::Array3D::Sum()
 template <class datatype>
 Array3D<datatype>&  Array3D<datatype>::operator = (const Array3D& array)
 {
-	if (this != &array)
-	{
-		this->_length = array._length;
-		this->_width = array._width;
-		this->_height = array._height;
-		this->_lengthTimesWidth = array._lengthTimesWidth;
-		this->_widthTimesHeight = array._widthTimesHeight;
-		this->_lengthTimesWidthTimesHeight = array._lengthTimesWidthTimesHeight;
-		
-		if (this->_array != 0)
-		{
-			delete [] this->_array;
-		}
-		this->_array = new datatype[this->_lengthTimesWidthTimesHeight];
-		memcpy(this->_array, array._array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
-	}
-	
-	return *this;
+    if (this != &array)
+    {
+        this->_length = array._length;
+        this->_width = array._width;
+        this->_height = array._height;
+        this->_lengthTimesWidth = array._lengthTimesWidth;
+        this->_widthTimesHeight = array._widthTimesHeight;
+        this->_lengthTimesWidthTimesHeight = array._lengthTimesWidthTimesHeight;
+
+        if (this->_array != 0)
+        {
+            delete [] this->_array;
+        }
+        this->_array = new datatype[this->_lengthTimesWidthTimesHeight];
+        memcpy(this->_array, array._array, this->_lengthTimesWidthTimesHeight*sizeof(datatype));
+    }
+
+    return *this;
 }
 
 //----------------------------------------------------------------
@@ -399,7 +399,7 @@ Array3D<datatype>&  Array3D<datatype>::operator = (const Array3D& array)
 template <class datatype>
 bool Array3D<datatype>::operator == (const Array3D& array)
 {
-	return (this == &array);
+    return (this == &array);
 }
 
 //----------------------------------------------------------------
@@ -416,7 +416,7 @@ bool Array3D<datatype>::operator == (const Array3D& array)
 template <class datatype>
 bool Array3D<datatype>::operator != (const Array3D& array)
 {
-	return (this != &array);
+    return (this != &array);
 }
 
 //----------------------------------------------------------------
@@ -436,7 +436,7 @@ bool Array3D<datatype>::operator != (const Array3D& array)
 template <class datatype>
 datatype& Array3D<datatype>::operator()(int l, int w, int h)
 {
-	int index = l*this->_widthTimesHeight + w*this->_height + h;
+    int index = l*this->_widthTimesHeight + w*this->_height + h;
     return this->_array[index];
 }
 
@@ -456,7 +456,7 @@ datatype& Array3D<datatype>::operator()(int l, int w, int h)
 template <class datatype>
 const datatype& Array3D<datatype>::operator()(int l, int w, int h) const
 {
-	int index = l*this->_widthTimesHeight + w*this->_height + h;
+    int index = l*this->_widthTimesHeight + w*this->_height + h;
     return this->_array[index];
 }
 
@@ -475,13 +475,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator + (datatype value)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-	
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] + value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] + value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -500,13 +500,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator + (const Array3D& array)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-		
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] + array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] + array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -524,13 +524,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator - (datatype value)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-	
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] - value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] - value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -550,13 +550,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator - (const Array3D& array)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-		
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] - array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] - array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -574,13 +574,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator * (datatype value)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-	
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] * value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] * value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -600,13 +600,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator * (const Array3D& array)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-		
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] * array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] * array._array[i];
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -624,13 +624,13 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator / (datatype value)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-	
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] / value;
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] / value;
+    }
+
+    return output;
 }
 
 //----------------------------------------------------------------
@@ -649,11 +649,11 @@ template <class datatype>
 Array3D<datatype> Array3D<datatype>::operator / (const Array3D& array)
 {
     Array3D<datatype> output(this->_length, this->_width, this->_height);
-		
-	for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
-	{
-		output._array[i] = this->_array[i] / array._array[i];
-	}
-	
-	return output;
+
+    for (int i=0; i<this->_lengthTimesWidthTimesHeight; i++)
+    {
+        output._array[i] = this->_array[i] / array._array[i];
+    }
+
+    return output;
 }

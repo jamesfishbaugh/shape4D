@@ -10,42 +10,42 @@
 class Landmarks : public TargetData
 {
 
-	public:
-		//--------------------------------------------------------------------------
-		// Private member variables
-		//--------------------------------------------------------------------------
-	
+    public:
+        //--------------------------------------------------------------------------
+        // Private member variables
+        //--------------------------------------------------------------------------
+
         Array2D<double> _centers;		// Centers of target faces
         Array2D<double> _normals;		// Normals of target faces
 
-		//--------------------------------------------------------------------------
-		// Constructors/Destructors
-		//--------------------------------------------------------------------------
-		
+        //--------------------------------------------------------------------------
+        // Constructors/Destructors
+        //--------------------------------------------------------------------------
+
         Landmarks();
-		//EXLandmarks(const EX2DArray<double>& y, const EX2DArray<int>& vx, double timept, int timeIndex);
+        //EXLandmarks(const EX2DArray<double>& y, const EX2DArray<int>& vx, double timept, int timeIndex);
         Landmarks(const Array2D<double>& y, const Array2D<int>& vy, const Array2D<int>& vx, double sigmaW, double timept, int timeIndex, double weight);
         Landmarks(const Landmarks& shape);
         ~Landmarks();
-		
-		//--------------------------------------------------------------------------
-		// Interface to compute data matching metric and gradient
-		//--------------------------------------------------------------------------
-		
+
+        //--------------------------------------------------------------------------
+        // Interface to compute data matching metric and gradient
+        //--------------------------------------------------------------------------
+
         virtual double Matching(const Array3D<double>& x, int t);
         virtual Array2D<double> GradMatching(const Array3D<double>& x, int t);
 
-		//--------------------------------------------------------------------------
-		// Helper functions
-		//--------------------------------------------------------------------------
-	
+        //--------------------------------------------------------------------------
+        // Helper functions
+        //--------------------------------------------------------------------------
+
         void ComputeCentersAndNormals(const Array2D<double>& pts, const Array2D<int>& tris, Array2D<double> &centers, Array2D<double> &normals);
-		
-		//--------------------------------------------------------------------------
-		// Overloaded operators
-		//--------------------------------------------------------------------------
-        Landmarks& operator = (const Landmarks& shape);
-		
+
+        //--------------------------------------------------------------------------
+        // Overloaded operators
+        //--------------------------------------------------------------------------
+    Landmarks& operator = (const Landmarks& shape);
+
 };
 
 #endif // LANDMARKS_H

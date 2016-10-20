@@ -28,9 +28,9 @@
 //----------------------------------------------------------------
 RegressionAcceleration::RegressionAcceleration()
 {
-	this->_iteration = 0;
-	this->SetNumTargets(0);
-	this->_targets = 0;
+    this->_iteration = 0;
+    this->SetNumTargets(0);
+    this->_targets = 0;
     this->_continueRegression = false;
 }
 
@@ -46,11 +46,11 @@ RegressionAcceleration::RegressionAcceleration()
 //----------------------------------------------------------------
 RegressionAcceleration::RegressionAcceleration(const RegressionParams& source)
 {
-	this->_iteration = 0;
-	this->SetSource(source);
-	this->SetNumTargets(0);
-	this->_targets = 0;
-	this->_continueRegression = false;
+    this->_iteration = 0;
+    this->SetSource(source);
+    this->SetNumTargets(0);
+    this->_targets = 0;
+    this->_continueRegression = false;
 }
 
 //----------------------------------------------------------------
@@ -67,11 +67,11 @@ RegressionAcceleration::RegressionAcceleration(const RegressionParams& source)
 //----------------------------------------------------------------
 RegressionAcceleration::RegressionAcceleration(const RegressionParams& source, int numTargets, TargetData** targets)
 {
-	this->_iteration = 0;
-	this->SetSource(source);
-	this->SetNumTargets(numTargets);
-	this->SetTargets(targets);	
-	this->_continueRegression = false;
+    this->_iteration = 0;
+    this->SetSource(source);
+    this->SetNumTargets(numTargets);
+    this->SetTargets(targets);
+    this->_continueRegression = false;
 }
 
 //----------------------------------------------------------------
@@ -85,7 +85,7 @@ RegressionAcceleration::RegressionAcceleration(const RegressionParams& source, i
 //----------------------------------------------------------------
 RegressionAcceleration::~RegressionAcceleration()
 {
-	delete [] this->_targets;
+    delete [] this->_targets;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -94,8 +94,8 @@ RegressionAcceleration::~RegressionAcceleration()
 
 void RegressionAcceleration::SetImpulse(Array3D<double> &impulse)
 {
-	this->_impulse = impulse;
-	this->_continueRegression = true;
+    this->_impulse = impulse;
+    this->_continueRegression = true;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ void RegressionAcceleration::SetImpulse(Array3D<double> &impulse)
 
 Array3D<double> RegressionAcceleration::GetX()
 {
-	return this->_X;
+    return this->_X;
 }
 
 //----------------------------------------------------------------
@@ -119,7 +119,7 @@ Array3D<double> RegressionAcceleration::GetX()
 //----------------------------------------------------------------
 Array3D<double> RegressionAcceleration::GetVelocity()
 {
-	return this->_dX;
+    return this->_dX;
 }
 
 //----------------------------------------------------------------
@@ -134,7 +134,7 @@ Array3D<double> RegressionAcceleration::GetVelocity()
 //----------------------------------------------------------------
 Array3D<double> RegressionAcceleration::GetAcceleration()
 {
-	return this->_accel;
+    return this->_accel;
 }
 
 //----------------------------------------------------------------
@@ -149,7 +149,7 @@ Array3D<double> RegressionAcceleration::GetAcceleration()
 //----------------------------------------------------------------
 Array3D<double> RegressionAcceleration::GetImpulse()
 {
-	return this->_impulse;
+    return this->_impulse;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -169,124 +169,124 @@ Array3D<double> RegressionAcceleration::GetImpulse()
 //----------------------------------------------------------------
 Array3D<double> RegressionAcceleration::Run()
 {
-	this->_tau = (double)1.0f/(double)(this->_source.GetT()-1.0f);
-	
-	// Initialize member arrays
-	this->InitX();
-	this->InitInitV0();
-	this->InitVelocity();
-	
-	if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
-	{
-		// Create the grids for optimization
-		this->SetSourceGrids();
-		this->SetTargetGrids();
-	}
+    this->_tau = (double)1.0f/(double)(this->_source.GetT()-1.0f);
 
-	//printf("Done setting grids\n");
-	
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
+    // Initialize member arrays
+    this->InitX();
+    this->InitInitV0();
+    this->InitVelocity();
+
+    if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
+    {
+        // Create the grids for optimization
+        this->SetSourceGrids();
+        this->SetTargetGrids();
+    }
+
+    //printf("Done setting grids\n");
+
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
     Array2D<double> X0 = this->_source.GetX();
-	
-	// Allocate memory for graddesc (stores the positions and velocities adding 2 dimensions to T)
+
+    // Allocate memory for graddesc (stores the positions and velocities adding 2 dimensions to T)
     Array3D<double> graddesc(dim, nx, T+2);
-	
-	// The graddesc variable has x0 and v0 concatenated at the end of the impulses
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			for (int k=0; k<T+2; k++)
-			{
-				if (k==T)
-				{
-					graddesc(i,j,k) = this->_initV0(i,j);
-				}
-				else if (k==(T+1))
-				{
-					graddesc(i,j,k) = X0(i,j);
-				}
-				else
-				{
-					if (this->_continueRegression)
-					{
-						graddesc(i,j,k) =  this->_impulse(i,j,k);
-					}
-					else
-					{
-						graddesc(i,j,k) =  0.0f;
-					}
-				}
-			}
-		}
-	}
-	
-	// Run the optimization
+
+    // The graddesc variable has x0 and v0 concatenated at the end of the impulses
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            for (int k=0; k<T+2; k++)
+            {
+                if (k==T)
+                {
+                    graddesc(i,j,k) = this->_initV0(i,j);
+                }
+                else if (k==(T+1))
+                {
+                    graddesc(i,j,k) = X0(i,j);
+                }
+                else
+                {
+                    if (this->_continueRegression)
+                    {
+                        graddesc(i,j,k) =  this->_impulse(i,j,k);
+                    }
+                    else
+                    {
+                        graddesc(i,j,k) =  0.0f;
+                    }
+                }
+            }
+        }
+    }
+
+    // Run the optimization
     this->FISTA(graddesc);
     Optimizer* optimizer = (Optimizer*) new AdaptiveGradientDescent(this);
-	//optimizer->SetStepsize(EXExoshapeState::GetCurrentStepsize());
+    //optimizer->SetStepsize(EXExoshapeState::GetCurrentStepsize());
     optimizer->SetMaxIterations(this->_source.GetMaxIters());
     optimizer->SetBreakRatio(this->_source.GetBreakRatio());
     optimizer->SetStepsize(0.05f);
-	optimizer->Optimize(graddesc);
-	
-	// Split out the impulse and v0
+    optimizer->Optimize(graddesc);
+
+    // Split out the impulse and v0
     Array3D<double> impulse(dim, nx, T);
     Array2D<double> v0(dim, nx);
-	this->SplitImpulseAndV0(graddesc, impulse, v0);
+    this->SplitImpulseAndV0(graddesc, impulse, v0);
 
-	// Compute the final trajectories now that we are done
-	this->ComputeTrajectories(impulse, v0);
+    // Compute the final trajectories now that we are done
+    this->ComputeTrajectories(impulse, v0);
 
-	// Compute the final acceleration
+    // Compute the final acceleration
     Array3D<double> accel(dim, nx, T);
-	accel.FillArray(0.0f);
-	for (int t=0; t<T-1; t++)
-	{
-		// Compute acceleration at time t
+    accel.FillArray(0.0f);
+    for (int t=0; t<T-1; t++)
+    {
+        // Compute acceleration at time t
         Array2D<double> accelt;
 
-		if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
-		{
-			accelt = this->GridKernelSum(t, impulse);
-		}
-		else
-		{
-			accelt = this->RegKernelSum(t, impulse);
-		}
+        if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
+        {
+            accelt = this->GridKernelSum(t, impulse);
+        }
+        else
+        {
+            accelt = this->RegKernelSum(t, impulse);
+        }
 
-		accel.Set2DSliceAtHeight(accelt,t);
-	}
-		
-	// Save the final values
-	this->_accel = accel;
-	this->_impulse = impulse;
-	
-	// Save the shapes and vectors
-	vector<char *> names;
-	names.push_back((char*)"velocity");
-	names.push_back((char*)"acceleration");
-	names.push_back((char*)"impulse");
-	
+        accel.Set2DSliceAtHeight(accelt,t);
+    }
+
+    // Save the final values
+    this->_accel = accel;
+    this->_impulse = impulse;
+
+    // Save the shapes and vectors
+    vector<char *> names;
+    names.push_back((char*)"velocity");
+    names.push_back((char*)"acceleration");
+    names.push_back((char*)"impulse");
+
     vector< Array3D<double> > vectors;
-	vectors.push_back(this->_dX);
-	vectors.push_back(this->_accel);
-	vectors.push_back(this->_impulse);
-	
+    vectors.push_back(this->_dX);
+    vectors.push_back(this->_accel);
+    vectors.push_back(this->_impulse);
+
     Shape4DState::SetX(_X);
     Shape4DState::SetVectors(names, vectors);
     Shape4DState::SaveShapesAndVectors();
     Shape4DState::SaveStateAccel();
-	
+
     Shape4DState::SetShouldWriteShapesAndVectors(false);
-	
-	// Clean up memory
-	delete optimizer;
-	
-	// Return the final trajectores
-	return this->_X;
+
+    // Clean up memory
+    delete optimizer;
+
+    // Return the final trajectores
+    return this->_X;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -305,19 +305,19 @@ Array3D<double> RegressionAcceleration::Run()
 //----------------------------------------------------------------	
 void RegressionAcceleration::InitInitV0()
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	
-	this->_initV0 = this->_source.GetInitV0();
-	
-	// If there is no initV0, return zeros
-	if ((this->_initV0.GetLength() == 0) || (this->_initV0.GetWidth() == 0))
-	{
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+
+    this->_initV0 = this->_source.GetInitV0();
+
+    // If there is no initV0, return zeros
+    if ((this->_initV0.GetLength() == 0) || (this->_initV0.GetWidth() == 0))
+    {
         Array2D<double> tempInitV0(dim,nx);
-		tempInitV0.FillArray(0.0f);
-	
-		this->_initV0 = tempInitV0;
-	}
+        tempInitV0.FillArray(0.0f);
+
+        this->_initV0 = tempInitV0;
+    }
 }
 
 //----------------------------------------------------------------
@@ -332,13 +332,13 @@ void RegressionAcceleration::InitInitV0()
 //----------------------------------------------------------------	
 void RegressionAcceleration::InitVelocity()
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
-	
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+
     Array3D<double> tempVelocity(dim,nx,T);
-	tempVelocity.FillArray(0.0f);
-	this->_dX = tempVelocity;
+    tempVelocity.FillArray(0.0f);
+    this->_dX = tempVelocity;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -360,37 +360,37 @@ void RegressionAcceleration::InitVelocity()
 //----------------------------------------------------------------	
 double RegressionAcceleration::ComputeRegularity(const Array3D<double>& impulse)
 {
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
-	double E = 0.0f;
-	        
-	for (int t=0; t<T; t++)
-	{
-		// Compute acceleration at time t
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+    double E = 0.0f;
+
+    for (int t=0; t<T; t++)
+    {
+        // Compute acceleration at time t
         Array2D<double> accelt;
-		
-		if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
-		{
-			accelt = this->GridKernelSum(t, impulse);
-		}
-		else
-		{
-			accelt = this->RegKernelSum(t, impulse);
-		}
 
-		// Regularity is the dot product between impulse and acceleration
+        if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
+        {
+            accelt = this->GridKernelSum(t, impulse);
+        }
+        else
+        {
+            accelt = this->RegKernelSum(t, impulse);
+        }
+
+        // Regularity is the dot product between impulse and acceleration
         //#pragma omp parallel for reduction(+:E)
-		for (int i=0; i<nx; i++)
-		{
-			double dot = (impulse(0,i,t)*accelt(0,i)) + 
-						 (impulse(1,i,t)*accelt(1,i)) +
-						 (impulse(2,i,t)*accelt(2,i));
-						
-			E += dot;
-		}
-	}
+        for (int i=0; i<nx; i++)
+        {
+            double dot = (impulse(0,i,t)*accelt(0,i)) +
+                    (impulse(1,i,t)*accelt(1,i)) +
+                    (impulse(2,i,t)*accelt(2,i));
 
-	return E;
+            E += dot;
+        }
+    }
+
+    return E;
 }
 
 //----------------------------------------------------------------
@@ -415,31 +415,31 @@ double RegressionAcceleration::ComputeRegularity(const Array3D<double>& impulse)
 //----------------------------------------------------------------	
 double RegressionAcceleration::ComputeFunctional(const Array3D<double>& impulseAndV0, double &dataMatching, double &regularity)
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
-	
-	// Split out the impulse and initial velocity
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+
+    // Split out the impulse and initial velocity
     Array3D<double> impulse(dim,nx,T);
     Array2D<double> v0(dim,nx);
-	this->SplitImpulseAndV0(impulseAndV0, impulse, v0);
-	
-	//printf("  Computing functional value\n");
-	//printf("    Computing trajectories...\n");
-	
-	// Apply the current deformation
-	this->ComputeTrajectories(impulse, v0);
-			
-	//printf("    Computing data matching...\n");
-	dataMatching = ComputeDataMatching(this->_X);
-	//printf("    Computing regularity...\n");
-	regularity = ComputeRegularity(impulse);
-	
-	//printf("Data = %0.4f  Reg = %0.4f\n", dataMatching, regularity);
-	
-	//printf("Done computing functional\n");
+    this->SplitImpulseAndV0(impulseAndV0, impulse, v0);
 
-	return dataMatching + this->_source.GetGamma()*regularity;
+    //printf("  Computing functional value\n");
+    //printf("    Computing trajectories...\n");
+
+    // Apply the current deformation
+    this->ComputeTrajectories(impulse, v0);
+
+    //printf("    Computing data matching...\n");
+    dataMatching = ComputeDataMatching(this->_X);
+    //printf("    Computing regularity...\n");
+    regularity = ComputeRegularity(impulse);
+
+    //printf("Data = %0.4f  Reg = %0.4f\n", dataMatching, regularity);
+
+    //printf("Done computing functional\n");
+
+    return dataMatching + this->_source.GetGamma()*regularity;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -463,11 +463,11 @@ double RegressionAcceleration::ComputeFunctional(const Array3D<double>& impulseA
 //----------------------------------------------------------------
 Array3D<double> RegressionAcceleration::ComputeGradient(const Array3D<double>& impulseAndV0)
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
     int T = this->_source.GetT();
-	
-	// Split out impulse and initial velocity
+
+    // Split out impulse and initial velocity
     Array3D<double> impulse(dim,nx,T);
     Array2D<double> V0 (dim,nx);
     this->SplitImpulseAndV0(impulseAndV0, impulse, V0);
@@ -485,39 +485,39 @@ Array3D<double> RegressionAcceleration::ComputeGradient(const Array3D<double>& i
 
     // Package of the final gradient calculation
     Array3D<double> G(dim,nx,T+2);
-	G.FillArray(0.0f);
-	
-	double gammaTimesTwo = 2.0f*this->_source.GetGamma();
-	
-	// Compute the final value of the gradient
+    G.FillArray(0.0f);
+
+    double gammaTimesTwo = 2.0f*this->_source.GetGamma();
+
+    // Compute the final value of the gradient
     //#pragma omp parallel for collapse(3)
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			for (int k=0; k<T+2; k++)
-			{
-				if (k==T)
-				// Initial velocity
-				{
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            for (int k=0; k<T+2; k++)
+            {
+                if (k==T)
+                    // Initial velocity
+                {
                     G(i,j,k) = gradV0(i,j);
-					
-				}
-				else if (k==(T+1))
-				// Initial position
-				{
+
+                }
+                else if (k==(T+1))
+                    // Initial position
+                {
                     G(i,j,k) = gradX0(i,j);
                 }
-				// Impulse
-				else
-				{
+                // Impulse
+                else
+                {
                     G(i,j,k) = gradImpulse(i,j,k);
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	return G;
+    return G;
 }
 
 //----------------------------------------------------------------
@@ -539,7 +539,7 @@ Array3D<double> RegressionAcceleration::ComputeGradient(const Array3D<double>& i
 // update impulse and initial velocity.
 //----------------------------------------------------------------
 void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
-                                               Array3D<double>& gradImpulse, Array2D<double>& gradX0, Array2D<double>& gradV0)
+                                             Array3D<double>& gradImpulse, Array2D<double>& gradX0, Array2D<double>& gradV0)
 {
     int dim = this->_X.GetLength();
     int nx = this->_source.GetNx();
@@ -788,35 +788,35 @@ void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, con
 //----------------------------------------------------------------
 void RegressionAcceleration::SplitImpulseAndV0(const Array3D<double>& impulseAndV0, Array3D<double>& impulse, Array2D<double>& v0)
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
-	
-	// Split impulse and v0
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+
+    // Split impulse and v0
     //#pragma omp parallel for collapse(3)
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			for (int k=0; k<T+2; k++)
-			{
-				// Initial velocity
-				if (k==T)
-				{
-					v0(i,j) = impulseAndV0(i,j,k);
-				}
-				else if (k==(T+1))
-				{
-					this->_X(i,j,0) = impulseAndV0(i,j,k);
-				}
-				// Impulse
-				else
-				{
-					impulse(i,j,k) = impulseAndV0(i,j,k);
-				}
-			}
-		}
-	}
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            for (int k=0; k<T+2; k++)
+            {
+                // Initial velocity
+                if (k==T)
+                {
+                    v0(i,j) = impulseAndV0(i,j,k);
+                }
+                else if (k==(T+1))
+                {
+                    this->_X(i,j,0) = impulseAndV0(i,j,k);
+                }
+                // Impulse
+                else
+                {
+                    impulse(i,j,k) = impulseAndV0(i,j,k);
+                }
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------
@@ -833,81 +833,81 @@ void RegressionAcceleration::SplitImpulseAndV0(const Array3D<double>& impulseAnd
 //----------------------------------------------------------------
 void RegressionAcceleration::ComputeTrajectories(const Array3D<double>& impulse, const Array2D<double>& v0)
 {
-	int dim = this->_X.GetLength();
-	int nx = this->_source.GetNx();
-	int T = this->_source.GetT();
-	double tau2 = pow(this->_tau,2);
-	
-	// Set the initial velocity
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			// Should we use the v0 we computed or a v0 the user provided
-			if (this->_source.ShouldUseInitV0())
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+    double tau2 = pow(this->_tau,2);
+
+    // Set the initial velocity
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            // Should we use the v0 we computed or a v0 the user provided
+            if (this->_source.ShouldUseInitV0())
             {
-				// User provided initial velocity
-				this->_dX(i,j,0) = this->_source.GetInitV0()(i,j);
-			}
-			else
-			{
-				// Use the value we computed
-				this->_dX(i,j,0) = v0(i,j);
-			}
-		}
-	}
-	
-	// Compute trajectories by Verlet integration
-	for (int t=0; t<T-1; t++)
-	{
-		// Compute acceleration at time t
+                // User provided initial velocity
+                this->_dX(i,j,0) = this->_source.GetInitV0()(i,j);
+            }
+            else
+            {
+                // Use the value we computed
+                this->_dX(i,j,0) = v0(i,j);
+            }
+        }
+    }
+
+    // Compute trajectories by Verlet integration
+    for (int t=0; t<T-1; t++)
+    {
+        // Compute acceleration at time t
         Array2D<double> accelt;
 
-		if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
-		{
-			accelt = this->GridKernelSum(t, impulse);
-		}
-		else
-		{
-			accelt = this->RegKernelSum(t, impulse);
-		}
+        if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
+        {
+            accelt = this->GridKernelSum(t, impulse);
+        }
+        else
+        {
+            accelt = this->RegKernelSum(t, impulse);
+        }
 
-		// Use the acceleration to update the positions
+        // Use the acceleration to update the positions
         //#pragma omp parallel for collapse(2)
-		for (int i=0; i<dim; i++)
-		{
-			for (int j=0; j<nx; j++)
-			{
-				this->_X(i,j,t+1) = this->_X(i,j,t) + this->_dX(i,j,t)*this->_tau + 0.5f*accelt(i,j)*tau2;
-			}
-		}
-		
-		// Compute acceleration at time t+1
+        for (int i=0; i<dim; i++)
+        {
+            for (int j=0; j<nx; j++)
+            {
+                this->_X(i,j,t+1) = this->_X(i,j,t) + this->_dX(i,j,t)*this->_tau + 0.5f*accelt(i,j)*tau2;
+            }
+        }
+
+        // Compute acceleration at time t+1
         Array2D<double> acceltp1;
 
-		if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
-		{
-			// Update grids since point positions have changed
-			this->UpdateSourceGrids();
-			this->UpdateTargetGrids();
+        if (strcmp(this->_source.GetKernelType(), "p3m") == 0)
+        {
+            // Update grids since point positions have changed
+            this->UpdateSourceGrids();
+            this->UpdateTargetGrids();
 
-			acceltp1 = this->GridKernelSum(t+1, impulse);
-		}
-		else
-		{
-			acceltp1 = this->RegKernelSum(t+1, impulse);
-		}
-			
-		// Now update the velocities
+            acceltp1 = this->GridKernelSum(t+1, impulse);
+        }
+        else
+        {
+            acceltp1 = this->RegKernelSum(t+1, impulse);
+        }
+
+        // Now update the velocities
         //#pragma omp parallel for collapse(2)
-		for (int i=0; i<dim; i++)
-		{
-			for (int j=0; j<nx; j++)
-			{
-				this->_dX(i,j,t+1) = this->_dX(i,j,t) + 0.5f*(accelt(i,j)+acceltp1(i,j))*this->_tau;
-			}
-		}
-	}
+        for (int i=0; i<dim; i++)
+        {
+            for (int j=0; j<nx; j++)
+            {
+                this->_dX(i,j,t+1) = this->_dX(i,j,t) + 0.5f*(accelt(i,j)+acceltp1(i,j))*this->_tau;
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------
@@ -990,8 +990,8 @@ void RegressionAcceleration::FISTA(const Array3D<double>& impulseAndV0)
 // Takes a step in the gradient direction
 //----------------------------------------------------------------
 void RegressionAcceleration::GradientDescentStep(Array3D<double>& impulseTest, Array2D<double>& X0Test, Array2D<double>& V0Test,
-                                                   const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
-                                                   double stepImpulse, double stepX0andV0)
+                                                 const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
+                                                 double stepImpulse, double stepX0andV0)
 {
 
 

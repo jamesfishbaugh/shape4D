@@ -23,7 +23,7 @@
 //----------------------------------------------------------------
 TargetData::~TargetData()
 {
-	delete this->_grid;
+    delete this->_grid;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -42,8 +42,8 @@ TargetData::~TargetData()
 //----------------------------------------------------------------
 void TargetData::SetY(const Array2D<double>& y)
 {
-	this->_ny = y.GetWidth();
-	this->_y = y;
+    this->_ny = y.GetWidth();
+    this->_y = y;
 }
 
 //----------------------------------------------------------------
@@ -58,8 +58,8 @@ void TargetData::SetY(const Array2D<double>& y)
 //----------------------------------------------------------------
 void TargetData::SetVy(const Array2D<int>& vy)
 {
-	this->_nvy = vy.GetWidth();
-	this->_vy = vy;
+    this->_nvy = vy.GetWidth();
+    this->_vy = vy;
 }
 
 //----------------------------------------------------------------
@@ -75,8 +75,8 @@ void TargetData::SetVy(const Array2D<int>& vy)
 //----------------------------------------------------------------
 void TargetData::SetVx(const Array2D<int>& vx)
 {
-	this->_nvx = vx.GetWidth();
-	this->_vx = vx;
+    this->_nvx = vx.GetWidth();
+    this->_vx = vx;
 }
 
 //----------------------------------------------------------------
@@ -91,7 +91,7 @@ void TargetData::SetVx(const Array2D<int>& vx)
 //----------------------------------------------------------------
 void TargetData::SetSigmaW(double sigmaW)
 {
-	this->_sigmaW = sigmaW;
+    this->_sigmaW = sigmaW;
 }
 
 //----------------------------------------------------------------
@@ -107,7 +107,7 @@ void TargetData::SetSigmaW(double sigmaW)
 //----------------------------------------------------------------
 void TargetData::SetTimept(double timept)
 {
-	this->_timept = timept;
+    this->_timept = timept;
 }
 
 //----------------------------------------------------------------
@@ -122,7 +122,7 @@ void TargetData::SetTimept(double timept)
 //----------------------------------------------------------------
 void TargetData::SetTimeIndex(int timeIndex)
 {
-	this->_timeIndex = timeIndex;
+    this->_timeIndex = timeIndex;
 }
 
 //----------------------------------------------------------------
@@ -137,7 +137,7 @@ void TargetData::SetTimeIndex(int timeIndex)
 //----------------------------------------------------------------
 void TargetData::SetWeight(double weight)
 {
-	this->_weight = weight;
+    this->_weight = weight;
 }
 
 //----------------------------------------------------------------
@@ -152,13 +152,13 @@ void TargetData::SetWeight(double weight)
 //----------------------------------------------------------------
 void TargetData::SetKernelType(char* kernelType)
 {
-	this->_kernelType=  kernelType;
+    this->_kernelType=  kernelType;
 
-	// If it not a supported kernel type set it to exact
-	if ((strcmp(this->_kernelType,"exact") != 0) && (strcmp(this->_kernelType,"p3m") != 0))
-	{
-		this->_kernelType = (char*) "exact";
-	}
+    // If it not a supported kernel type set it to exact
+    if ((strcmp(this->_kernelType,"exact") != 0) && (strcmp(this->_kernelType,"p3m") != 0))
+    {
+        this->_kernelType = (char*) "exact";
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ void TargetData::SetKernelType(char* kernelType)
 //----------------------------------------------------------------
 const int TargetData::GetNy() const
 {
-	return this->_ny;
+    return this->_ny;
 }
 
 //----------------------------------------------------------------
@@ -192,7 +192,7 @@ const int TargetData::GetNy() const
 //----------------------------------------------------------------
 const Array2D<double> TargetData::GetY() const
 {
-	return this->_y;
+    return this->_y;
 }
 
 //----------------------------------------------------------------
@@ -207,7 +207,7 @@ const Array2D<double> TargetData::GetY() const
 //----------------------------------------------------------------
 const int TargetData::GetNvy() const
 {
-	return this->_nvy;
+    return this->_nvy;
 }
 
 //----------------------------------------------------------------
@@ -222,7 +222,7 @@ const int TargetData::GetNvy() const
 //----------------------------------------------------------------
 const Array2D<int> TargetData::GetVy() const
 {
-	return this->_vy;
+    return this->_vy;
 }
 
 //----------------------------------------------------------------
@@ -239,7 +239,7 @@ const Array2D<int> TargetData::GetVy() const
 //----------------------------------------------------------------
 const int TargetData::GetNvx() const
 {
-	return this->_nvx;
+    return this->_nvx;
 }
 
 //----------------------------------------------------------------
@@ -255,7 +255,7 @@ const int TargetData::GetNvx() const
 //----------------------------------------------------------------
 const Array2D<int> TargetData::GetVx() const
 {
-	return this->_vx;
+    return this->_vx;
 }
 
 //----------------------------------------------------------------
@@ -270,7 +270,7 @@ const Array2D<int> TargetData::GetVx() const
 //----------------------------------------------------------------
 const double TargetData::GetSigmaW() const
 {
-	return this->_sigmaW;
+    return this->_sigmaW;
 }
 
 //----------------------------------------------------------------
@@ -287,7 +287,7 @@ const double TargetData::GetSigmaW() const
 //----------------------------------------------------------------
 const double TargetData::GetTimept() const
 {
-	return this->_timept;
+    return this->_timept;
 }
 
 //----------------------------------------------------------------
@@ -302,7 +302,7 @@ const double TargetData::GetTimept() const
 //----------------------------------------------------------------
 const double TargetData::GetTimeIndex() const
 {
-	return this->_timeIndex;
+    return this->_timeIndex;
 }
 
 //----------------------------------------------------------------
@@ -317,7 +317,7 @@ const double TargetData::GetTimeIndex() const
 //----------------------------------------------------------------
 const double TargetData::GetWeight() const
 {
-	return this->_weight;
+    return this->_weight;
 }
 
 //----------------------------------------------------------------
@@ -332,7 +332,7 @@ const double TargetData::GetWeight() const
 //----------------------------------------------------------------
 const char* TargetData::GetKernelType() const
 {
-	return this->_kernelType;
+    return this->_kernelType;
 }
 
 
@@ -349,7 +349,7 @@ const char* TargetData::GetKernelType() const
 //----------------------------------------------------------------
 Grid* TargetData::GetGrid()
 {
-	return this->_grid;
+    return this->_grid;
 }
 
 //----------------------------------------------------------------
@@ -365,5 +365,5 @@ Grid* TargetData::GetGrid()
 //----------------------------------------------------------------
 const Grid* TargetData::GetGrid() const
 {
-	return this->_grid;
+    return this->_grid;
 }

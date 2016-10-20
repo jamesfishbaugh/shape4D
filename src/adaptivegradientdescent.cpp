@@ -255,7 +255,7 @@ void AdaptiveGradientDescent::Optimize(Array3D<double>& X)
         // Update the iteration values for saving
         Shape4DState::UpdateIteration(Shape4DState::GetIteration()+1, dataMatchingValues[i-1], regularityValues[i-1], _stepsize);
         printf("Iteration %3d   funct = %0.4f   data = %0.4f   reg = %0.4f   step = %0.10lf\n",
-                Shape4DState::GetIteration(), criterionValues[i-1], dataMatchingValues[i-1], regularityValues[i-1], _stepsize);
+               Shape4DState::GetIteration(), criterionValues[i-1], dataMatchingValues[i-1], regularityValues[i-1], _stepsize);
 
         // If it is time to save intermediate shapes
         if ((i%Shape4DState::GetSaveProgressEveryNIterations() == 0) && (Shape4DState::GetShouldSave()))
@@ -268,7 +268,7 @@ void AdaptiveGradientDescent::Optimize(Array3D<double>& X)
 
         // Termination criteria
         if ((criterionValues[i-1]-criterionValues[i]) <
-            (breakratio*(criterionValues[0]-criterionValues[i])) || (loop==loopbreak))
+                (breakratio*(criterionValues[0]-criterionValues[i])) || (loop==loopbreak))
         {
             break;
         }

@@ -11,29 +11,29 @@
 class AdaptiveGradientDescent : public Optimizer
 {
 
-	public:
-	
-		//--------------------------------------------------------------------------
-		// Constructors/Destructor
-		//--------------------------------------------------------------------------
-	
+    public:
+
+        //--------------------------------------------------------------------------
+        // Constructors/Destructor
+        //--------------------------------------------------------------------------
+
         AdaptiveGradientDescent();
         AdaptiveGradientDescent(Algorithm* algorithm);
         ~AdaptiveGradientDescent();
-		
-		//--------------------------------------------------------------------------
-		// Setters
-		//--------------------------------------------------------------------------
-		
+
+        //--------------------------------------------------------------------------
+        // Setters
+        //--------------------------------------------------------------------------
+
         void SetAlgorithm(Algorithm* algorithm);
-		
+
         virtual void SetMaxIterations(int maxIters);
         virtual void SetBreakRatio(double breakRatio);
-		virtual void SetStepsize(double stepsize);
-		
-		//--------------------------------------------------------------------------
+        virtual void SetStepsize(double stepsize);
+
+        //--------------------------------------------------------------------------
         // Implementation of Optimzer interface
-		//--------------------------------------------------------------------------
+        //--------------------------------------------------------------------------
 
         virtual void Optimize(Array3D<double>& X);
 

@@ -23,14 +23,14 @@
 //----------------------------------------------------------------
 Landmarks::Landmarks()
 {
-	this->_ny = 0;
-	this->_nvy = 0;
-	this->_nvx = 0;
-	this->_sigmaW = 0;
-	this->_timept = 0.0;
-	this->_timeIndex = -1;
-	this->_weight = 0.0;
-	this->_grid = 0;
+    this->_ny = 0;
+    this->_nvy = 0;
+    this->_nvx = 0;
+    this->_sigmaW = 0;
+    this->_timept = 0.0;
+    this->_timeIndex = -1;
+    this->_weight = 0.0;
+    this->_grid = 0;
 }
 
 /*
@@ -51,13 +51,13 @@ Landmarks::Landmarks()
 //----------------------------------------------------------------
 EXLandmarks::EXLandmarks(const EX2DArray<double>& y, const EX2DArray<int>& vx, double timept, int timeIndex)
 {
-	this->_ny = y.GetWidth();
-	this->_y = y;
-	this->_nvx = vx.GetWidth();
-	this->_vx = vx;
-	this->_timept = timept;
-	this->_timeIndex = timeIndex;
-	this->_weight = 1.0;
+    this->_ny = y.GetWidth();
+    this->_y = y;
+    this->_nvx = vx.GetWidth();
+    this->_vx = vx;
+    this->_timept = timept;
+    this->_timeIndex = timeIndex;
+    this->_weight = 1.0;
 
 }
 */
@@ -79,25 +79,25 @@ EXLandmarks::EXLandmarks(const EX2DArray<double>& y, const EX2DArray<int>& vx, d
 //----------------------------------------------------------------
 Landmarks::Landmarks(const Array2D<double>& y, const Array2D<int>& vy, const Array2D<int>& vx, double sigmaW, double timept, int timeIndex, double weight)
 {
-	this->_ny = y.GetWidth();
-	this->_y = y;
-	this->_nvy = vy.GetWidth();
-	this->_vy = vy;
-	this->_nvx = vx.GetWidth();
-	this->_vx = vx;
-	this->_sigmaW = sigmaW;
-	this->_timept = timept;
-	this->_timeIndex = timeIndex;
-	this->_weight = weight;
-	
+    this->_ny = y.GetWidth();
+    this->_y = y;
+    this->_nvy = vy.GetWidth();
+    this->_vy = vy;
+    this->_nvx = vx.GetWidth();
+    this->_vx = vx;
+    this->_sigmaW = sigmaW;
+    this->_timept = timept;
+    this->_timeIndex = timeIndex;
+    this->_weight = weight;
+
     this->_grid = new Grid();
-	
-	//EX2DArray<double> tempCenters(3,this->_nvy);
-	//EX2DArray<double> tempNormals(3,this->_nvy);
-	//this->ComputeCentersAndNormals(y, vy, tempCenters, tempNormals);
-	
-	//this->_centers = tempCenters;
-	//this->_normals = tempNormals;
+
+    //EX2DArray<double> tempCenters(3,this->_nvy);
+    //EX2DArray<double> tempNormals(3,this->_nvy);
+    //this->ComputeCentersAndNormals(y, vy, tempCenters, tempNormals);
+
+    //this->_centers = tempCenters;
+    //this->_normals = tempNormals;
 }
 
 //----------------------------------------------------------------
@@ -112,18 +112,18 @@ Landmarks::Landmarks(const Array2D<double>& y, const Array2D<int>& vy, const Arr
 //----------------------------------------------------------------
 Landmarks::Landmarks(const Landmarks& shape)
 {
-	this->_ny = shape._ny;
-	this->_y = shape._y;
-	this->_nvy = shape._nvy;
-	this->_vy = shape._vy;
-	this->_nvx = shape._nvx;
-	this->_vx = shape._vx;
-	this->_sigmaW = shape._sigmaW;
-	this->_timept = shape._timept;
-	this->_timeIndex = shape._timeIndex;
-	//this->_centers = shape._centers;
-	//this->_normals = shape._normals;
-	this->_grid = shape._grid;
+    this->_ny = shape._ny;
+    this->_y = shape._y;
+    this->_nvy = shape._nvy;
+    this->_vy = shape._vy;
+    this->_nvx = shape._nvx;
+    this->_vx = shape._vx;
+    this->_sigmaW = shape._sigmaW;
+    this->_timept = shape._timept;
+    this->_timeIndex = shape._timeIndex;
+    //this->_centers = shape._centers;
+    //this->_normals = shape._normals;
+    this->_grid = shape._grid;
 }
 
 //----------------------------------------------------------------
@@ -157,27 +157,27 @@ Landmarks::~Landmarks()
 //----------------------------------------------------------------
 double Landmarks::Matching(const Array3D<double>& x, int t)
 {
-	int dim = x.GetLength();
-	int nx = x.GetWidth();
-	double sum = 0.0f;
+    int dim = x.GetLength();
+    int nx = x.GetWidth();
+    double sum = 0.0f;
 
-	//printf("For timept %d\n",t);
+    //printf("For timept %d\n",t);
 
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			//int curind = this->_vx(i,j);
-			double curpt = x(i,j,t);
-			double diff = (curpt - this->_y(i,j));
-			
-			sum += (diff*diff);
-		}
-	}
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            //int curind = this->_vx(i,j);
+            double curpt = x(i,j,t);
+            double diff = (curpt - this->_y(i,j));
 
-	//printf("   sum =  %f\n", sum);
-	
-	return sum;
+            sum += (diff*diff);
+        }
+    }
+
+    //printf("   sum =  %f\n", sum);
+
+    return sum;
 }
 
 //----------------------------------------------------------------
@@ -195,21 +195,21 @@ double Landmarks::Matching(const Array3D<double>& x, int t)
 //----------------------------------------------------------------
 Array2D<double> Landmarks::GradMatching(const Array3D<double>& x, int t)
 {
-	int dim = x.GetLength();
-	int nx = x.GetWidth();
-	
+    int dim = x.GetLength();
+    int nx = x.GetWidth();
+
     Array2D<double> g(dim,nx);
-	g.FillArray(0.0f);
-	
-	for (int i=0; i<dim; i++)
-	{
-		for (int j=0; j<nx; j++)
-		{
-			//int curind = this->_vx(i,j);
-			g(i,j) = 2*(x(i,j,t)-this->_y(i,j));
-		}
-	}
-	
+    g.FillArray(0.0f);
+
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            //int curind = this->_vx(i,j);
+            g(i,j) = 2*(x(i,j,t)-this->_y(i,j));
+        }
+    }
+
     return g;
 }
 
@@ -230,23 +230,23 @@ Array2D<double> Landmarks::GradMatching(const Array3D<double>& x, int t)
 //----------------------------------------------------------------
 Landmarks& Landmarks::operator = (const Landmarks& shape)
 {
-if (this != &shape)
-	{
-		this->_ny = shape._ny;
-		this->_y = shape._y;
-		this->_nvy = shape._nvy;
-		this->_vy = shape._vy;
-		this->_nvx = shape._nvx;
-		this->_vx = shape._vx;
-		this->_sigmaW = shape._sigmaW;
-		this->_timept = shape._timept;
-		this->_timeIndex = shape._timeIndex;
-		//this->_centers = shape._centers;
-		//this->_normals = shape._normals;
-		this->_grid = shape._grid;
-	}
-	
-	return *this;
+    if (this != &shape)
+    {
+        this->_ny = shape._ny;
+        this->_y = shape._y;
+        this->_nvy = shape._nvy;
+        this->_vy = shape._vy;
+        this->_nvx = shape._nvx;
+        this->_vx = shape._vx;
+        this->_sigmaW = shape._sigmaW;
+        this->_timept = shape._timept;
+        this->_timeIndex = shape._timeIndex;
+        //this->_centers = shape._centers;
+        //this->_normals = shape._normals;
+        this->_grid = shape._grid;
+    }
+
+    return *this;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -272,28 +272,28 @@ if (this != &shape)
 //----------------------------------------------------------------
 void Landmarks::ComputeCentersAndNormals(const Array2D<double>& pts, const Array2D<int>& tris, Array2D<double> &centers, Array2D<double> &normals)
 {
-	int numTris = tris.GetWidth();
-	
-	// Loop over all the faces
-	for (int f=0; f<numTris; f++)
-	{
-		double v[9];
-		for (int k=0; k<3; k++)
-		{
-			for (int j=0; j<3; j++)
-			{
-				v[k+3*j] = pts(k,tris(j,f)); 
-			}
-		}
-		
-		// Calculate the center of each face c = (v1+v2+v3)/3;
-		centers(0,f) = ((double)(v[0]+v[3]+v[6]))/3.0f;
-		centers(1,f) = ((double)(v[1]+v[4]+v[7]))/3.0f;
-		centers(2,f) = ((double)(v[2]+v[5]+v[8]))/3.0f;
-		
-		// Calcuate the normal of each face N = [(v2-v1)a(v3-v1)]/2;
-		normals(0,f) = ((double)(((v[4]-v[1])*(v[8]-v[2])-(v[5]-v[2])*(v[7]-v[1]))))/2.0f;
-		normals(1,f) = ((double)(((v[5]-v[2])*(v[6]-v[0])-(v[3]-v[0])*(v[8]-v[2]))))/2.0f;
-		normals(2,f) = ((double)(((v[3]-v[0])*(v[7]-v[1])-(v[4]-v[1])*(v[6]-v[0]))))/2.0f;
-	}
+    int numTris = tris.GetWidth();
+
+    // Loop over all the faces
+    for (int f=0; f<numTris; f++)
+    {
+        double v[9];
+        for (int k=0; k<3; k++)
+        {
+            for (int j=0; j<3; j++)
+            {
+                v[k+3*j] = pts(k,tris(j,f));
+            }
+        }
+
+        // Calculate the center of each face c = (v1+v2+v3)/3;
+        centers(0,f) = ((double)(v[0]+v[3]+v[6]))/3.0f;
+        centers(1,f) = ((double)(v[1]+v[4]+v[7]))/3.0f;
+        centers(2,f) = ((double)(v[2]+v[5]+v[8]))/3.0f;
+
+        // Calcuate the normal of each face N = [(v2-v1)a(v3-v1)]/2;
+        normals(0,f) = ((double)(((v[4]-v[1])*(v[8]-v[2])-(v[5]-v[2])*(v[7]-v[1]))))/2.0f;
+        normals(1,f) = ((double)(((v[5]-v[2])*(v[6]-v[0])-(v[3]-v[0])*(v[8]-v[2]))))/2.0f;
+        normals(2,f) = ((double)(((v[3]-v[0])*(v[7]-v[1])-(v[4]-v[1])*(v[6]-v[0]))))/2.0f;
+    }
 }

@@ -21,7 +21,7 @@
 //----------------------------------------------------------------
 VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 {
-	this->_vtkFile = new ofstream(filename);
+    this->_vtkFile = new ofstream(filename);
 }
 
 //----------------------------------------------------------------
@@ -35,7 +35,7 @@ VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 //----------------------------------------------------------------
 VTKPolyDataWriter::~VTKPolyDataWriter()
 {
-	delete this->_vtkFile;
+    delete this->_vtkFile;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -53,8 +53,8 @@ VTKPolyDataWriter::~VTKPolyDataWriter()
 //----------------------------------------------------------------
 void VTKPolyDataWriter::AddField(char* fieldName, const Array2D<double>& field)
 {
-	_fieldNames.push_back(fieldName);
-	_fields.push_back(field);
+    _fieldNames.push_back(fieldName);
+    _fields.push_back(field);
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,74 +75,74 @@ void VTKPolyDataWriter::AddField(char* fieldName, const Array2D<double>& field)
 //----------------------------------------------------------------
 bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Array2D<int>& tris)
 {
-	int numPts = pts.GetWidth();
-	int numTris = tris.GetWidth();
-	char buffer[100];
-	
-	if (!this->_vtkFile->is_open())
-	{
-		this->_vtkFile->close();
-		return false;
-	}
-	
-	// Write the header information
-	*(this->_vtkFile)<<"# vtk DataFile Version 3.0\n";
+    int numPts = pts.GetWidth();
+    int numTris = tris.GetWidth();
+    char buffer[100];
+
+    if (!this->_vtkFile->is_open())
+    {
+        this->_vtkFile->close();
+        return false;
+    }
+
+    // Write the header information
+    *(this->_vtkFile)<<"# vtk DataFile Version 3.0\n";
     *(this->_vtkFile)<<"vtk output\n";
     *(this->_vtkFile)<<"ASCII\n";
     *(this->_vtkFile)<<"DATASET POLYDATA\n";
-	sprintf (buffer, "POINTS %d double\n", numPts);
-	*(this->_vtkFile)<<buffer;
-	
-	// Write the points
-	for (int i=0; i<numPts; i++)
-	{
-		*(this->_vtkFile)<<pts(0,i)<<" "<<pts(1,i)<<" "<<pts(2,i)<<"\n";
-	}
-	
-	memset(buffer, 0, 100*sizeof(char));
-	sprintf(buffer, "POLYGONS %d %d\n", numTris, numTris*4);
-	*(this->_vtkFile)<<buffer;
-	
-	// Write the triangles
-	for (int i=0; i<numTris; i++)
-	{
-		*(this->_vtkFile)<<"3 "<<tris(0,i)<<" "<<tris(1,i)<<" "<<tris(2,i)<<"\n";
-	}
-	
-	//memset(buffer, 0, 100*sizeof(char));
-	//sprintf(buffer, "CELL_DATA %d\n", numTris);
-	//*(this->_vtkFile)<<buffer;
-	//memset(buffer, 0, 100*sizeof(char));
-	//sprintf(buffer, "POINT_DATA %d\n", numPts);
-	//*(this->_vtkFile)<<buffer;
-	
-	memset(buffer, 0, 100*sizeof(char));
-	sprintf(buffer, "POINT_DATA %d\n", numPts);
-	*(this->_vtkFile)<<buffer;
-	
-	memset(buffer, 0, 100*sizeof(char));
-	sprintf(buffer, "FIELD FieldData %d\n", (int)_fieldNames.size());
-	*(this->_vtkFile)<<buffer;
-	
-	// Write the fields
-	for (unsigned int i=0; i<_fields.size(); i++)
-	{
-		memset(buffer, 0, 100*sizeof(char));
-		sprintf(buffer, "%s %d %d double\n", _fieldNames[i], 3, numPts);
-		*(this->_vtkFile)<<buffer;
-		
-		// Get the current field
+    sprintf (buffer, "POINTS %d double\n", numPts);
+    *(this->_vtkFile)<<buffer;
+
+    // Write the points
+    for (int i=0; i<numPts; i++)
+    {
+        *(this->_vtkFile)<<pts(0,i)<<" "<<pts(1,i)<<" "<<pts(2,i)<<"\n";
+    }
+
+    memset(buffer, 0, 100*sizeof(char));
+    sprintf(buffer, "POLYGONS %d %d\n", numTris, numTris*4);
+    *(this->_vtkFile)<<buffer;
+
+    // Write the triangles
+    for (int i=0; i<numTris; i++)
+    {
+        *(this->_vtkFile)<<"3 "<<tris(0,i)<<" "<<tris(1,i)<<" "<<tris(2,i)<<"\n";
+    }
+
+    //memset(buffer, 0, 100*sizeof(char));
+    //sprintf(buffer, "CELL_DATA %d\n", numTris);
+    //*(this->_vtkFile)<<buffer;
+    //memset(buffer, 0, 100*sizeof(char));
+    //sprintf(buffer, "POINT_DATA %d\n", numPts);
+    //*(this->_vtkFile)<<buffer;
+
+    memset(buffer, 0, 100*sizeof(char));
+    sprintf(buffer, "POINT_DATA %d\n", numPts);
+    *(this->_vtkFile)<<buffer;
+
+    memset(buffer, 0, 100*sizeof(char));
+    sprintf(buffer, "FIELD FieldData %d\n", (int)_fieldNames.size());
+    *(this->_vtkFile)<<buffer;
+
+    // Write the fields
+    for (unsigned int i=0; i<_fields.size(); i++)
+    {
+        memset(buffer, 0, 100*sizeof(char));
+        sprintf(buffer, "%s %d %d double\n", _fieldNames[i], 3, numPts);
+        *(this->_vtkFile)<<buffer;
+
+        // Get the current field
         Array2D<double> curField = this->_fields[i];
-		
-		// Write the vectors
-		for (int i=0; i<numPts; i++)
-		{
-			*(this->_vtkFile)<<curField(0,i)<<" "<<curField(1,i)<<" "<<curField(2,i)<<"\n";
-		}
-	}
 
-	this->_vtkFile->close();
+        // Write the vectors
+        for (int i=0; i<numPts; i++)
+        {
+            *(this->_vtkFile)<<curField(0,i)<<" "<<curField(1,i)<<" "<<curField(2,i)<<"\n";
+        }
+    }
 
-	return true;
+    this->_vtkFile->close();
+
+    return true;
 }
 

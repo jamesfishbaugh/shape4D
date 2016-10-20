@@ -15,15 +15,15 @@ class Algorithm
 
         virtual void WriteSelf() = 0;
 
-	public:
-	
-		//--------------------------------------------------------------------------
-		// Interface that inherited classes must implement
-		//--------------------------------------------------------------------------
-	
+    public:
+
+        //--------------------------------------------------------------------------
+        // Interface that inherited classes must implement
+        //--------------------------------------------------------------------------
+
         virtual double ComputeFunctional(const Array3D<double>& X, double &dataMatching, double &regularity) = 0;
         virtual Array3D<double> ComputeGradient(const Array3D<double>& X) = 0;
-	
+
 };
 
 #endif // ALGORITHM_H
