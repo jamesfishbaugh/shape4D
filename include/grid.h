@@ -14,10 +14,10 @@ class Grid
         // Private member variables
         //--------------------------------------------------------------------------
 
-        double _ratio;			// Accuracy of the grid
+        double _ratio;			    // Accuracy of the grid
         double _pas;				// Accuracy of the grid
-        double _origin[3];		// Grid origin
-        int _long[3];			// Grid dimensions
+        double _origin[3];		    // Grid origin
+        int _long[3];			    // Grid dimensions
         double* _fft3kD;			// FFT of the grid positions
 
         //--------------------------------------------------------------------------
