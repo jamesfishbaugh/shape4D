@@ -49,6 +49,10 @@ set(shape4D_SOURCE
    src/saveshapesandvectors.cpp
    src/surfacecurrent.cpp
    src/targetdata.cpp
+   src/shapeobject.cpp
+   src/tmplandmark.cpp
+   src/tmpsurfacecurrent.cpp
+   src/multiobjectcomplex.cpp
    src/vtkpolydatareader.cpp
    src/vtkpolydatawriter.cpp
    src/tinystr.cpp

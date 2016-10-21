@@ -7,6 +7,11 @@
 
 #include "runexperiment.h"
 
+#include "shapeobject.h"
+#include "tmplandmark.h"
+#include "tmpsurfacecurrent.h"
+#include "multiobjectcomplex.h"
+
 //----------------------------------------------------------------
 // main
 //----------------------------------------------------------------
@@ -22,6 +27,43 @@
 int main(int argc, char **argv)
 {	
     printf("\n");
+
+    // Some testing
+    ShapeObject* landmark1 = (ShapeObject*) new tmpLandmarks();
+    Array2D<double> points1(3, 200);
+    points1.FillArray(0.0);
+    landmark1->SetPoints(points1);
+    landmark1->SetSigmaW(20.0);
+    landmark1->SetTimept(2.0);
+    landmark1->SetTimeIndex(0);
+    landmark1->SetWeight(1.0);
+
+    ShapeObject* surface1 = (ShapeObject*) new tmpSurfaceCurrent();
+    Array2D<double> points2(3, 360);
+    points1.FillArray(0.0);
+    Array2D<int> edges2(3,600);
+    edges2.FillArray(1);
+    surface1->SetPoints(points2);
+    surface1->SetEdges(edges2);
+    surface1->SetSigmaW(10.0);
+    surface1->SetTimept(6.0);
+    surface1->SetTimeIndex(30);
+    surface1->SetWeight(1.0);
+
+    MultiObjectComplex multiObject;
+    multiObject.AddShape(landmark1);
+    multiObject.AddShape(surface1);
+
+    ShapeObject* newObject = multiObject.GetShapeAt(1);
+    ShapeObject* anotherObject = multiObject.GetShapeAt(0);
+
+    multiObject.SetShapeAt(0, newObject);
+    multiObject.SetShapeAt(1, anotherObject);
+
+    ShapeObject* firstObject = multiObject.GetShapeAt(0);
+    ShapeObject* secondObject = multiObject.GetShapeAt(1);
+
+    double matchValue = firstObject->Matching(secondObject);
 
     // Check command line arguments
     if (argc < 2)
