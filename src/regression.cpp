@@ -35,6 +35,54 @@ Regression::~Regression()
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //----------------------------------------------------------------
+// SetTheSource
+//----------------------------------------------------------------
+// Inputs:
+//   theSource - reference to a source object
+//
+// Outputs:
+//----------------------------------------------------------------
+// Setter for the source
+//----------------------------------------------------------------
+void Regression::SetTheSource(const MultiObjectComplex theSource)
+{
+    MultiObjectComplex newSource(theSource);
+    this->_theSource = newSource;
+}
+
+//----------------------------------------------------------------
+// SetTargets
+//----------------------------------------------------------------
+// Inputs:
+//   theTargets - vector of target objects
+//
+// Outputs:
+//----------------------------------------------------------------
+// Setter for the target vector
+//----------------------------------------------------------------
+void Regression::SetTargets(const vector<MultiObjectComplex>& theTargets)
+{
+    vector<MultiObjectComplex> newTargets(theTargets);
+    this->_theTarget = newTargets;
+}
+
+//----------------------------------------------------------------
+// AddTarget
+//----------------------------------------------------------------
+// Inputs:
+//   target - reference to a target object
+//
+// Outputs:
+//----------------------------------------------------------------
+// Adds an additional target to the current target vector
+//----------------------------------------------------------------
+void Regression::AddTarget(const MultiObjectComplex& target)
+{
+    MultiObjectComplex newTarget(target);
+    this->_theTarget.push_back(newTarget);
+}
+
+//----------------------------------------------------------------
 // SetSource
 //----------------------------------------------------------------
 // Inputs:
@@ -154,6 +202,25 @@ void Regression::InitX()
 //----------------------------------------------------------------	
 double Regression::ComputeDataMatching(const Array3D<double>& X)
 {
+//    double sum = 0;
+
+//    int numTargets = this->_theTarget.size();
+
+//    for (int i=0; i<numTargets; i++)
+//    {
+//        MultiObjectComplex curShapeComplex = this->_theTarget[i];
+
+//        for (int j=0; j<curShapeComplex.GetNumberOfShapes(); j++)
+//        {
+//            ShapeObject* curShapeObject = curShapeComplex.GetShapeAt(j);
+//            int curTimeIndex = curShapeObject->GetTimeIndex();
+//            Array2D<double> correspondingXt = X.Get2DSliceAtHeight(curTimeIndex);
+//            sum += curShapeObject->GetWeight() * curShapeObject->Matching(correspondingXt);
+//        }
+//    }
+
+//    return sum;
+
     double sum = 0;
 
     for (int i=0; i<this->_numTargets; i++)
@@ -182,6 +249,39 @@ double Regression::ComputeDataMatching(const Array3D<double>& X)
 //----------------------------------------------------------------
 Array3D<double> Regression::ComputeDataMatchingGradient(const Array3D<double>& X)
 {	
+//    int dim = X.GetLength();
+//    int nx = X.GetWidth();
+//    int T = X.GetHeight();
+
+//    Array3D<double> G(dim, nx, T);
+//    G.FillArray(0.0);
+
+//    int numTargets = this->_theTarget.size();
+
+//    for (int i=0; i<numTargets; i++)
+//    {
+//        MultiObjectComplex curShapeComplex = this->_theTarget[i];
+
+//        for (int j=0; j<curShapeComplex.GetNumberOfShapes(); j++)
+//        {
+//            ShapeObject* curShapeObject = curShapeComplex.GetShapeAt(j);
+//            int curTimeIndex = curShapeObject->GetTimeIndex();
+//            Array2D<double> correspondingXt = X.Get2DSliceAtHeight(curTimeIndex);
+
+//            Array2D<double> curG = curShapeObject->GradMatching(correspondingXt);
+
+//            for (int d=0; d<dim; d++)
+//            {
+//                for (int p=0; p<nx; p++)
+//                {
+//                    G(d, p, curTimeIndex) += curShapeObject->GetWeight() * curG(d,p);
+//                }
+//            }
+//        }
+//    }
+
+//    return G;
+
     int dim = this->_X.GetLength();
     int nx = this->_source.GetNx();
     int T = this->_source.GetT();

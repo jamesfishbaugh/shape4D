@@ -181,7 +181,7 @@ datatype* Array3D<datatype>::GetArray()
 // Returns the value of the array at the given position
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array3D<datatype>::GetAt(int l, int w, int h)
+datatype Array3D<datatype>::GetAt(int l, int w, int h) const
 {
     int index = l*this->_widthTimesHeight + w*this->_height + h;
     return this->_array[index];
@@ -219,7 +219,7 @@ void Array3D<datatype>::SetAt(int l, int w, int h, datatype value)
 // Returns a 2D array at the given height index
 //----------------------------------------------------------------
 template <class datatype>
-Array2D<datatype> Array3D<datatype>::Get2DSliceAtHeight(int h)
+Array2D<datatype> Array3D<datatype>::Get2DSliceAtHeight(int h) const
 {
     Array2D<datatype> output(this->_length, this->_width);
 

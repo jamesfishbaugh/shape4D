@@ -49,9 +49,9 @@ class Array3D
         // Accessors
         //--------------------------------------------------------------------------
 
-        datatype GetAt(int l, int w, int h);
+        datatype GetAt(int l, int w, int h) const;
         void SetAt(int l, int w, int h, datatype value);
-        Array2D<datatype> Get2DSliceAtHeight(int h);
+        Array2D<datatype> Get2DSliceAtHeight(int h) const;
         void Set2DSliceAtHeight(const Array2D<datatype>& array, int h);
 
         //--------------------------------------------------------------------------

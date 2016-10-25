@@ -36,12 +36,6 @@ class Landmarks : public TargetData
         virtual Array2D<double> GradMatching(const Array3D<double>& x, int t);
 
         //--------------------------------------------------------------------------
-        // Helper functions
-        //--------------------------------------------------------------------------
-
-        void ComputeCentersAndNormals(const Array2D<double>& pts, const Array2D<int>& tris, Array2D<double> &centers, Array2D<double> &normals);
-
-        //--------------------------------------------------------------------------
         // Overloaded operators
         //--------------------------------------------------------------------------
         Landmarks& operator = (const Landmarks& shape);

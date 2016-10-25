@@ -20,12 +20,14 @@ class tmpLandmarks : public ShapeObject
         tmpLandmarks(const tmpLandmarks& shape);
         ~tmpLandmarks();
 
+        virtual ShapeObject* Copy() const;
+
         //--------------------------------------------------------------------------
         // Interface to compute data matching metric and gradient
         //--------------------------------------------------------------------------
 
-        virtual double Matching(const ShapeObject* shape);
-        virtual Array2D<double> GradMatching(const ShapeObject* shape);
+        virtual double Matching(const Array2D<double>& shape) const;
+        virtual Array2D<double> GradMatching(const Array2D<double>& shape) const;
 
         //--------------------------------------------------------------------------
         // Overloaded operators

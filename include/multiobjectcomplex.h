@@ -15,7 +15,6 @@ class MultiObjectComplex
 
     private:
 
-        int _numShapes;
         vector<ShapeObject*> _shapes;
 
     public:

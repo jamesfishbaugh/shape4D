@@ -33,7 +33,10 @@ class ShapeObject
         // Destructor
         //--------------------------------------------------------------------------
         ShapeObject();
+        ShapeObject(const ShapeObject& shape);
         virtual ~ShapeObject();
+
+        virtual ShapeObject* Copy() const = 0;
 
         //--------------------------------------------------------------------------
         // Setters
@@ -63,8 +66,8 @@ class ShapeObject
         // Interface to compute data matching metric and gradient
         //--------------------------------------------------------------------------
 
-        virtual double Matching(const ShapeObject* shape) = 0;
-        virtual Array2D<double> GradMatching(const ShapeObject* shape) = 0;
+        virtual double Matching(const Array2D<double>& shape) const = 0;
+        virtual Array2D<double> GradMatching(const Array2D<double>& shape) const = 0 ;
 
 };
 

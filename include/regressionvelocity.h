@@ -16,8 +16,8 @@ class RegressionVelocity : public Regression
         // Private member variables
         //--------------------------------------------------------------------------
 
-        Array3D<double> _dX;   // Velocity vectors over time
-        Array3D<double> _momenta;	// Momenta vectors over time
+        Array3D<double> _dX;            // Velocity vectors over time
+        Array3D<double> _momenta;       // Momenta vectors over time
 
         int _iteration;
         bool _continueRegression;

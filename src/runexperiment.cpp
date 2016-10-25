@@ -31,6 +31,11 @@
 #include "regressionvelocity.h"
 #include "regressionacceleration.h"
 
+#include "shapeobject.h"
+#include "tmplandmark.h"
+#include "tmpsurfacecurrent.h"
+#include "multiobjectcomplex.h"
+
 //#define realpath(N,R) _fullpath((R),(N),260)
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -490,6 +495,8 @@ void RunExperiment::StartExperiment(char* pathToFile)
         int totalSourceTris = 0;
         int* numSourceTrisArray = new int[numSourceShapes];
 
+        MultiObjectComplex theSource;
+
         // Read all the source data files
         for (int i=0; i<numSourceShapes; i++)
         {
@@ -514,6 +521,14 @@ void RunExperiment::StartExperiment(char* pathToFile)
             // Add current arrays to the vectors
             allSourcePts[i] = sourcePts;
             allSourceTris[i] = sourceTris;
+
+            ShapeObject* curSourceShape = (ShapeObject*) new tmpSurfaceCurrent();
+            curSourceShape->SetPoints(sourcePts);
+            curSourceShape->SetEdges(sourceTris);
+            curSourceShape->SetTimeIndex(0);
+            curSourceShape->SetTimept(t0);
+
+            theSource.AddShape(curSourceShape);
         }
 
         // Now lets put all the source points into one array
@@ -668,8 +683,14 @@ void RunExperiment::StartExperiment(char* pathToFile)
             char* timeptString = (char*)node->FirstChild("timept")->ToElement()->GetText();
             sscanf(timeptString, "%lf", &timept);
 
+            if ((timept > tn) || (timept < t0))
+            {
+                printf("***ERROR*** <timept> %0.2f </timept> is out of the time range [%0.2f, %0.2f].\n\n", timept, t0, tn);
+                exit(1);
+            }
+
             //--------------------------------------------------------------------------------
-            // <timept> </timept>
+            // <weight> </weight>
             //--------------------------------------------------------------------------------
 
             // Check to see if the user included a weight for this target
@@ -736,6 +757,201 @@ void RunExperiment::StartExperiment(char* pathToFile)
 
             count++;
         }
+
+//        // Create the target array and read target data
+//        int curShapeTriIndex = 0;
+//        count = 0;
+//        TargetData** targetArray = new TargetData*[numTargets];
+//        vector<MultiObjectComplex> theTarget;
+//        for(node = targetsNode->FirstChild("target"); node; node = node->NextSibling())
+//        {
+//            // No shape tag found, exit with an error
+//            if (node->FirstChild("shape") == 0)
+//            {
+//                printf("***ERROR*** No <shape> tag found. A target must include shape information.\n\n");
+//                exit(1);
+//            }
+
+//            MultiObjectComplex curMultiObject;
+//            curShapeTriIndex = 0;
+
+//            //--------------------------------------------------------------------------------
+//            // <timept> </timept>
+//            //--------------------------------------------------------------------------------
+
+//            double timept;
+//            if (node->FirstChild("timept") == 0)
+//            {
+//                printf("***ERROR*** No <timept> tag found.  A target must include a time point.\n\n");
+//                exit(1);
+//            }
+//            char* timeptString = (char*)node->FirstChild("timept")->ToElement()->GetText();
+//            sscanf(timeptString, "%lf", &timept);
+
+//            // Compute the time index associated with this target
+//            int timeIndex = int((timept-t0)*((T-1)/(tn-t0))+0.5f);
+
+//            TiXmlNode* shapeNode = 0;
+//            int numShapesHere = 0;
+//            for (shapeNode = node->FirstChild("shape"); shapeNode; shapeNode = node->NextSibling("shape"))
+//            {
+//                numShapesHere++;
+//            }
+
+//            //--------------------------------------------------------------------------------
+//            // <shape> </shape>
+//            //--------------------------------------------------------------------------------
+//            shapeNode = 0;
+//            for (shapeNode = node->FirstChild("shape"); shapeNode; shapeNode = shapeNode->NextSibling("shape"))
+//            {
+
+//                //--------------------------------------------------------------------------------
+//                // <path> </path>
+//                //--------------------------------------------------------------------------------
+//                if (shapeNode->FirstChild("path") == 0)
+//                {
+//                    printf("***ERROR*** No <path> tag found.  A target shape must include a path to data.\n\n");
+//                    exit(1);
+//                }
+//                char* targetDataPath = (char*)shapeNode->FirstChild("path")->ToElement()->GetText();
+
+//                //--------------------------------------------------------------------------------
+//                // <type> </type>
+//                //--------------------------------------------------------------------------------
+
+//                if (shapeNode->FirstChild("type") == 0)
+//                {
+//                    printf("***ERROR*** No <type> tag found.  A target shape must include a type.  Currently supported types are \"SURFACE\" and \"LANDMARKS\".\n\n");
+//                    exit(1);
+//                }
+
+//                // Read target type which specifies the data representation and metric for the target
+//                char* targetTypeString = (char*)shapeNode->FirstChild("type")->ToElement()->GetText();
+//                // Convert the targetTypeString to its #DEFINE value
+//                int targetType;
+//                if (strcmp(targetTypeString, "SURFACE") == 0)
+//                {
+//                    targetType = SURFACE;
+//                }
+//                else if (strcmp(targetTypeString, "LANDMARKS") == 0)
+//                {
+//                    targetType = LANDMARKS;
+//                }
+//                else
+//                {
+//                    printf("***ERROR*** Unknown target type: \"%s\".  Currently supported types are \"SURFACE\" and \"LANDMARKS\".\n\n", targetTypeString);
+//                    exit(1);
+//                }
+
+//                //--------------------------------------------------------------------------------
+//                // <sigmaW> </sigmaW>
+//                //--------------------------------------------------------------------------------
+
+//                double sigmaW;
+//                if (shapeNode->FirstChild("sigmaW") == 0)
+//                {
+//                    if (targetType != LANDMARKS)
+//                    {
+//                        printf("***ERROR*** No <sigmaW> tag found.  A target shape must include a value for sigmaW.\n\n");
+//                        exit(1);
+//                    }
+//                }
+//                else
+//                {
+//                    char* sigmaWString = (char*)shapeNode->FirstChild("sigmaW")->ToElement()->GetText();
+//                    sscanf(sigmaWString, "%lf", &sigmaW);
+//                }
+
+//                //--------------------------------------------------------------------------------
+//                // <weight> </weight>
+//                //--------------------------------------------------------------------------------
+
+//                // Check to see if the user included a weight for this target
+//                double weight = 1.0;
+//                if (shapeNode->FirstChild("weight") != 0)
+//                {
+//                    char* weightString = (char*)shapeNode->FirstChild("weight")->ToElement()->GetText();
+//                    sscanf(weightString, "%lf", &weight);
+//                }
+
+//                //--------------------------------------------------------------------------------
+//                // We are done reading target information and can now read target data and
+//                // build the target object
+//                //--------------------------------------------------------------------------------
+
+//                // Read the target data
+//                Array2D<double> targetPts;
+//                Array2D<int> targetTris;
+
+//                VTKPolyDataReader targetReader(targetDataPath);
+//                bool didReadTarget = targetReader.ReadPointsAndTris(targetPts, targetTris);
+
+//                //printf("Num points = %d\n", targetTris.GetWidth());
+
+//                // Did we fail to read the data file
+//                if (!didReadTarget)
+//                {
+//                    printf("***ERROR*** Could not read target VTK file: \"%s\"\n\n", targetDataPath);
+//                    exit(1);
+//                }
+
+//                // Build the target object and add it to our array
+//                Array2D<int> sourceConnectivity = allSourceTris[curShapeTriIndex];
+//                // Add the offset necessary since the source array can be a concatination of multiple shape data
+//                if (curShapeTriIndex != 0)
+//                {
+//                    int offset = 0;
+//                    for (int i=(curShapeTriIndex-1); i>=0; i--)
+//                    {
+//                        offset += numSourcePtsArray[i];
+//                    }
+
+//                    sourceConnectivity = sourceConnectivity + offset;
+//                }
+
+//                if (targetType == SURFACE)
+//                {
+//                    targetArray[count] = (TargetData*) new SurfaceCurrent(targetPts, targetTris, sourceConnectivity, sigmaW, timept, timeIndex, weight);
+//                }
+//                else if (targetType == LANDMARKS)
+//                {
+//                    targetArray[count] = (TargetData*) new Landmarks(targetPts, targetTris, sourceConnectivity, sigmaW, timept, timeIndex, weight);
+//                }
+//                else
+//                {
+//                    printf("***ERROR*** Unknown target type: \"%s\".  Currently supported types are \"SURFACE\" and \"LANDMARKS\".\n", targetTypeString);
+//                    exit(1);
+//                }
+
+//                // Build the new target structures
+//                ShapeObject* curShapeObject;
+
+//                if (targetType == SURFACE)
+//                {
+//                    curShapeObject = (ShapeObject*) new tmpSurfaceCurrent();
+//                }
+//                else if (targetType == LANDMARKS)
+//                {
+//                    curShapeObject = (ShapeObject*) new tmpLandmarks();
+
+//                }
+
+//                curShapeObject->SetPoints(targetPts);
+//                curShapeObject->SetEdges(targetTris);
+//                curShapeObject->SetSigmaW(sigmaW);
+//                curShapeObject->SetTimept(timept);
+//                curShapeObject->SetTimeIndex(timeIndex);
+//                curShapeObject->SetWeight(weight);
+
+//                curMultiObject.AddShape(curShapeObject);
+
+//                count++;
+//                curShapeTriIndex++;
+
+//            }
+
+//            theTarget.push_back(curMultiObject);
+//        }
 
         //--------------------------------------------------------------------------------
         // We have built the source and array of target objects and are ready to
@@ -924,6 +1140,8 @@ void RunExperiment::StartExperiment(char* pathToFile)
             }
 
             regression = (Regression*) new RegressionAcceleration(source, numTargets, targetArray);
+            //regression->SetTheSource(theSource);
+            //regression->SetTargets(theTarget);
 
             // We set the impulse to continue where we left off
             if (_continueExp)

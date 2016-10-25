@@ -13,6 +13,10 @@
 #include "array2d.h"
 #include "array3d.h"
 
+#include "multiobjectcomplex.h"
+
+using namespace std;
+
 class Regression : public Algorithm
 {
 
@@ -22,10 +26,13 @@ class Regression : public Algorithm
         // Private member variables
         //--------------------------------------------------------------------------
 
+        MultiObjectComplex _theSource;
+        vector<MultiObjectComplex> _theTarget;
+
         RegressionParams _source;		// Source structure
         int _numTargets;				// Number of targets
-        TargetData** _targets;		// Array of targets
-        Array3D<double> _X;			// Trajectory of source points over time
+        TargetData** _targets;          // Array of targets
+        Array3D<double> _X;             // Trajectory of source points over time
         double _tau;					// Step size for integration schemes
 
         //--------------------------------------------------------------------------
@@ -76,6 +83,9 @@ class Regression : public Algorithm
         // Setters
         //--------------------------------------------------------------------------
 
+        void SetTheSource(const MultiObjectComplex theSource);
+        void SetTargets(const vector<MultiObjectComplex>& theTargets);
+        void AddTarget(const MultiObjectComplex& target);
         void SetSource(const RegressionParams& source);
         void SetNumTargets(int numTargets);
         void SetTargets(TargetData** targets);

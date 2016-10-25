@@ -20,12 +20,14 @@ class tmpSurfaceCurrent : public ShapeObject
         tmpSurfaceCurrent(const tmpSurfaceCurrent& shape);
         ~tmpSurfaceCurrent();
 
+        virtual ShapeObject* Copy() const;
+
         //--------------------------------------------------------------------------
         // Interface to compute data matching metric and gradient
         //--------------------------------------------------------------------------
 
-        virtual double Matching(const ShapeObject* shape);
-        virtual Array2D<double> GradMatching(const ShapeObject* shape);
+        virtual double Matching(const Array2D<double>& shape) const;
+        virtual Array2D<double> GradMatching(const Array2D<double>& shape) const;
 
         //--------------------------------------------------------------------------
         // Overloaded operators
