@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     ShapeObject* firstObject = multiObject.GetShapeAt(0);
     ShapeObject* secondObject = multiObject.GetShapeAt(1);
 
-    double matchValue = firstObject->Matching(secondObject);
+    double matchValue = firstObject->Matching(secondObject->GetPoints());
 
     // Check command line arguments
     if (argc < 2)

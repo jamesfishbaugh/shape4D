@@ -35,11 +35,12 @@ tmpSurfaceCurrent::tmpSurfaceCurrent()
 //----------------------------------------------------------------
 tmpSurfaceCurrent::tmpSurfaceCurrent(const tmpSurfaceCurrent& shape)
 {
-    this->_numPoints = shape._numPoints;
     this->_points = shape._points;
-    this->_numEdges = shape._numEdges;
+    this->_numPoints = shape._numPoints;
     this->_edges = shape._edges;
+    this->_numEdges = shape._numEdges;
     this->_sigmaW = shape._sigmaW;
+    this->_weight = shape._weight;
     this->_timept = shape._timept;
     this->_timeIndex = shape._timeIndex;
 }
@@ -57,6 +58,22 @@ tmpSurfaceCurrent::~tmpSurfaceCurrent()
 {
 }
 
+//----------------------------------------------------------------
+// Copy
+//----------------------------------------------------------------
+// Inputs:
+//
+// Outputs:
+//   return - a new copied surface current object
+//----------------------------------------------------------------
+// Copy method
+//----------------------------------------------------------------
+ShapeObject* tmpSurfaceCurrent::Copy() const
+{
+    return new tmpSurfaceCurrent(*this);
+}
+
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // INTERFACE TO COMPUTE DATA MATCHING METRIC AND GRADIENT
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -69,21 +86,19 @@ tmpSurfaceCurrent::~tmpSurfaceCurrent()
 //
 // Outputs:
 //----------------------------------------------------------------
-// Computes the data matching metric between sets of surface
-// currents
+// Computes the data matching metric between sets of landmarks
 //----------------------------------------------------------------
-double tmpSurfaceCurrent::Matching(const ShapeObject* shape)
+double tmpSurfaceCurrent::Matching(const Array2D<double>& shape) const
 {
-    Array2D<double> x = shape->GetPoints();
-    int dim = x.GetLength();
-    int nx = x.GetWidth();
+    int dim = shape.GetLength();
+    int nx = shape.GetWidth();
     double sum = 0.0f;
 
     for (int i=0; i<dim; i++)
     {
         for (int j=0; j<nx; j++)
         {
-            double curpt = x(i,j);
+            double curpt = shape(i,j);
             double diff = (curpt - this->_points(i,j));
 
             sum += (diff*diff);
@@ -97,19 +112,18 @@ double tmpSurfaceCurrent::Matching(const ShapeObject* shape)
 // GradMatching
 //----------------------------------------------------------------
 // Inputs:
-//   x - a 2D array (dim, num_pts) of points to compare
+//   x - a 2D array (dim, num_pts, time) of points to compare
 //       with the target points
 //
 // Outputs:
 //----------------------------------------------------------------
 // Computes the gradient of the data matching metric between
-// sets of surface currents
+// sets of landmarks
 //----------------------------------------------------------------
-Array2D<double> tmpSurfaceCurrent::GradMatching(const ShapeObject* shape)
+Array2D<double> tmpSurfaceCurrent::GradMatching(const Array2D<double>& shape) const
 {
-    Array2D<double> x = shape->GetPoints();
-    int dim = x.GetLength();
-    int nx = x.GetWidth();
+    int dim = shape.GetLength();
+    int nx = shape.GetWidth();
 
     Array2D<double> g(dim,nx);
     g.FillArray(0.0f);
@@ -118,12 +132,13 @@ Array2D<double> tmpSurfaceCurrent::GradMatching(const ShapeObject* shape)
     {
         for (int j=0; j<nx; j++)
         {
-            g(i,j) = 2*(x(i,j)-this->_points(i,j));
+            g(i,j) = 2*(shape(i,j)-this->_points(i,j));
         }
     }
 
     return g;
 }
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // OVERLOADED OPERATORS

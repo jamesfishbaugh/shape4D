@@ -5,7 +5,6 @@
 #include <string.h>			// For memcpy
 
 #include "shapeobject.h"
-#include "helper.h"
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // CONSTRUCTOR/DESTRUCTOR
@@ -28,6 +27,28 @@ ShapeObject::ShapeObject()
     this->_timept = 0.0;
     this->_timeIndex = 0;
     this->_weight = 1.0;
+}
+
+//----------------------------------------------------------------
+// tmpLandmarks
+//----------------------------------------------------------------
+// Inputs:
+//   shape - the shape object to copy
+//
+// Outputs:
+//----------------------------------------------------------------
+// Copy constructor
+//----------------------------------------------------------------
+ShapeObject::ShapeObject(const ShapeObject& shape)
+{
+    this->_points = shape._points;
+    this->_numPoints = shape._numPoints;
+    this->_edges = shape._edges;
+    this->_numEdges = shape._numEdges;
+    this->_sigmaW = shape._sigmaW;
+    this->_weight = shape._weight;
+    this->_timept = shape._timept;
+    this->_timeIndex = shape._timeIndex;
 }
 
 //----------------------------------------------------------------
@@ -247,3 +268,19 @@ const double ShapeObject::GetTimeIndex() const
 {
     return this->_timeIndex;
 }
+
+//----------------------------------------------------------------
+// GetWeight
+//----------------------------------------------------------------
+// Inputs:
+//
+// Outputs:
+//   return - the weight for this shape
+//----------------------------------------------------------------
+// Returns the weight for this shape
+//----------------------------------------------------------------
+const double ShapeObject::GetWeight() const
+{
+    return this->_weight;
+}
+

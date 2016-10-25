@@ -19,7 +19,7 @@
 //----------------------------------------------------------------
 MultiObjectComplex::MultiObjectComplex()
 {
-
+    this->_shapes.clear();
 }
 
 //----------------------------------------------------------------
@@ -34,6 +34,7 @@ MultiObjectComplex::MultiObjectComplex()
 //----------------------------------------------------------------
 MultiObjectComplex::MultiObjectComplex(const MultiObjectComplex& multiObject)
 {
+    this->_shapes = multiObject._shapes;
 }
 
 //----------------------------------------------------------------
@@ -61,7 +62,8 @@ MultiObjectComplex::~MultiObjectComplex()
 //----------------------------------------------------------------
 void MultiObjectComplex::AddShape(ShapeObject* shape)
 {
-    this->_shapes.push_back(shape);
+    ShapeObject* newObject = shape->Copy();
+    this->_shapes.push_back(newObject);
 }
 
 //----------------------------------------------------------------

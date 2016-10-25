@@ -35,8 +35,12 @@ tmpLandmarks::tmpLandmarks()
 //----------------------------------------------------------------
 tmpLandmarks::tmpLandmarks(const tmpLandmarks& shape)
 {
-    this->_numPoints = shape._numPoints;
     this->_points = shape._points;
+    this->_numPoints = shape._numPoints;
+    this->_edges = shape._edges;
+    this->_numEdges = shape._numEdges;
+    this->_sigmaW = shape._sigmaW;
+    this->_weight = shape._weight;
     this->_timept = shape._timept;
     this->_timeIndex = shape._timeIndex;
 }
@@ -54,6 +58,21 @@ tmpLandmarks::~tmpLandmarks()
 {
 }
 
+//----------------------------------------------------------------
+// Copy
+//----------------------------------------------------------------
+// Inputs:
+//
+// Outputs:
+//   return - a new copied landmark object
+//----------------------------------------------------------------
+// Copy method
+//----------------------------------------------------------------
+ShapeObject* tmpLandmarks::Copy() const
+{
+    return new tmpLandmarks(*this);
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // INTERFACE TO COMPUTE DATA MATCHING METRIC AND GRADIENT
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,18 +87,17 @@ tmpLandmarks::~tmpLandmarks()
 //----------------------------------------------------------------
 // Computes the data matching metric between sets of landmarks
 //----------------------------------------------------------------
-double tmpLandmarks::Matching(const ShapeObject* shape)
+double tmpLandmarks::Matching(const Array2D<double>& shape) const
 {
-    Array2D<double> x = shape->GetPoints();
-    int dim = x.GetLength();
-    int nx = x.GetWidth();
+    int dim = shape.GetLength();
+    int nx = shape.GetWidth();
     double sum = 0.0f;
 
     for (int i=0; i<dim; i++)
     {
         for (int j=0; j<nx; j++)
         {
-            double curpt = x(i,j);
+            double curpt = shape(i,j);
             double diff = (curpt - this->_points(i,j));
 
             sum += (diff*diff);
@@ -101,11 +119,10 @@ double tmpLandmarks::Matching(const ShapeObject* shape)
 // Computes the gradient of the data matching metric between
 // sets of landmarks
 //----------------------------------------------------------------
-Array2D<double> tmpLandmarks::GradMatching(const ShapeObject* shape)
+Array2D<double> tmpLandmarks::GradMatching(const Array2D<double>& shape) const
 {
-    Array2D<double> x = shape->GetPoints();
-    int dim = x.GetLength();
-    int nx = x.GetWidth();
+    int dim = shape.GetLength();
+    int nx = shape.GetWidth();
 
     Array2D<double> g(dim,nx);
     g.FillArray(0.0f);
@@ -114,7 +131,7 @@ Array2D<double> tmpLandmarks::GradMatching(const ShapeObject* shape)
     {
         for (int j=0; j<nx; j++)
         {
-            g(i,j) = 2*(x(i,j)-this->_points(i,j));
+            g(i,j) = 2*(shape(i,j)-this->_points(i,j));
         }
     }
 
