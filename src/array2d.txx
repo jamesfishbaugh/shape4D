@@ -461,7 +461,7 @@ Array2D<datatype>  Array2D<datatype>::operator - (datatype value)
 // subtraction between two arrays
 //----------------------------------------------------------------
 template <class datatype>
-Array2D<datatype> Array2D<datatype>::operator - (const Array2D& array)
+Array2D<datatype> Array2D<datatype>::operator - (const Array2D& array) const
 {
     Array2D<datatype> output(this->_length, this->_width);
 
@@ -485,7 +485,7 @@ Array2D<datatype> Array2D<datatype>::operator - (const Array2D& array)
 // Overloaded * operator with a scalar
 //----------------------------------------------------------------
 template <class datatype>
-Array2D<datatype>  Array2D<datatype>::operator * (datatype value)
+Array2D<datatype>  Array2D<datatype>::operator * (datatype value) const
 {
     Array2D<datatype> output(this->_length, this->_width);
 

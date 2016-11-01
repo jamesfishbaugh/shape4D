@@ -80,8 +80,8 @@ class Array3D
         Array3D<datatype> operator + (datatype value);
         Array3D<datatype> operator + (const Array3D& array);
         Array3D<datatype> operator - (datatype value);
-        Array3D<datatype> operator - (const Array3D& array);
-        Array3D<datatype> operator * (datatype value);
+        Array3D<datatype> operator - (const Array3D& array) const;
+        Array3D<datatype> operator * (datatype value) const;
         Array3D<datatype> operator * (const Array3D& array);
         Array3D<datatype> operator / (datatype value);
         Array3D<datatype> operator / (const Array3D& array);
