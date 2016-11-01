@@ -1139,7 +1139,7 @@ void RegressionAcceleration::FISTA(Array3D<double>& impulse, Array2D<double>& X0
     for (int iter=0; iter<maxIters; iter++)
     {
         // If it is time to save intermediate shapes
-        if ((iter%Shape4DState::GetSaveProgressEveryNIterations() == 0) && (Shape4DState::GetShouldSave()))
+        if (((iter)%Shape4DState::GetSaveProgressEveryNIterations() == 0) && (Shape4DState::GetShouldSave()) && (iter != 0))
         {
             Shape4DState::SetShouldWriteShapesAndVectors(true);
         }

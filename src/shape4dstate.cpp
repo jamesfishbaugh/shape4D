@@ -766,7 +766,7 @@ bool Shape4DState::SaveShapesAndVectors()
             // Else save the temporary files
             else
             {
-                sprintf(filename, "%s%siter_%.3d_time_%.3d.vtk", _outputDir, _outputNames[s], Shape4DState::GetIteration(), t);
+                sprintf(filename, "%s%siter_%.3d_time_%.3d.vtk", _outputDir, _outputNames[s], Shape4DState::GetIteration()+1, t);
             }
             VTKPolyDataWriter writer(filename);
 

@@ -192,7 +192,7 @@ void AdaptiveGradientDescent::Optimize(Array3D<double>& X)
                 }
             }
         }
-        _stepsize = (criterionValues[0]/sumSquared)*0.1;
+        _stepsize = (criterionValues[0]/sumSquared)*0.01;
     }
     // Else use the current stepsize * stepIncrease
     else
