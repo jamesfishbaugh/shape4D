@@ -1617,9 +1617,10 @@ void RegressionAcceleration::GradientDescent(Array3D<double>& impulse, Array2D<d
             V0 = V0Test;
 
             stepImpulse *= stepIncrease;
-            //if (!((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true)))
-            //{
+            if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
+            {
                 stepX0andV0 *= stepIncrease;
+            }
 
             leastSquaresRef = criterionValues[iter+1];
 
