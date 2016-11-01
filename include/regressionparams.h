@@ -19,12 +19,12 @@ class RegressionParams
         //--------------------------------------------------------------------------
 
         int _nx;						    // The number of source points
-        Array2D<double> _x;			  	// Source points array 3 x nx
+        Array2D<double> _x;                 // Source points array 3 x nx
         double _sigmaV;				        // Scale of deformation
         double _gamma;					    // Weight on regularity
         double _stdV;					    //
         int _T;							    // Number of time steps for discretization
-        Array1D<double> _xtime;			// Time discretization array
+        Array1D<double> _xtime;             // Time discretization array
         Array2D<double> _initV0;			// Initial velocity
         bool _useInitV0	;				    // Should we only use the initV0?
         bool _estimateBaseline;				// Should we estimate the baseline shape or leave it fixed?
@@ -32,9 +32,10 @@ class RegressionParams
         char* _kernelType;					// The kernel type
         int _maxIters;                      // Max iterations for gradient descent
         double _breakRatio;                 // Break ratio for optimzation
+        bool _useFista;                     // Should we use FISTA
+        double _baselineSmoothing;          // Factor for baseline shape smoothing
 
-
-        Grid** _grids;				    // An array of grids at each time point
+        Grid** _grids;                      // An array of grids at each time point
 
     public:
 
@@ -64,6 +65,8 @@ class RegressionParams
         void SetKernelType(char* kernelType);
         void SetMaxIters(int maxIters);
         void SetBreakRatio(double breakRatio);
+        void SetShouldUseFista(bool yesNo);
+        void SetBaselineSmoothing(double baselineSmoothing);
 
         //--------------------------------------------------------------------------
         // Getters
@@ -85,6 +88,8 @@ class RegressionParams
         const double GetV0Weight() const;
         Grid* GetGridAt(int index);
         const Grid* GetGridAt(int index) const;
+        const bool ShouldUseFista() const;
+        const double GetBaselineSmoothing() const;
 
         //--------------------------------------------------------------------------
         // Overloaded operators

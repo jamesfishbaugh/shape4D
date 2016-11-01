@@ -33,6 +33,7 @@ RegressionParams::RegressionParams()
     this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
+    this->_useFista = true;
 
     this->_grids = new Grid*[this->_T];
     for (int t=0; t<this->_T; t++)
@@ -69,6 +70,7 @@ RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, doub
     this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
+    this->_useFista = true;
 
     this->_grids = new Grid*[this->_T];
     for (int t=0; t<this->_T; t++)
@@ -108,6 +110,8 @@ RegressionParams::RegressionParams(const Array2D<double>& x, double sigmaV, doub
     this->_kernelType = (char*) "exact";
     this->_maxIters = 500;
     this->_breakRatio = 1e-6;
+    this->_useFista = true;
+    this->_baselineSmoothing = 1.0;
 
     this->_grids = new Grid*[this->_T];
     for (int t=0; t<this->_T; t++)
@@ -144,6 +148,8 @@ RegressionParams::RegressionParams(const RegressionParams& source)
     this->_kernelType = source._kernelType;
     this->_maxIters = source._maxIters;
     this->_breakRatio = source._breakRatio;
+    this->_useFista = source._useFista;
+    this->_baselineSmoothing = 1.0;
 
     this->_grids = new Grid*[this->_T];
     for (int t=0; t<this->_T; t++)
@@ -365,6 +371,35 @@ void RegressionParams::SetKernelType(char* kernelType)
     }
 }
 
+//----------------------------------------------------------------
+// SetShouldUseFista
+//----------------------------------------------------------------
+// Inputs:
+//   yesNo - use use FISTA algorithm
+//
+// Outputs:
+//----------------------------------------------------------------
+// Setter for this->_useFista
+//----------------------------------------------------------------
+void RegressionParams::SetShouldUseFista(bool yesNo)
+{
+    this->_useFista = yesNo;
+}
+
+//----------------------------------------------------------------
+// SetBaselineSmoothing
+//----------------------------------------------------------------
+// Inputs:
+//   baselineSmoothing - factor for smoothing baseline shape
+//
+// Outputs:
+//----------------------------------------------------------------
+// Setter for this->_baselineSmoothing
+//----------------------------------------------------------------
+void RegressionParams::SetBaselineSmoothing(double baselineSmoothing)
+{
+    this->_baselineSmoothing = baselineSmoothing;
+}
 
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -582,6 +617,36 @@ const double RegressionParams::GetV0Weight() const
 }
 
 //----------------------------------------------------------------
+// ShouldUseFista
+//----------------------------------------------------------------
+// Inputs:
+//
+// Outputs:
+//   return - true if using FISTA, false otherwise
+//----------------------------------------------------------------
+// Returns true if using FISTA, false otherwise
+//----------------------------------------------------------------
+const bool RegressionParams::ShouldUseFista() const
+{
+    return this->_useFista;
+}
+
+//----------------------------------------------------------------
+// GetBaselineSmoothing
+//----------------------------------------------------------------
+// Inputs:
+//
+// Outputs:
+//   return - baseline shape smoothing factor
+//----------------------------------------------------------------
+// Returns the baseline shape smoothing factor
+//----------------------------------------------------------------
+const double RegressionParams::GetBaselineSmoothing() const
+{
+    return this->_baselineSmoothing;
+}
+
+//----------------------------------------------------------------
 // GetGridAt
 //----------------------------------------------------------------
 // Inputs:
@@ -646,6 +711,8 @@ RegressionParams& RegressionParams::operator = (const RegressionParams& source)
         this->_kernelType = source._kernelType;
         this->_maxIters = source._maxIters;
         this->_breakRatio = source._breakRatio;
+        this->_useFista = source._useFista;
+        this->_baselineSmoothing = source._baselineSmoothing;
 
         if (this->_grids != 0)
         {

@@ -190,6 +190,11 @@ Array3D<double> RegressionAcceleration::Run()
     int T = this->_source.GetT();
     Array2D<double> X0 = this->_source.GetX();
 
+    Array2D<double> sobolevGrad(dim,nx);
+    sobolevGrad.FillArray(0.0);
+    this->_sobolevGrad = sobolevGrad;
+
+
     // Allocate memory for graddesc (stores the positions and velocities adding 2 dimensions to T)
     Array3D<double> graddesc(dim, nx, T+2);
 
@@ -224,21 +229,40 @@ Array3D<double> RegressionAcceleration::Run()
     }
 
     // Run the optimization
-    this->FISTA(graddesc);
-    Optimizer* optimizer = (Optimizer*) new AdaptiveGradientDescent(this);
-    //optimizer->SetStepsize(EXExoshapeState::GetCurrentStepsize());
-    optimizer->SetMaxIterations(this->_source.GetMaxIters());
-    optimizer->SetBreakRatio(this->_source.GetBreakRatio());
-    optimizer->SetStepsize(0.05f);
-    optimizer->Optimize(graddesc);
-
-    // Split out the impulse and v0
     Array3D<double> impulse(dim, nx, T);
-    Array2D<double> v0(dim, nx);
-    this->SplitImpulseAndV0(graddesc, impulse, v0);
+    if (this->_continueRegression)
+    {
+        impulse = this->_impulse;
+    }
+    else
+    {
+        impulse.FillArray(0.0);
+    }
+
+    Array2D<double> V0(dim, nx);
+    V0 = this->_initV0;
+
+    if (this->_source.ShouldUseFista())
+    {
+        this->FISTA(impulse, X0, V0);
+    }
+    else
+    {
+        this->GradientDescent(impulse, X0, V0);
+//        Optimizer* optimizer = (Optimizer*) new AdaptiveGradientDescent(this);
+//        optimizer->SetMaxIterations(this->_source.GetMaxIters());
+//        optimizer->SetBreakRatio(this->_source.GetBreakRatio());
+//        optimizer->SetStepsize(0.05f);
+//        optimizer->Optimize(graddesc);
+
+//        this->SplitImpulseAndV0(graddesc, impulse, V0);
+
+//        // Clean up memory
+//        delete optimizer;
+    }
 
     // Compute the final trajectories now that we are done
-    this->ComputeTrajectories(impulse, v0);
+    this->ComputeTrajectories(impulse, this->_X.Get2DSliceAtHeight(0), V0);
 
     // Compute the final acceleration
     Array3D<double> accel(dim, nx, T);
@@ -281,9 +305,6 @@ Array3D<double> RegressionAcceleration::Run()
     Shape4DState::SaveStateAccel();
 
     Shape4DState::SetShouldWriteShapesAndVectors(false);
-
-    // Clean up memory
-    delete optimizer;
 
     // Return the final trajectores
     return this->_X;
@@ -391,6 +412,44 @@ double RegressionAcceleration::ComputeRegularity(const Array3D<double>& impulse)
     }
 
     return E;
+}
+
+
+//----------------------------------------------------------------
+// ComputeFunctional
+//----------------------------------------------------------------
+// Inputs:
+//   impulse -
+//   X0 -
+//   V0 -
+//   dataMatching - double for data matching value return
+//   regularity - double for regularity value return
+//
+// Outputs:
+//   dataMatching - data matching value
+//   regularity - regularity value
+//   return - total value of the regression functional
+//----------------------------------------------------------------
+// Computes the value of the regression criteria by computing
+// the total data matching and regularity terms.  Returns
+// data matching and regularity independently through reference
+// parameters as well as returning the functional value.
+//----------------------------------------------------------------
+double RegressionAcceleration::ComputeFunctional(const Array3D<double>& impulse, const Array2D<double> X0, const Array2D<double> V0, double &dataMatching, double &regularity)
+{
+    // Apply the current deformation
+    this->ComputeTrajectories(impulse, X0, V0);
+
+    //printf("    Computing data matching...\n");
+    dataMatching = ComputeDataMatching(this->_X);
+    //printf("    Computing regularity...\n");
+    regularity = ComputeRegularity(impulse);
+
+    //printf("Data = %0.4f  Reg = %0.4f\n", dataMatching, regularity);
+
+    //printf("Done computing functional\n");
+
+    return dataMatching + this->_source.GetGamma()*regularity;
 }
 
 //----------------------------------------------------------------
@@ -729,12 +788,13 @@ void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, con
         }
     }
 
-    // We need to ensure the baseline shape doesn't self intersect by convolving the gradient with a kernel
-    Array2D<double> sobolevGradient(dim,nx);
-    sobolevGradient.FillArray(0.0f);
-
     if (this->_source.ShouldEstimateBaseline())
     {
+        // We need to ensure the baseline shape doesn't self intersect by convolving the gradient with a kernel
+        this->_sobolevGrad.FillArray(0.0);
+        double stdV = this->_source.GetStdV();
+        double smoothingFactor = this->_source.GetBaselineSmoothing();
+
         //#pragma omp parallel for collapse(2)
         for (int i=0; i<nx; i++)
         {
@@ -742,22 +802,20 @@ void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, con
             {
                 double argin = - ( pow(this->_X(0,i,0)-this->_X(0,j,0),2) +
                                    pow(this->_X(1,i,0)-this->_X(1,j,0),2) +
-                                   pow(this->_X(2,i,0)-this->_X(2,j,0),2) ) / sigmaV2;
+                                   pow(this->_X(2,i,0)-this->_X(2,j,0),2) ) / (smoothingFactor*sigmaV2);
 
-                double argout = exp(argin);
+                double argout = stdV*exp(argin);
+                //printf("%0.4f\n", argout);
 
-                sobolevGradient(0,i) = sobolevGradient(0,i) + argout*gradX0(0,j);
-                sobolevGradient(1,i) = sobolevGradient(1,i) + argout*gradX0(1,j);
-                sobolevGradient(2,i) = sobolevGradient(2,i) + argout*gradX0(2,j);
+                this->_sobolevGrad(0,i) = this->_sobolevGrad(0,i) + argout*gradX0(0,j);
+                this->_sobolevGrad(1,i) = this->_sobolevGrad(1,i) + argout*gradX0(1,j);
+                this->_sobolevGrad(2,i) = this->_sobolevGrad(2,i) + argout*gradX0(2,j);
             }
         }
 
-        for (int i=0; i<dim; i++)
+        if (this->_source.ShouldUseFista() == false)
         {
-            for (int j=0; j<nx; j++)
-            {
-                gradX0(i,j) = sobolevGradient(i,j);
-            }
+            gradX0 = this->_sobolevGrad;
         }
     }
 
@@ -817,6 +875,68 @@ void RegressionAcceleration::SplitImpulseAndV0(const Array3D<double>& impulseAnd
             }
         }
     }
+}
+
+//----------------------------------------------------------------
+// SplitGradient
+//----------------------------------------------------------------
+// Inputs:
+//   G - 3D array (dim, num_pts, time+2) of impulse vectors
+//       (:,:,0:time) and V0(:,:,time+1) and X0(:,:,time+2)
+//   gradImpulse - 3D array (dim, num_pts, time) of grad
+//                  impulse as storage for return by reference
+//   gradX0 - 2D array (dim, num_pts) of grad X0 as storage for
+//            or return by reference
+//   gradV0 - 2D array (dim, num_pts) of grad V0 as storage for
+//            or return by reference
+//
+// Outputs:
+//   gradImpulse - 3D array (dim, num_pts, time) of grad impulse
+//   gradX0 - 2D array (dim, num_pts) of grad X0
+//   gradV0 - 2D array (dim, num_pts) of grad V0
+//----------------------------------------------------------------
+// Splits the gradient into its 3 parts: impulse, X0, and V0
+//----------------------------------------------------------------
+void RegressionAcceleration::SplitGradient(const Array3D<double>& G, Array3D<double>& gradImpulse, Array2D<double>& gradX0, Array2D<double>& gradV0)
+{
+    int dim = G.GetLength();
+    int nx = G.GetWidth();
+    int T = this->_source.GetT();
+
+    int Tplus2 = G.GetHeight();
+
+    if ((T+2) != Tplus2)
+    {
+        // There is an error in usage here
+        printf("Warning: Gradient is wrong dimension to hold impulse, x0, and v0. Application may crash or produce strange results.\n");
+    }
+
+    // Split impulse and v0
+    //#pragma omp parallel for collapse(3)
+    for (int i=0; i<dim; i++)
+    {
+        for (int j=0; j<nx; j++)
+        {
+            for (int k=0; k<T+2; k++)
+            {
+                // Initial velocity
+                if (k==T)
+                {
+                    gradV0(i,j) = G(i,j,k);
+                }
+                else if (k==(T+1))
+                {
+                    gradX0(i,j) = G(i,j,k);
+                }
+                // Impulse
+                else
+                {
+                    gradImpulse(i,j,k) = G(i,j,k);
+                }
+            }
+        }
+    }
+
 }
 
 //----------------------------------------------------------------
@@ -911,6 +1031,46 @@ void RegressionAcceleration::ComputeTrajectories(const Array3D<double>& impulse,
 }
 
 //----------------------------------------------------------------
+// ComputeTrajectories
+//----------------------------------------------------------------
+// Inputs:
+//   impulse - 3D array (dim, num_pts, time) of impulse vectors
+//   v0 - 2D array (dim, num_pts) of initial velocity
+//
+// Outputs:
+//----------------------------------------------------------------
+// Apply the deformation to the source points this->_X using
+// a verlet integration scheme
+//----------------------------------------------------------------
+void RegressionAcceleration::ComputeTrajectories(const Array3D<double>& impulse, const Array2D<double>& x0, const Array2D<double>& v0)
+{
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+    double tau2 = pow(this->_tau,2);
+
+    if (this->_source.ShouldEstimateBaseline())
+    {
+        // Set the initial velocity
+        for (int i=0; i<dim; i++)
+        {
+            for (int j=0; j<nx; j++)
+            {
+                // Use the value we computed
+                this->_X(i,j,0) = x0(i,j);
+            }
+        }
+
+        // Update grids since point positions have changed
+        this->UpdateSourceGrids();
+        this->UpdateTargetGrids();
+    }
+
+    this->ComputeTrajectories(impulse, v0);
+
+}
+
+//----------------------------------------------------------------
 // WriteSelf
 //----------------------------------------------------------------
 // Inputs:
@@ -939,36 +1099,554 @@ void RegressionAcceleration::WriteSelf()
 //----------------------------------------------------------------
 // Fast iterative shrinkage thresholding algorithm
 //----------------------------------------------------------------
-void RegressionAcceleration::FISTA(const Array3D<double>& impulseAndV0)
+void RegressionAcceleration::FISTA(Array3D<double>& impulse, Array2D<double>& X0, Array2D<double>& V0)
 {
     int maxIters = this->_source.GetMaxIters();
     double breakRatio = this->_source.GetBreakRatio();
     int maxLineIters = 40;
     double stepImpulse = 0.05f;
     double stepX0andV0 = 0.05f;
+    double stepIncrease = 1.2f;
+    double stepDecrease = 0.25f;
 
     int dim = this->_X.GetLength();
     int nx = this->_source.GetNx();
     int T = this->_source.GetT();
-    double sigmaV2 = pow(this->_source.GetSigmaV(),2);
 
-    // Split out impulse and initial velocity
-    Array3D<double> impulse(dim,nx,T);
-    Array2D<double> V0 (dim,nx);
-    this->SplitImpulseAndV0(impulseAndV0, impulse, V0);
-    Array2D<double> X0 (dim,nx);
-    X0 = this->_X.Get2DSliceAtHeight(0);
+    double* dataMatchingValues = new double[maxIters];
+    double* regularityValues = new double[maxIters];
+    double* criterionValues = new double[maxIters];
 
-    for (int iter=1; iter<maxIters; iter++)
+    // Compute the functional by following the algorithm's pointer
+    criterionValues[0] = this->ComputeFunctional(impulse, X0, V0, dataMatchingValues[0], regularityValues[0]);
+    double leastSquaresRef = criterionValues[0];
+
+    Array3D<double> impulsePrev = impulse;
+    Array2D<double> V0Prev = V0;
+    Array2D<double> X0Prev = X0;
+
+    Array3D<double> impulseTest(dim, nx, T);
+    Array2D<double> V0Test(dim, nx);
+    Array2D<double> X0Test(dim, nx);
+
+    double tau = 1.0;
+    int freezeDirectionCounter = 0;
+    int numberItersFreeze = 3;
+
+    Shape4DState::SetHasConverged(false);
+    printf("\n");
+
+    for (int iter=0; iter<maxIters; iter++)
     {
+        // If it is time to save intermediate shapes
+        if ((iter%Shape4DState::GetSaveProgressEveryNIterations() == 0) && (Shape4DState::GetShouldSave()))
+        {
+            Shape4DState::SetShouldWriteShapesAndVectors(true);
+        }
+
+        // Compute the gradient
+        Array3D<double> gradImpulse(dim, nx, T);
+        Array2D<double> gradX0(dim, nx);
+        Array2D<double> gradV0(dim, nx);
+        this->ComputeGradient(impulse, X0, V0, gradImpulse, gradX0, gradV0);
+
+        // Compute a good initial stepsize
+        if (iter == 0)
+        {
+            // The initial step size is the functional value over the sum of squared gradient
+            double sumSquared = 0.0f;
+            for (int i=0; i<dim; i++)
+            {
+                for (int j=0; j<nx; j++)
+                {
+                    for (int k=0; k<T; k++)
+                    {
+                        sumSquared += gradImpulse(i,j,k)*gradImpulse(i,j,k);
+                    }
+                }
+            }
+            stepImpulse = (criterionValues[0]/sumSquared)*0.01;
+            stepX0andV0 = stepImpulse;
+        }
+
+        // Update the iteration values for saving
+        Shape4DState::UpdateIteration(iter, dataMatchingValues[iter], regularityValues[iter], stepImpulse);
+        printf("Iteration %3d   funct = %0.4f   data = %0.4f   reg = %0.4f   stepImpulse = %0.10lf   stepX0AndV0 = %0.10lf\n",
+               iter+1, criterionValues[iter], dataMatchingValues[iter], regularityValues[iter], stepImpulse, stepX0andV0);
+
         bool minimTest = false;
         unsigned int lineIter = 0;
         for (; lineIter < maxLineIters; lineIter++)
         {
+            // Apply the current gradient with current stepsize
+            this->GradientDescentStep(impulseTest, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+            criterionValues[iter+1] = this->ComputeFunctional(impulseTest, X0Test, V0Test, dataMatchingValues[iter+1], regularityValues[iter+1]);
+
+            double QDiffTerm = this->QDiffTerm(impulseTest, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+            double Q = leastSquaresRef - criterionValues[iter+1] + QDiffTerm;
+
+            //printf("QDiffTerm = %0.4f\n", QDiffTerm);
+
+            if (criterionValues[iter+1] > 1.10*criterionValues[iter])
+            {
+                Q = -1;
+            }
+
+            if (Q >= 0)
+            {
+                minimTest = true;
+            }
+            else
+            {
+                //printf("Negative Q, beginning search...\n");
+
+                double QArray[4];
+
+                // Case 1
+                stepImpulse *= stepDecrease;
+                Array3D<double> impulsePrime1(dim, nx, T);
+                this->GradientDescentStep(impulsePrime1, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+                double dataMatching1, regularity1;
+                double functCase1 = this->ComputeFunctional(impulsePrime1, X0Test, V0Test, dataMatching1, regularity1);
+                double QDiffTermCase1 = this->QDiffTerm(impulsePrime1, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                QArray[0] = leastSquaresRef - functCase1 + QDiffTermCase1;
+
+                // Case 2
+                stepImpulse *= stepDecrease;
+                Array3D<double> impulsePrime2(dim, nx, T);
+                this->GradientDescentStep(impulsePrime2, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+                double dataMatching2, regularity2;
+                double functCase2 = this->ComputeFunctional(impulsePrime2, X0Test, V0Test, dataMatching2, regularity2);
+                double QDiffTermCase2 = this->QDiffTerm(impulsePrime2, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                QArray[1] = leastSquaresRef - functCase2 + QDiffTermCase2;
+
+                // Case 3
+                stepImpulse /= (stepDecrease*stepDecrease);
+                stepX0andV0 *= stepDecrease;
+                Array2D<double> X0Prime3(dim, nx);
+                Array2D<double> V0Prime3(dim, nx);
+                double dataMatching3, regularity3;
+                double functCase3;
+                double QDiffTermCase3;
+
+                if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
+                {
+                    //printf("Computing case 3 qdiff\n");
+                    this->GradientDescentStep(impulseTest, X0Prime3, V0Prime3, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                    functCase3 = this->ComputeFunctional(impulseTest, X0Prime3, V0Prime3, dataMatching3, regularity3);
+                    QDiffTermCase3 = this->QDiffTerm(impulseTest, X0Prime3, V0Prime3, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                    QArray[2] = leastSquaresRef - functCase3 + QDiffTermCase3;
+
+                }
+                else
+                {
+                    //printf("Skipping computing case 3 qdiff\n");
+                    QArray[2] = -500000;
+                }
+
+                // Case 4
+                stepX0andV0 *= stepDecrease;
+                Array2D<double> X0Prime4(dim, nx);
+                Array2D<double> V0Prime4(dim, nx);
+                double dataMatching4, regularity4;
+                double functCase4;
+                double QDiffTermCase4;
+
+                if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
+                {
+                    //printf("Computing case 4 qdiff\n");
+                    this->GradientDescentStep(impulseTest, X0Prime4, V0Prime4, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                    functCase4 = this->ComputeFunctional(impulseTest, X0Prime4, V0Prime4, dataMatching4, regularity4);
+                    QDiffTermCase4 = this->QDiffTerm(impulseTest, X0Prime4, V0Prime4, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+                    QArray[3] = leastSquaresRef - functCase4 + QDiffTermCase4;
+
+                }
+                else
+                {
+                    //printf("Skipping computing case 4 qdiff\n");
+                    QArray[3] = -500000;
+                }
+
+                int indexMax = 0;
+                double QMax = QArray[0];
+                for (int i=1; i<4; i++)
+                {
+                    if (QArray[i] > QMax)
+                    {
+                        QMax = QArray[i];
+                        indexMax = i;
+                    }
+                }
+
+                //printf("%0.4f    %0.4f    %0.4f    %0.4f\n", QArray[0], QArray[1], QArray[2], QArray[3]);
+
+                if (QMax >= 0)
+                {
+                    minimTest = true;
+
+                    if (indexMax == 0)
+                    {
+                        //printf("Case 1\n");
+                        impulseTest = impulsePrime1;
+
+                        if (functCase1 > 1.10*criterionValues[iter])
+                        {
+                            stepImpulse *= stepDecrease;
+                            stepX0andV0 *= stepDecrease;
+                            continue;
+                        }
+
+                        criterionValues[iter+1] = functCase1;
+                        dataMatchingValues[iter+1] = dataMatching1;
+                        regularityValues[iter+1] = regularity1;
+
+                        stepImpulse *= stepDecrease;
+                        stepX0andV0 /= (stepDecrease*stepDecrease);
+
+                    }
+                    else if (indexMax == 1)
+                    {
+                        //printf("Case 2\n");
+                        impulseTest = impulsePrime2;
+
+                        if (functCase2 > 1.10*criterionValues[iter])
+                        {
+                            stepImpulse *= stepDecrease;
+                            stepX0andV0 *= stepDecrease;
+                            continue;
+                        }
+
+                        criterionValues[iter+1] = functCase2;
+                        dataMatchingValues[iter+1] = dataMatching2;
+                        regularityValues[iter+1] = regularity2;
+
+                        stepImpulse *= (stepDecrease*stepDecrease);
+                        stepX0andV0 /= (stepDecrease*stepDecrease);
+                    }
+                    else if (indexMax == 2)
+                    {
+                        //printf("Case 3\n");
+                        X0Test = X0Prime3;
+                        V0Test = V0Prime3;
+
+                        if (functCase3 > 1.10*criterionValues[iter])
+                        {
+                            stepImpulse *= stepDecrease;
+                            stepX0andV0 *= stepDecrease;
+                            continue;
+                        }
+
+                        criterionValues[iter+1] = functCase3;
+                        dataMatchingValues[iter+1] = dataMatching3;
+                        regularityValues[iter+1] = regularity3;
+
+                        stepX0andV0 /= stepDecrease;
+
+                    }
+                    else
+                    {
+                        //printf("Case 4\n");
+                        X0Test = X0Prime4;
+                        V0Test = V0Prime4;
+
+                        if (functCase4 > 1.10*criterionValues[iter])
+                        {
+                            stepImpulse *= stepDecrease;
+                            stepX0andV0 *= stepDecrease;
+                            continue;
+                        }
+
+                        criterionValues[iter+1] = functCase4;
+                        dataMatchingValues[iter+1] = dataMatching4;
+                        regularityValues[iter+1] = regularity4;
+                    }
+                }
+                // Update failed, continue line search
+                else
+                {
+                    stepImpulse *= stepDecrease;
+                    stepX0andV0 *= stepDecrease;
+                }
+            }
+
+            if (minimTest == true)
+            {
+                break;
+            }
+
+        }    // End for (line search)
+
+        if (minimTest == true)
+        {
+            double tauNext = 1.0;
+
+            if ((lineIter == 0) && ((freezeDirectionCounter == 0) || (freezeDirectionCounter > numberItersFreeze)))
+            {
+                tauNext = (1 + sqrt(1.0 + 4.0 * tau * tau / stepIncrease)) / 2.0;
+                if (freezeDirectionCounter > numberItersFreeze)
+                {
+                    freezeDirectionCounter = 0;
+                }
+            }
+            else
+            {
+                tauNext = (1 + sqrt(1.0 + 4.0 * tau * tau)) / 2.0;
+                freezeDirectionCounter++;
+            }
+
+            double tauScale = (tau - 1.0) / tauNext;
+
+            impulse = impulseTest + (impulseTest - impulsePrev) * tauScale;
+            X0 = X0Test + (X0Test - X0Prev) * tauScale;
+            V0 = V0Test + (V0Test - V0Prev) * tauScale;
+
+            impulsePrev = impulseTest;
+            X0Prev = X0Test;
+            V0Prev = V0Test;
+
+            tau = tauNext;
+
+            if ((freezeDirectionCounter == 0) || (freezeDirectionCounter > numberItersFreeze))
+            {
+                stepImpulse *= stepIncrease;
+                if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
+                {
+                    stepX0andV0 *= stepIncrease;
+                }
+            }
+
+            leastSquaresRef = criterionValues[iter+1];
 
         }
-    }
+        // We have exhausted line searching so we're done
+        else
+        {
+            break;
+        }
 
+        // Check for regular old convergence (termination criteria)
+        //
+        double deltaFCurr = fabs(criterionValues[iter]-criterionValues[iter+1]);
+        double deltaFRef = fabs(criterionValues[0]-criterionValues[iter+1]);
+        if (deltaFCurr < (breakRatio*deltaFRef))
+        {
+            break;
+        }
+
+    }   // End for (iterations of FISTA)
+
+    delete[] dataMatchingValues;
+    delete[] regularityValues;
+    delete[] criterionValues;
+
+    Shape4DState::SetHasConverged(true);
+
+}
+
+//----------------------------------------------------------------
+// GradientDescent
+//----------------------------------------------------------------
+// Inputs:
+//
+//
+// Outputs:
+//----------------------------------------------------------------
+// Gradient descent with adaptive step sizes
+//----------------------------------------------------------------
+void RegressionAcceleration::GradientDescent(Array3D<double>& impulse, Array2D<double>& X0, Array2D<double>& V0)
+{
+    int maxIters = this->_source.GetMaxIters();
+    double breakRatio = this->_source.GetBreakRatio();
+    int maxLineIters = 40;
+    double stepImpulse = 0.05f;
+    double stepX0andV0 = 0.05f;
+    double stepIncrease = 1.2f;
+    double stepDecrease = 0.25f;
+
+    int dim = this->_X.GetLength();
+    int nx = this->_source.GetNx();
+    int T = this->_source.GetT();
+
+    double* dataMatchingValues = new double[maxIters];
+    double* regularityValues = new double[maxIters];
+    double* criterionValues = new double[maxIters];
+
+    // Compute the functional by following the algorithm's pointer
+    criterionValues[0] = this->ComputeFunctional(impulse, X0, V0, dataMatchingValues[0], regularityValues[0]);
+    double leastSquaresRef = criterionValues[0];
+
+    Array3D<double> impulsePrev = impulse;
+    Array2D<double> V0Prev = V0;
+    Array2D<double> X0Prev = X0;
+
+    Array3D<double> impulseTest(dim, nx, T);
+    Array2D<double> V0Test(dim, nx);
+    Array2D<double> X0Test(dim, nx);
+
+    Shape4DState::SetHasConverged(false);
+    printf("\n");
+
+    for (int iter=0; iter<maxIters; iter++)
+    {
+        // If it is time to save intermediate shapes
+        if ((iter%Shape4DState::GetSaveProgressEveryNIterations() == 0) && (Shape4DState::GetShouldSave()))
+        {
+            Shape4DState::SetShouldWriteShapesAndVectors(true);
+        }
+
+        // Compute the gradient
+        Array3D<double> gradImpulse(dim, nx, T);
+        Array2D<double> gradX0(dim, nx);
+        Array2D<double> gradV0(dim, nx);
+        this->ComputeGradient(impulse, X0, V0, gradImpulse, gradX0, gradV0);
+
+        // Compute a good initial stepsize
+        if (iter == 0)
+        {
+            // The initial step size is the functional value over the sum of squared gradient
+            double sumSquared = 0.0f;
+            for (int i=0; i<dim; i++)
+            {
+                for (int j=0; j<nx; j++)
+                {
+                    for (int k=0; k<T; k++)
+                    {
+                        sumSquared += gradImpulse(i,j,k)*gradImpulse(i,j,k);
+                    }
+                }
+            }
+            stepImpulse = (criterionValues[0]/sumSquared)*0.01;
+            stepX0andV0 = stepImpulse;
+        }
+
+        // Update the iteration values for saving
+        Shape4DState::UpdateIteration(iter, dataMatchingValues[iter], regularityValues[iter], stepImpulse);
+        printf("Iteration %3d   funct = %0.4f   data = %0.4f   reg = %0.4f   stepImpulse = %0.10lf   stepX0AndV0 = %0.10lf\n",
+               iter+1, criterionValues[iter], dataMatchingValues[iter], regularityValues[iter], stepImpulse, stepX0andV0);
+
+        bool minimTest = false;
+        unsigned int lineIter = 0;
+        for (; lineIter < maxLineIters; lineIter++)
+        {
+            // Apply the current gradient with current stepsize
+            this->GradientDescentStep(impulseTest, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+            criterionValues[iter+1] = this->ComputeFunctional(impulseTest, X0Test, V0Test, dataMatchingValues[iter+1], regularityValues[iter+1]);
+
+            double Q = leastSquaresRef - criterionValues[iter+1];
+
+            //printf("%0.4f\n", Q);
+            //printf("%0.10lf     %0.10lf\n", stepImpulse, stepX0andV0);
+
+            if (Q >= 0)
+            {
+                minimTest = true;
+                break;
+            }
+            else
+            {
+                // Case 1
+                stepImpulse *= stepDecrease;
+                Array3D<double> impulsePrime1(dim, nx, T);
+                this->GradientDescentStep(impulsePrime1, X0Test, V0Test, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+                double dataMatching1, regularity1;
+                double functCase1 = this->ComputeFunctional(impulsePrime1, X0Test, V0Test, dataMatching1, regularity1);
+                double Q1 = leastSquaresRef - functCase1;
+
+                // Case 2
+                stepImpulse /= stepDecrease;
+                stepX0andV0 *= stepDecrease;
+                Array2D<double> X0Prime2(dim, nx);
+                Array2D<double> V0Prime2(dim, nx);
+                this->GradientDescentStep(impulseTest, X0Prime2, V0Prime2, impulse, X0, V0, gradImpulse, gradX0, gradV0, stepImpulse, stepX0andV0);
+
+                double dataMatching2, regularity2;
+                double functCase2 = this->ComputeFunctional(impulseTest, X0Prime2, V0Prime2, dataMatching2, regularity2);
+                double Q2 = leastSquaresRef - functCase2;
+
+                if ( (Q1 >= 0) || (Q2 >= 0) )
+                {
+                    if (Q1 >= Q2)
+                    {
+                        impulseTest = impulsePrime1;
+
+                        criterionValues[iter+1] = functCase1;
+                        dataMatchingValues[iter+1] = dataMatching1;
+                        regularityValues[iter+1] = regularity1;
+
+                        stepImpulse *= stepDecrease;
+                        stepX0andV0 /= (stepDecrease);
+                    }
+                    else
+                    {
+                        X0Test = X0Prime2;
+                        V0Test = V0Prime2;
+
+                        criterionValues[iter+1] = functCase2;
+                        dataMatchingValues[iter+1] = dataMatching2;
+                        regularityValues[iter+1] = regularity2;
+                    }
+
+                    minimTest = true;
+
+                }
+                // Update failed, continue line search
+                else
+                {
+                    stepImpulse *= stepDecrease;
+                    stepX0andV0 *= stepDecrease;
+                }
+            }
+
+
+            if (minimTest == true)
+            {
+                break;
+            }
+
+        }   // End line search
+
+        if (minimTest == true)
+        {
+            impulse = impulseTest;
+            X0 = X0Test;
+            V0 = V0Test;
+
+            stepImpulse *= stepIncrease;
+            //if (!((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true)))
+            //{
+                stepX0andV0 *= stepIncrease;
+
+            leastSquaresRef = criterionValues[iter+1];
+
+        }
+        // We have exhausted line searching so we're done
+        else
+        {
+            break;
+        }
+
+        // Check for regular old convergence (termination criteria)
+        //
+        double deltaFCurr = fabs(criterionValues[iter]-criterionValues[iter+1]);
+        double deltaFRef = fabs(criterionValues[0]-criterionValues[iter+1]);
+        if (deltaFCurr < (breakRatio*deltaFRef))
+        {
+            break;
+        }
+
+    }   // End main iters loop
+
+
+    delete[] dataMatchingValues;
+    delete[] regularityValues;
+    delete[] criterionValues;
+
+    Shape4DState::SetHasConverged(true);
 }
 
 //----------------------------------------------------------------
@@ -981,6 +1659,7 @@ void RegressionAcceleration::FISTA(const Array3D<double>& impulseAndV0)
 //   impulse -
 //   X0 -
 //   V0 -
+//   G - gradient of the criterion (wrt impulse, v0, and x0)
 //   stepImpulse -
 //   stepX0andV0 -
 //
@@ -991,8 +1670,88 @@ void RegressionAcceleration::FISTA(const Array3D<double>& impulseAndV0)
 //----------------------------------------------------------------
 void RegressionAcceleration::GradientDescentStep(Array3D<double>& impulseTest, Array2D<double>& X0Test, Array2D<double>& V0Test,
                                                  const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
+                                                 const Array3D<double>& gradImpulse, const Array2D<double>& gradX0, const Array2D<double>& gradV0,
                                                  double stepImpulse, double stepX0andV0)
 {
+    // Update the impulse
+    impulseTest = impulse - gradImpulse*stepImpulse;
+
+    // Update V0
+    if ((this->_source.ShouldUseInitV0()) || (this->_source.GetV0Weight() == 0.0))
+    {
+        V0Test = V0;
+    }
+    else
+    {
+        V0Test = V0 - gradV0*stepX0andV0;
+    }
+
+    // Update X0
+    if (this->_source.ShouldEstimateBaseline())
+    {
+        X0Test = X0 - this->_sobolevGrad*stepX0andV0;
+        //X0Test = X0 - gradX0*stepX0andV0;
+    }
+    else
+    {
+        X0Test = X0;
+    }
+}
+
+double RegressionAcceleration::QDiffTerm(const Array3D<double> &impulseTest, const Array2D<double> X0Test, const Array2D<double> V0Test,
+                                         const Array3D<double> &impulse, const Array2D<double> X0, const Array2D<double> V0,
+                                         const Array3D<double> &gradImpulse, const Array2D<double> &gradX0, const Array2D<double> &gradV0,
+                                         double stepImpulse, double stepX0andV0)
+{
+    int dim = impulse.GetLength();
+    int nx = impulse.GetWidth();
+    int T = impulse.GetHeight();
+
+    Array3D<double> impulseDiff(dim, nx, T);
+    Array2D<double> X0Diff(dim, nx);
+    Array2D<double> V0Diff(dim, nx);
+
+    impulseDiff = impulseTest - impulse;
+    X0Diff = X0Test - X0;
+    V0Diff = V0Test - V0;
+
+    // Term 1 is the sum of all the dot products with gradients
+    double termVal1 = 0.0;
+    // Term 2 is norm of impulse difference
+    double termVal2 = 0.0;
+    // Term 3 is the sum of norm of x0 difference and v0 difference
+    double termVal3 = 0.0;
+
+    for (int i=0; i<nx; i++)
+    {
+        double diffX0X = X0Diff(0, i);  double diffX0Y = X0Diff(1, i);  double diffX0Z = X0Diff(2, i);
+        double gradX0X = gradX0(0, i);  double gradX0Y = gradX0(1, i);  double gradX0Z = gradX0(2, i);
+
+        termVal1 += diffX0X*gradX0X + diffX0Y*gradX0Y + diffX0Z*gradX0Z;
+        termVal3 += diffX0X*diffX0X + diffX0Y*diffX0Y + diffX0Z*diffX0Z;
+
+        double diffV0X = V0Diff(0, i);  double diffV0Y = V0Diff(1, i);  double diffV0Z = V0Diff(2, i);
+        double gradV0X = gradV0(0, i);  double gradV0Y = gradV0(1, i);  double gradV0Z = gradV0(2, i);
+
+        termVal1 += diffV0X*gradV0X + diffV0Y*gradV0Y + diffV0Z*gradV0Z;
+        termVal3 += diffV0X*diffV0X + diffV0Y*diffV0Y + diffV0Z*diffV0Z;
+
+        for (int j=0; j<T; j++)
+        {
+            double diffImpulseX = impulseDiff(0, i, j);  double diffImpulseY = impulseDiff(1, i, j);  double diffImpulseZ = impulseDiff(2, i, j);
+            double gradImpulseX = gradImpulse(0, i, j);  double gradImpulseY = gradImpulse(1, i, j);  double gradImpulseZ = gradImpulse(2, i, j);
+
+            termVal1 += diffImpulseX*gradImpulseX + diffImpulseY*gradImpulseY + diffImpulseZ*gradImpulseZ;
+            termVal2 += diffImpulseX*diffImpulseX + diffImpulseY*diffImpulseY + diffImpulseZ*diffImpulseZ;
+        }
+    }
+
+    //printf("Term 1 = %0.4f\n", termVal1);
+    //printf("Term 2 = %0.4f\n", termVal2);
+    //printf("Term 3 = %0.4f\n", termVal3);
+
+    double finalVal = termVal1 + termVal2 / (2.0*stepImpulse) + termVal3 / (2.0*stepX0andV0);
 
 
+    return finalVal;
 }

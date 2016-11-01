@@ -481,6 +481,30 @@ void RunExperiment::StartExperiment(char* pathToFile)
         }
 
         //--------------------------------------------------------------------------------
+        // <useFista> </useFista>
+        //--------------------------------------------------------------------------------
+
+        // Attempt to read the "useFista" option
+        int useFista = 1;
+        if (sourceNode->FirstChild("useFista") != 0)
+        {
+            char* useFistaString = (char*)sourceNode->FirstChild("useFista")->ToElement()->GetText();
+            sscanf(useFistaString, "%d", &useFista);
+        }
+
+        //--------------------------------------------------------------------------------
+        // <baselineSmoothing> </baselineSmoothing>
+        //--------------------------------------------------------------------------------
+
+        // Attempt to read the "baselineSmoothing" option
+        double baselineSmoothing = 1.0;
+        if (sourceNode->FirstChild("baselineSmoothing") != 0)
+        {
+            char* baselineSmoothingString = (char*)sourceNode->FirstChild("baselineSmoothing")->ToElement()->GetText();
+            sscanf(baselineSmoothingString, "%lf", &baselineSmoothing);
+        }
+
+        //--------------------------------------------------------------------------------
         // We are done reading source information and can now read source data and
         // build the source object
         //--------------------------------------------------------------------------------
@@ -562,6 +586,7 @@ void RunExperiment::StartExperiment(char* pathToFile)
         source.SetKernelType(kernelType);
         source.SetMaxIters(maxIters);
         source.SetBreakRatio(breakRatio);
+        source.SetBaselineSmoothing(baselineSmoothing);
 
         //--------------------------------------------------------------------------------
         // <targets> </targets>
@@ -1099,6 +1124,15 @@ void RunExperiment::StartExperiment(char* pathToFile)
             else
             {
                 source.SetShouldEstimateBaseline(false);
+            }
+
+            if (useFista)
+            {
+                source.SetShouldUseFista(true);
+            }
+            else
+            {
+                source.SetShouldUseFista(false);
             }
 
             // If we are continuing the experiment instead of starting from the beginning
