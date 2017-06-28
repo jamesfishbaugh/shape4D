@@ -1,68 +1,43 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1)
 
-project(shape4D)
+project(shape4d)
 
-# External dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+if(shape4d_BUILD_SLICER_EXTENSION)
+  #-----------------------------------------------------------------------------
+  # Extension meta-information
+  set(EXTENSION_HOMEPAGE "http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/shape4d")
+  set(EXTENSION_CATEGORY "Shape Analysis")
+  set(EXTENSION_CONTRIBUTORS "Francois Budin (Kitware Inc.), James Fishbaugh (NYU)")
+  set(EXTENSION_DESCRIPTION "shape4D is an extension for estimating continuous evolution from a discrete collection of shapes, designed to produce realistic anatomical trajectories.")
+  set(EXTENSION_ICONURL "http://www.example.com/Slicer/Extensions/shape4d.png")
+  set(EXTENSION_SCREENSHOTURLS "http://www.example.com/Slicer/Extensions/shape4d/Screenshots/1.png")
+  set(EXTENSION_DEPENDS "NA") # Specified as a space separated string, a list or 'NA' if any
+  set(EXTENSION_BUILD_SUBDIRECTORY inner-build)
 
-find_package (FFTW REQUIRED)
-include_directories(${FFTW_INCLUDE_DIR})
+  set(SUPERBUILD_TOPLEVEL_PROJECT inner)
 
-#set (CMAKE_CXX_FLAGS "-fopenmp")
+  #-----------------------------------------------------------------------------
+  # Extension dependencies
+  find_package(Slicer REQUIRED)
+  include(${Slicer_USE_FILE})
+  mark_as_superbuild(Slicer_DIR)
 
-#find_package(MPI REQUIRED)
+  find_package(Git REQUIRED)
+  mark_as_superbuild(GIT_EXECUTABLE)
+  
+  set(${EXTENSION_NAME}_SUPERBUILD ON CACHE BOOL "Build ${EXTENSION_NAME} and the projects it depends on.")
+endif()
 
-#SET(CMAKE_C_COMPILER mpicc)
-#SET(CMAKE_CXX_COMPILER mpicxx)
+#-----------------------------------------------------------------------------
+# SuperBuild setup
+option(${EXTENSION_NAME}_SUPERBUILD "Build ${EXTENSION_NAME} and the projects it depends on." OFF)
+mark_as_advanced(${EXTENSION_NAME}_SUPERBUILD)
+if(${EXTENSION_NAME}_SUPERBUILD)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
+  return()
+endif()
 
-#set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-#set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
-
-
-
-# Include directories
-include_directories(
-  include/
-  src/
-  #${MPI_INCLUDE_PATH}
-)
-
-FILE(GLOB_RECURSE shape4D_INCLUDE "include/*.h")
-
-set(shape4D_SOURCE 	
-   src/array1d.txx		
-   src/array2d.txx
-   src/array3d.txx
-   src/adaptivegradientdescent.cpp
-   src/algorithm.cpp
-   src/shape4dstate.cpp
-   src/grid.cpp
-   src/gridoptimize.cpp
-   src/helper.cpp
-   src/landmarks.cpp
-   src/optimizer.cpp
-   src/regressionacceleration.cpp
-   src/regression.cpp
-   src/regressionparams.cpp
-   src/regressionvelocity.cpp	
-   src/runexperiment.cpp
-   src/saveshapesandvectors.cpp
-   src/surfacecurrent.cpp
-   src/targetdata.cpp
-   src/shapeobject.cpp
-   src/tmplandmark.cpp
-   src/tmpsurfacecurrent.cpp
-   src/multiobjectcomplex.cpp
-   src/vtkpolydatareader.cpp
-   src/vtkpolydatawriter.cpp
-   src/tinystr.cpp
-   src/tinyxml.cpp
-   src/tinyxmlerror.cpp
-   src/tinyxmlparser.cpp
-   src/main.cpp
-)
-
-add_executable(shape4D ${shape4D_SOURCE})
-target_link_libraries(shape4D ${FFTW_LIBRARIES})
-add_custom_target(include SOURCES ${shape4D_INCLUDE})
+#-----------------------------------------------------------------------------
+# Shape4d application
+include("${CMAKE_CURRENT_SOURCE_DIR}/Inner.cmake")
 
