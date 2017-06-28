@@ -12,6 +12,8 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
+#include "shape4DCLP.h"
+
 //----------------------------------------------------------------
 // main
 //----------------------------------------------------------------
@@ -24,7 +26,7 @@
 //----------------------------------------------------------------
 // Entry point of application
 //----------------------------------------------------------------
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {	
     printf("\n");
 
@@ -68,7 +70,7 @@ int main(int argc, char **argv)
     // Check command line arguments
     if (argc < 2)
     {
-        printf("Usage:  exoshapeaccel driver_file.xml    OR\n        exoshapeaccel --continue progress_file.exo\n");
+        printf("Usage:  shape4D driver_file.xml    OR\n        shape4D --continue progress_file.exo\n");
         exit(1);
     }
 
