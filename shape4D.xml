@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Shape Analysis</category>
+  <title>shape4D</title>
+  <description><![CDATA[shape4D is a Slicer extension for estimating continuous evolution from a discrete collection of shapes, designed to produce realistic anatomical trajectories.]]></description>
+  <version>1.0.0</version>
+  <documentation-url>https://github.com/jamesfishbaugh/shape4D</documentation-url>
+  <license>Slicer</license>
+  <contributor>James Fishbaugh (NYU), Francois Budin (Kitware Inc.)</contributor>
+  <acknowledgements>This work was partially funded by NIH grant NIBIB R01EB021391</acknowledgements>
+  <parameters>
+    <label>IO</label>
+    <description><![CDATA[Input/output parameters]]></description>
+    <file>
+      <name>inputXML</name>
+      <label>Input XML</label>
+      <channel>input</channel>
+      <longflag>input</longflag>
+      <default></default>
+      <description><![CDATA[Input XML]]></description>
+    </file>
+    <file>
+      <name>progressFile</name>
+      <label>Progress File</label>
+      <channel>input</channel>
+      <longflag>continue</longflag>
+      <default></default>
+      <description><![CDATA[Progress File]]></description>
+    </file>
+  </parameters>
+</executable>

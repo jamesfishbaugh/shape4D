@@ -27,8 +27,8 @@ include_directories(
 
 FILE(GLOB_RECURSE shape4D_INCLUDE "include/*.h")
 
-set(shape4D_SOURCE 	
-   src/array1d.txx		
+set(shape4D_SOURCE
+   src/array1d.txx
    src/array2d.txx
    src/array3d.txx
    src/adaptivegradientdescent.cpp
@@ -42,7 +42,7 @@ set(shape4D_SOURCE
    src/regressionacceleration.cpp
    src/regression.cpp
    src/regressionparams.cpp
-   src/regressionvelocity.cpp	
+   src/regressionvelocity.cpp
    src/runexperiment.cpp
    src/saveshapesandvectors.cpp
    src/surfacecurrent.cpp
@@ -60,8 +60,23 @@ set(shape4D_SOURCE
    src/main.cpp
 )
 
-add_executable(shape4D ${shape4D_SOURCE})
-target_link_libraries(shape4D ${FFTW_LIBRARIES})
+if(Slicer_DIR)
+  # Build a Slicer CLI for Slicer
+  find_package(SlicerExecutionModel REQUIRED)
+  include(${SlicerExecutionModel_USE_FILE})
+  SEMMacroBuildCLI(
+    NAME ${PROJECT_NAME}
+    ADDITIONAL_SRCS ${shape4D_SOURCE}
+    TARGET_LIBRARIES ${FFTW_LIBRARIES}
+    INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
+  )
+  target_compile_definitions(shape4DLib PRIVATE "-DSLICER_EXTENSION")
+else()
+  # Build an independent executable without any dependency if outside of Slicer
+  add_executable(shape4D ${shape4D_SOURCE})
+  target_link_libraries(shape4D ${FFTW_LIBRARIES})
+endif()
+
 add_custom_target(include SOURCES ${shape4D_INCLUDE})
 
 # If install subdirectory is not set, set it to default value

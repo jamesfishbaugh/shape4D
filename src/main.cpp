@@ -12,7 +12,9 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
+#ifdef SLICER_EXTENSION
 #include "shape4DCLP.h"
+#endif
 
 //----------------------------------------------------------------
 // main
@@ -28,6 +30,9 @@
 //----------------------------------------------------------------
 int main(int argc, char *argv[])
 {	
+#ifdef SLICER_EXTENSION
+    PARSE_ARGS;
+#endif
     printf("\n");
 
     // Some testing
@@ -67,14 +72,30 @@ int main(int argc, char *argv[])
 
     double matchValue = firstObject->Matching(secondObject->GetPoints());
 
+    RunExperiment experiment;
     // Check command line arguments
+#ifdef SLICER_EXTENSION
+    if( !(inputXML.empty()^progressFile.empty()) )
+    {
+        printf("Usage:  shape4D --input driver_file.xml    OR\n\
+        shape4D --continue progress_file.exo\n");
+        return 1;
+    }
+    if (!inputXML.empty())
+    {
+        experiment.StartExperiment(argv[1]);
+    }
+    else
+    {
+        experiment.ContinueExperiment(argv[2]);
+    }
+
+#else
     if (argc < 2)
     {
         printf("Usage:  shape4D driver_file.xml    OR\n        shape4D --continue progress_file.exo\n");
         exit(1);
     }
-
-    RunExperiment experiment;
     if (argc == 2)
     {
         experiment.StartExperiment(argv[1]);
@@ -83,6 +104,8 @@ int main(int argc, char *argv[])
     {
         experiment.ContinueExperiment(argv[2]);
     }
+
+#endif
 
     return 0;
 }
