@@ -40,23 +40,13 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
     ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
-    set(_configure_cflags)
-    #
-    # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
-    # used when making a shared object; recompile with -fPIC
-    # See http://www.cmake.org/pipermail/cmake/2007-May/014350.html
-    #
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8) # 64-bit
-      set(_configure_cflags "-fPIC")
-    endif()
-
     # configure step
     set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
     file(WRITE ${_configure_script}
 "include(\"${_env_script}\")
 set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
 ExternalProject_Execute(${proj} \"configure\" sh configure
-  --prefix=${FFTW_build} --with-cflags=${_configure_cflags}
+  --prefix=${FFTW_build}
   --enable-shared --enable-static=no
   )
 ")

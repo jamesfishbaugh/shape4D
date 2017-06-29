@@ -20,15 +20,6 @@ if(NOT FFTW_INCLUDE_DIR OR NOT FFTW_LIBRARIES)
         PATH_SUFFIXES lib
     )
     
-    find_library(
-        FFTWF_LIB
-        NAMES fftw3f
-        HINTS 
-        ${FFTW_ROOT}
-        ENV FFTW_ROOT
-        PATH_SUFFIXES lib
-    )
-    
     #find includes
     find_path(
         FFTW_INCLUDE_DIR
