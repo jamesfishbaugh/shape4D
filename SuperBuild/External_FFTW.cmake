@@ -26,7 +26,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(FFTW_BUILD_COMMAND "")
     set(FFTW_INSTALL_COMMAND "")
 
-
+    set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
     if(WIN32)
         # Assume that Slicer is always built in 64bits on Windows
         set(DOWNLOAD_URL ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip)
@@ -91,7 +91,6 @@ ExternalProject_Execute(${proj} \"install\" make install)
         )
     endif()
     
-    set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
     set(${proj}_BUILD_IN_SOURCE 1)
 
     ExternalProject_Add(${proj}
