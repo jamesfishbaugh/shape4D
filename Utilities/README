@@ -1,0 +1,26 @@
+How to compile fftw
+-------------------
+
+On MacOS:
+Download source code:
+wget http://www.fftw.org/fftw-3.3.6-pl2.tar.gz
+tar -xvzf fftw-3.3.6-pl2.tar.gz
+cd fftw-3.3.6-pl2
+Slicer targets OS 10.6, so we do the same here:
+CFLAGS="-mmacosx-version-min=10.6" ./configure --enable-shared --enable-static=no --enable-threads --prefix `pwd`/fftw-install
+make -j8
+make install
+tar -cvzf fftw-3.3.6-pl2_macOS_10.6.tar.gz fftw-install
+
+Upload file 
+
+NOTES
+-----
+
+Once compiled on MacOS, shape4d will not run without changing the paths/names in fftw3.3.dylib
+It is not a problem as the goal is to package it as an extension for Slicer and Slicer packaging system modifies the library
+paths.
+To manually make the tool work on MacOS, use:
+install_name_tool -change /Users/kitware/Dashboards/Francois/fftw-3.3.6-pl2/fftw-install/lib/libfftw3.3.dylib @executable_path/libfftw3.3.dylib shape4d
+Or
+install_name_tool -id libfftw3.3.dylib libfftw3.3.dylib
