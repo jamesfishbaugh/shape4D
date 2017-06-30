@@ -26,8 +26,8 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(FFTW_BUILD_COMMAND "")
     set(FFTW_INSTALL_COMMAND "")
 
-    set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
-    set(${proj}_ROOT ${CMAKE_BINARY_DIR}/${proj}-build)
+    set(FFTW_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+    set(${proj}_ROOT ${FFTW_SOURCE_DIR})
     
     if(WIN32)
         # Assume that Slicer is always built in 64bits on Windows
@@ -47,6 +47,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
         
     else()
         set(FFTW_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/FFTW)
+        set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
         set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
 
         include(ExternalProjectForNonCMakeProject)
