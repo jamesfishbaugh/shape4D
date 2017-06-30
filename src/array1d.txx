@@ -203,7 +203,7 @@ void Array1D<datatype>::FillArray(datatype* array)
 // Returns the sum of the array elements
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array1D<datatype>::Array1D::Sum()
+datatype Array1D<datatype>::Sum()
 {
     datatype sum = 0;
 

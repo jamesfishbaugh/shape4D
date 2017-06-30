@@ -253,7 +253,7 @@ void Array2D<datatype>::FillArray(datatype** array)
 // Returns the sum of the array elements
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array2D<datatype>::Array2D::Sum()
+datatype Array2D<datatype>::Sum()
 {
     datatype sum = 0;
 

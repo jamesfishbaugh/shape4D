@@ -335,7 +335,7 @@ void Array3D<datatype>::FillArray(datatype*** array)
 // Returns the sum of the array elements
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array3D<datatype>::Array3D::Sum()
+datatype Array3D<datatype>::Sum()
 {
     datatype sum = 0;
 
