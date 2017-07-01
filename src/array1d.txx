@@ -93,7 +93,7 @@ Array1D<datatype>::~Array1D()
 // Returns the size of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array1D<datatype>::GetLength() const
+int Array1D<datatype>::GetLength() const
 {
     return this->_length;
 }

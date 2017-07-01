@@ -110,7 +110,7 @@ Array3D<datatype>::~Array3D()
 // Returns the length of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array3D<datatype>::GetLength() const
+int Array3D<datatype>::GetLength() const
 {
     return this->_length;
 }
@@ -126,7 +126,7 @@ const int Array3D<datatype>::GetLength() const
 // Returns the width of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array3D<datatype>::GetWidth() const
+int Array3D<datatype>::GetWidth() const
 {
     return this->_width;
 }
@@ -142,7 +142,7 @@ const int Array3D<datatype>::GetWidth() const
 // Returns the height of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array3D<datatype>::GetHeight() const
+int Array3D<datatype>::GetHeight() const
 {
     return this->_height;
 }

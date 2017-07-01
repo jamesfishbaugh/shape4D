@@ -100,7 +100,7 @@ Array2D<datatype>::~Array2D()
 // Returns the length of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array2D<datatype>::GetLength() const
+int Array2D<datatype>::GetLength() const
 {
     return this->_length;
 }
@@ -116,7 +116,7 @@ const int Array2D<datatype>::GetLength() const
 // Returns the width of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array2D<datatype>::GetWidth() const
+int Array2D<datatype>::GetWidth() const
 {
     return this->_width;
 }

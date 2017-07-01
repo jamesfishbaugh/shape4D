@@ -53,14 +53,14 @@ class ShapeObject
         // Getters
         //--------------------------------------------------------------------------
 
-        const int GetNumberOfPoints() const;
+        int GetNumberOfPoints() const;
         const Array2D<double> GetPoints() const;
-        const int GetNumberOfEdges() const;
+        int GetNumberOfEdges() const;
         const Array2D<int> GetEdges() const;
-        const double GetSigmaW() const;
-        const double GetTimept() const;
-        const double GetTimeIndex() const;
-        const double GetWeight() const;
+        double GetSigmaW() const;
+        double GetTimept() const;
+        double GetTimeIndex() const;
+        double GetWeight() const;
 
         //--------------------------------------------------------------------------
         // Interface to compute data matching metric and gradient

@@ -431,7 +431,7 @@ const Array2D<double> RegressionParams::GetX() const
 //----------------------------------------------------------------
 // Returns the number of source points
 //----------------------------------------------------------------
-const int RegressionParams::GetNx() const
+int RegressionParams::GetNx() const
 {
     return this->_nx;
 }
@@ -446,7 +446,7 @@ const int RegressionParams::GetNx() const
 //----------------------------------------------------------------
 // Returns the scale of deformation
 //----------------------------------------------------------------
-const double RegressionParams::GetSigmaV() const
+double RegressionParams::GetSigmaV() const
 {
     return this->_sigmaV;
 }
@@ -461,7 +461,7 @@ const double RegressionParams::GetSigmaV() const
 //----------------------------------------------------------------
 // Returns the weight of regularity
 //----------------------------------------------------------------
-const double RegressionParams::GetGamma() const
+double RegressionParams::GetGamma() const
 {
     return this->_gamma;
 }
@@ -476,7 +476,7 @@ const double RegressionParams::GetGamma() const
 //----------------------------------------------------------------
 // Returns stdV
 //----------------------------------------------------------------
-const double RegressionParams::GetStdV() const
+double RegressionParams::GetStdV() const
 {
     return this->_stdV;
 }
@@ -491,7 +491,7 @@ const double RegressionParams::GetStdV() const
 //----------------------------------------------------------------
 // Returns the number of time points in the discretization
 //----------------------------------------------------------------
-const int RegressionParams::GetT() const
+int RegressionParams::GetT() const
 {
     return this->_T;
 }
@@ -521,7 +521,7 @@ const Array1D<double> RegressionParams::GetXTime() const
 //----------------------------------------------------------------
 // Returns true if using an initial velocity, false otherwise
 //----------------------------------------------------------------
-const bool RegressionParams::ShouldUseInitV0() const
+bool RegressionParams::ShouldUseInitV0() const
 {
     return this->_useInitV0;
 }
@@ -536,7 +536,7 @@ const bool RegressionParams::ShouldUseInitV0() const
 //----------------------------------------------------------------
 // Returns true if estimating baseline, false otherwise
 //----------------------------------------------------------------
-const bool RegressionParams::ShouldEstimateBaseline() const
+bool RegressionParams::ShouldEstimateBaseline() const
 {
     return this->_estimateBaseline;
 }
@@ -566,7 +566,7 @@ const char* RegressionParams::GetKernelType() const
 //----------------------------------------------------------------
 // Returns maximum number of iterations for the optimzier
 //----------------------------------------------------------------
-const int RegressionParams::GetMaxIters() const
+int RegressionParams::GetMaxIters() const
 {
     return this->_maxIters;
 }
@@ -581,7 +581,7 @@ const int RegressionParams::GetMaxIters() const
 //----------------------------------------------------------------
 // Returns break ratio for the optimzier
 //----------------------------------------------------------------
-const double RegressionParams::GetBreakRatio() const
+double RegressionParams::GetBreakRatio() const
 {
     return this->_breakRatio;
 }
@@ -611,7 +611,7 @@ const Array2D<double> RegressionParams::GetInitV0() const
 //----------------------------------------------------------------
 // Returns initial velocity
 //----------------------------------------------------------------
-const double RegressionParams::GetV0Weight() const
+double RegressionParams::GetV0Weight() const
 {
     return this->_v0Weight;
 }
@@ -626,7 +626,7 @@ const double RegressionParams::GetV0Weight() const
 //----------------------------------------------------------------
 // Returns true if using FISTA, false otherwise
 //----------------------------------------------------------------
-const bool RegressionParams::ShouldUseFista() const
+bool RegressionParams::ShouldUseFista() const
 {
     return this->_useFista;
 }
@@ -641,7 +641,7 @@ const bool RegressionParams::ShouldUseFista() const
 //----------------------------------------------------------------
 // Returns the baseline shape smoothing factor
 //----------------------------------------------------------------
-const double RegressionParams::GetBaselineSmoothing() const
+double RegressionParams::GetBaselineSmoothing() const
 {
     return this->_baselineSmoothing;
 }

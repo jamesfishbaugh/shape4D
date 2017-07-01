@@ -63,16 +63,16 @@ class TargetData
         // Getters
         //--------------------------------------------------------------------------
 
-        const int GetNy() const;
+        int GetNy() const;
         const Array2D<double> GetY() const;
-        const int GetNvy() const;
+        int GetNvy() const;
         const Array2D<int> GetVy() const;
-        const int GetNvx() const;
+        int GetNvx() const;
         const Array2D<int> GetVx() const;
-        const double GetSigmaW() const;
-        const double GetTimept() const;
-        const double GetTimeIndex() const;
-        const double GetWeight() const;
+        double GetSigmaW() const;
+        double GetTimept() const;
+        double GetTimeIndex() const;
+        double GetWeight() const;
         const char* GetKernelType() const;
         Grid* GetGrid();
         const Grid* GetGrid() const;

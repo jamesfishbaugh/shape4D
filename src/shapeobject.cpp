@@ -174,7 +174,7 @@ void ShapeObject::SetWeight(double weight)
 //----------------------------------------------------------------
 // Returns the number of shape points
 //----------------------------------------------------------------
-const int ShapeObject::GetNumberOfPoints() const
+int ShapeObject::GetNumberOfPoints() const
 {
     return this->_numPoints;
 }
@@ -204,7 +204,7 @@ const Array2D<double> ShapeObject::GetPoints() const
 //----------------------------------------------------------------
 // Returns the number of shape edges
 //----------------------------------------------------------------
-const int ShapeObject::GetNumberOfEdges() const
+int ShapeObject::GetNumberOfEdges() const
 {
     return this->_numEdges;
 }
@@ -234,7 +234,7 @@ const Array2D<int> ShapeObject::GetEdges() const
 //----------------------------------------------------------------
 // Returns the scale of the kernel for shape matching
 //----------------------------------------------------------------
-const double ShapeObject::GetSigmaW() const
+double ShapeObject::GetSigmaW() const
 {
     return this->_sigmaW;
 }
@@ -249,7 +249,7 @@ const double ShapeObject::GetSigmaW() const
 //----------------------------------------------------------------
 // Returns the time corresponding to this shape
 //----------------------------------------------------------------
-const double ShapeObject::GetTimept() const
+double ShapeObject::GetTimept() const
 {
     return this->_timept;
 }
@@ -264,7 +264,7 @@ const double ShapeObject::GetTimept() const
 //----------------------------------------------------------------
 // Returns the index into the time discretization array
 //----------------------------------------------------------------
-const double ShapeObject::GetTimeIndex() const
+double ShapeObject::GetTimeIndex() const
 {
     return this->_timeIndex;
 }
@@ -279,7 +279,7 @@ const double ShapeObject::GetTimeIndex() const
 //----------------------------------------------------------------
 // Returns the weight for this shape
 //----------------------------------------------------------------
-const double ShapeObject::GetWeight() const
+double ShapeObject::GetWeight() const
 {
     return this->_weight;
 }
