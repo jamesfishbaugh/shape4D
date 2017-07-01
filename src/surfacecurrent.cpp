@@ -364,7 +364,7 @@ double SurfaceCurrent::RegScalarProduct(const Array2D<double>& centA, const Arra
 // approximate kernel computations using a grid based method
 //----------------------------------------------------------------
 double SurfaceCurrent::GridScalarProduct(const Array2D<double>& centA, const Array2D<double>& normA,
-                                         const Array2D<double>& centB, const Array2D<double>& normB, double sigmaW2)
+                                         const Array2D<double>& centB, const Array2D<double>& normB, double)
 {
     int numFacesA = centA.GetWidth();
     int numFacesB = centB.GetWidth();

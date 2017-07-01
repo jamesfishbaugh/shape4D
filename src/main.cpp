@@ -67,11 +67,6 @@ int main(int argc, char *argv[])
     multiObject.SetShapeAt(0, newObject);
     multiObject.SetShapeAt(1, anotherObject);
 
-    ShapeObject* firstObject = multiObject.GetShapeAt(0);
-    ShapeObject* secondObject = multiObject.GetShapeAt(1);
-
-    double matchValue = firstObject->Matching(secondObject->GetPoints());
-
     RunExperiment experiment;
     // Check command line arguments
 #ifdef USE_SEM

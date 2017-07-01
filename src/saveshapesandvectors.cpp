@@ -54,8 +54,6 @@ bool SaveShapesAndVectors::SaveRegression(Regression* regression)
     Array3D<double> dX = ((RegressionAcceleration*) regression)->GetVelocity();
     Array3D<double> accel = ((RegressionAcceleration*) regression)->GetAcceleration();
 
-    // Get total number of shape points
-    int nx = (((RegressionAcceleration*) regression)->GetX()).GetWidth();
     // Get number of time points
     int T = (((RegressionAcceleration*) regression)->GetX()).GetHeight();
 
@@ -94,7 +92,7 @@ bool SaveShapesAndVectors::SaveRegression(Regression* regression)
 
             Array2D<int> curTris = _sourceTris[s];
 
-            bool didWrite = writer.WritePointsAndTris(curPts, curTris);
+            writer.WritePointsAndTris(curPts, curTris);
         }
     }
 

@@ -519,7 +519,6 @@ void RunExperiment::StartExperiment(char* pathToFile)
         // Keep track of the sums and individual numbers of pts and tris
         int totalSourcePts = 0;
         int* numSourcePtsArray = new int[numSourceShapes];
-        int totalSourceTris = 0;
         int* numSourceTrisArray = new int[numSourceShapes];
 
         MultiObjectComplex theSource;
@@ -541,7 +540,6 @@ void RunExperiment::StartExperiment(char* pathToFile)
             // Keep track of the number of pts and tris
             totalSourcePts += sourcePts.GetWidth();
             numSourcePtsArray[i] = sourcePts.GetWidth();
-            totalSourceTris = sourceTris.GetWidth();
             numSourceTrisArray[i] = sourceTris.GetWidth();
 
             // Add current arrays to the vectors

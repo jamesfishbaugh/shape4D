@@ -16,13 +16,9 @@
 //----------------------------------------------------------------
 // Default constructor
 //----------------------------------------------------------------
-GridOptimize::GridOptimize(int ncx, double* cx, int ntaux, double* taux, int ncy, double* cy,  int* grid_long, double grid_pas, double* grid_origin, double* fft3k_R)
+GridOptimize::GridOptimize(int, double*, int ntaux, double*, int ncy, double*,  int*, double, double*, double*)
 {
-    int Ndim, N, i, k, nx, ny, nz, nnx, Nin, Nout, c0X, c0Y, c0Z;
-    nx = grid_long[0];
-    ny = grid_long[1];
-    nz = grid_long[2];
-    nnx = (int) (nx/2 + 1);
+    int Ndim, Nout;
     Ndim = ntaux;
     Nout = ncy;
 
@@ -41,7 +37,7 @@ GridOptimize::GridOptimize(int ncx, double* cx, int ntaux, double* taux, int ncy
 //----------------------------------------------------------------
 // Copy constructor
 //----------------------------------------------------------------
-GridOptimize::GridOptimize(const GridOptimize& gridOptim)
+GridOptimize::GridOptimize(const GridOptimize&)
 {
     printf("In EXGridOptimize copy constructor...\n");
 }
