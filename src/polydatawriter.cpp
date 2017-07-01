@@ -3,7 +3,16 @@
 // which writes legacy ascii vtk files
 //--------------------------------------------------------------------------
 
-#include "vtkpolydatawriter.h"
+#include "polydatawriter.h"
+#ifdef USE_VTK
+#include <vtkPolyDataWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+#include <vtkTriangle.h>
+#include <vtkIdList.h>
+#include <vtkCellType.h>
+#endif
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // CONSTRUCTORS
@@ -21,7 +30,11 @@
 //----------------------------------------------------------------
 VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 {
+#ifdef USE_VTK
+    m_FileName = filename;
+#else
     this->_vtkFile = new ofstream(filename);
+#endif
 }
 
 //----------------------------------------------------------------
@@ -35,7 +48,9 @@ VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 //----------------------------------------------------------------
 VTKPolyDataWriter::~VTKPolyDataWriter()
 {
+#ifndef USE_VTK
     delete this->_vtkFile;
+#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -77,6 +92,35 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
 {
     int numPts = pts.GetWidth();
     int numTris = tris.GetWidth();
+    #ifdef USE_VTK
+    vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+    // Convert points and triangles to polydata
+    vtkSmartPointer<vtkPoints> vpts = vtkSmartPointer<vtkPoints>::New();
+    double tmpPts[3];
+    for (int i=0; i<numPts; i++)
+    {
+       tmpPts[0] = pts(0,i);
+       tmpPts[1] = pts(1,i);
+       tmpPts[2] = pts(2,i);
+       vpts->SetPoint(i, tmpPts);
+    }
+    polydata->SetPoints(vpts);
+    // Convert triangles to polydata
+    for (int i=0; i<numTris; i++)
+    {
+         vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+         idList->SetNumberOfIds(3);
+         idList->InsertId(0, tris(0,i));
+         idList->InsertId(1, tris(1,i));
+         idList->InsertId(2, tris(2,i));
+         polydata->InsertNextCell(VTK_TRIANGLE, idList);
+    }
+    // Save polydata
+    vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+    writer->SetFileName(m_FileName.c_str());
+    writer->SetInputData(polydata);
+    writer->Update();
+    #else
     char buffer[100];
 
     if (!this->_vtkFile->is_open())
@@ -142,7 +186,7 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
     }
 
     this->_vtkFile->close();
-
+    #endif
     return true;
 }
 

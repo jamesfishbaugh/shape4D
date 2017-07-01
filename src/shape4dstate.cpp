@@ -1,5 +1,5 @@
 #include "shape4dstate.h"
-#include "vtkpolydatawriter.h"
+#include "polydatawriter.h"
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // STATIC MEMBER VARIABLES

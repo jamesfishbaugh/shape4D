@@ -1,24 +1,21 @@
 //--------------------------------------------------------------------------
-// VTKPolyDataWriter: A simple and lightweight VTKPolyData writer
-// which writes legacy ascii vtk files
+// VTKPolyDataReader: A simple and lightweight VTKPolyData reader
+// which reads legacy ascii vtk files
 //--------------------------------------------------------------------------
 
-#ifndef VTKPOLYDATAWRITER_H
-#define VTKPOLYDATAWRITER_H
+#ifndef VTKPOLYDATAREADER_H
+#define VTKPOLYDATAREADER_H
 
 #include <iostream>
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
-#include <vector>
-#include <string>
 
 #include "array2d.h"
-#include "array3d.h"
 
 using namespace std;
 
-class VTKPolyDataWriter
+class VTKPolyDataReader
 {
 
     private:
@@ -26,32 +23,33 @@ class VTKPolyDataWriter
         //--------------------------------------------------------------------------
         // Private member variables
         //--------------------------------------------------------------------------
+#ifdef USE_VTK
+        string m_FileName;
+#else
+        ifstream* _vtkFile;			// For reading from a file
 
-        ofstream* _vtkFile;		// For writing to a file
 
-        vector<char*> _fieldNames;
-        vector< Array2D<double> > _fields;
+        //--------------------------------------------------------------------------
+        // Helper functions
+        //--------------------------------------------------------------------------
 
+        int GotoKeyword(string keyword);
+#endif
     public:
 
         //--------------------------------------------------------------------------
         // Constructors/Destructors
         //--------------------------------------------------------------------------
 
-        VTKPolyDataWriter(char* filename);
-        ~VTKPolyDataWriter();
+        VTKPolyDataReader(char* filename);
+        ~VTKPolyDataReader();
 
         //--------------------------------------------------------------------------
-        // Add fields
-        //--------------------------------------------------------------------------
-        void AddField(char* fieldName, const Array2D<double>& field);
-
-        //--------------------------------------------------------------------------
-        // Write VTK file
+        // Read VTK file
         //--------------------------------------------------------------------------
 
-        bool WritePointsAndTris(const Array2D<double>& pts, const Array2D<int>& tris);
+        bool ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tris);
 
 };
 
-#endif // VTKPOLYDATAWRITER_H
+#endif // VTKPOLYDATAREADER_H

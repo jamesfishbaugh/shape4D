@@ -2,7 +2,7 @@
 
 #include "saveshapesandvectors.h"
 #include "regressionacceleration.h"
-#include "vtkpolydatawriter.h"
+#include "polydatawriter.h"
 
 int SaveShapesAndVectors::_numSourceShapes = 0;
 int* SaveShapesAndVectors::_numSourcePtsArray = 0;

@@ -8,6 +8,8 @@
 #include <vector>			// For vector
 #include <stdlib.h>			// For file paths
 #include <sys/stat.h>       // For checking if a directory exists
+#include <string>
+#include <fstream>
 
 // Data structures
 #include "array1d.h"
@@ -15,8 +17,8 @@
 
 // File IO
 #include "tinyxml.h"
-#include "vtkpolydatareader.h"
-#include "vtkpolydatawriter.h"
+#include "polydatareader.h"
+#include "polydatawriter.h"
 #include "shape4dstate.h"
 
 // Data for regression
@@ -36,8 +38,9 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
-//#define realpath(N,R) _fullpath((R),(N),260)
-
+#ifdef _MSC_VER
+#define realpath(N,R) _fullpath((R),(N),260)
+#endif
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // CONSTRUCTORS
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -528,7 +531,6 @@ void RunExperiment::StartExperiment(char* pathToFile)
             Array2D<int> sourceTris;
             VTKPolyDataReader sourceReader(sourcePathArray[i]);
             bool didReadSource = sourceReader.ReadPointsAndTris(sourcePts, sourceTris);
-
             // Did we fail to read the data file
             if (!didReadSource)
             {
@@ -734,10 +736,8 @@ void RunExperiment::StartExperiment(char* pathToFile)
             // Read the target data
             Array2D<double> targetPts;
             Array2D<int> targetTris;
-
             VTKPolyDataReader targetReader(targetDataPath);
             bool didReadTarget = targetReader.ReadPointsAndTris(targetPts, targetTris);
-
             //printf("Num points = %d\n", targetTris.GetWidth());
 
             // Did we fail to read the data file
@@ -1225,10 +1225,10 @@ void RunExperiment::ContinueExperiment(char* pathToFile)
 {
     this->_continueExp = true;
 
-    string line;
+    std::string line;
     char* charLine;
 
-    ifstream exoFile(pathToFile);
+    std::ifstream exoFile(pathToFile);
 
     // Get the version
     char* version;

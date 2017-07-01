@@ -3,8 +3,15 @@
 // which reads legacy ascii vtk files
 //--------------------------------------------------------------------------
 
-#include "vtkpolydatareader.h"
+#include "polydatareader.h"
 #include "helper.h"
+
+#ifdef USE_VTK
+#include <vtkPolyDataReader.h>
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+#include <vtkPoints.h>
+#endif
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // CONSTRUCTORS
@@ -22,7 +29,11 @@
 //----------------------------------------------------------------
 VTKPolyDataReader::VTKPolyDataReader(char* filename)
 {
+#ifdef USE_VTK
+m_FileName = filename ;
+#else
     this->_vtkFile = new ifstream(filename);
+#endif
 }
 
 //----------------------------------------------------------------
@@ -36,7 +47,9 @@ VTKPolyDataReader::VTKPolyDataReader(char* filename)
 //----------------------------------------------------------------
 VTKPolyDataReader::~VTKPolyDataReader()
 {
+#ifndef USE_VTK
     delete this->_vtkFile;
+#endif
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -56,6 +69,7 @@ VTKPolyDataReader::~VTKPolyDataReader()
 // Returns the absolute position of the keyword in the file or
 // -1 if the keyword is not found
 //----------------------------------------------------------------
+#ifndef USE_VTK
 int VTKPolyDataReader::GotoKeyword(string keyword)
 {
     int kewordLocation = -1;
@@ -81,7 +95,7 @@ int VTKPolyDataReader::GotoKeyword(string keyword)
 
     return kewordLocation;
 }
-
+#endif
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 // READ VTK FILE
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,6 +116,44 @@ int VTKPolyDataReader::GotoKeyword(string keyword)
 //----------------------------------------------------------------
 bool VTKPolyDataReader::ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tris)
 {
+#ifdef USE_VTK
+    vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
+    reader->SetFileName(m_FileName.c_str());
+    reader->Update();
+    vtkPolyData* polydata = reader->GetOutput();
+    if(!polydata)
+    {
+      return false;
+    }
+    vtkPoints* readerPoints = polydata->GetPoints();
+    Array2D<double> tmpPts(3, polydata->GetNumberOfPoints() );
+    double lpts[3];
+    for(unsigned int j=0; j < polydata->GetNumberOfPoints() ; j++)
+    {
+        readerPoints->GetPoint(j, lpts);
+        pts(0,j) = lpts[0];
+        pts(1,j) = lpts[1];
+        pts(2,j) = lpts[2];
+    }
+    Array2D<int> tmpTris(3,polydata->GetNumberOfCells());
+    vtkCell* cell;
+    vtkIdList* ptsId;
+    for(unsigned int j=0; j < polydata->GetNumberOfCells() ; j++)
+    {
+        cell = polydata->GetCell(j);
+        if(cell->GetNumberOfPoints() != 3)
+        {
+            printf("***ERROR*** All cells must be triangles.");
+            exit(1);
+        }
+        ptsId = cell->GetPointIds();
+        tris(0,j) = ptsId->GetId(0);
+        tris(1,j) = ptsId->GetId(1);
+        tris(2,j) = ptsId->GetId(2);
+    }
+    pts = tmpPts;
+    tris = tmpTris;
+#else
     string line;
     char* charLine;
 
@@ -193,6 +245,6 @@ bool VTKPolyDataReader::ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tr
 
     // Clear up memory
     delete [] charLine;
-
+#endif
     return true;
 }

@@ -2,27 +2,24 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(shape4D)
 
+if(EXTENSION_SUPERBUILD_BINARY_DIR)
+  find_package(Slicer REQUIRED)
+  include(${Slicer_USE_FILE})
+endif()
+
 # External dependencies
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH} )
 
+option(USE_VTK "Use VTK instead of built-in vtk polydata reader/writer" OFF)
+option(USE_SEM "Use SlicerExecutionModel as CLI" OFF)
+
 find_package (FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
-
-#set (CMAKE_CXX_FLAGS "-fopenmp")
-
-#find_package(MPI REQUIRED)
-
-#SET(CMAKE_C_COMPILER mpicc)
-#SET(CMAKE_CXX_COMPILER mpicxx)
-
-#set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-#set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
 
 # Include directories
 include_directories(
   include/
   src/
-  #${MPI_INCLUDE_PATH}
 )
 
 FILE(GLOB_RECURSE shape4D_INCLUDE "include/*.h")
@@ -51,8 +48,8 @@ set(shape4D_SOURCE
    src/tmplandmark.cpp
    src/tmpsurfacecurrent.cpp
    src/multiobjectcomplex.cpp
-   src/vtkpolydatareader.cpp
-   src/vtkpolydatawriter.cpp
+   src/polydatareader.cpp
+   src/polydatawriter.cpp
    src/tinystr.cpp
    src/tinyxml.cpp
    src/tinyxmlerror.cpp
@@ -60,21 +57,31 @@ set(shape4D_SOURCE
    src/main.cpp
 )
 
-if(Slicer_DIR)
+if(USE_SEM)
+  add_definitions("-DUSE_SEM")
   # Build a Slicer CLI for Slicer
   find_package(SlicerExecutionModel REQUIRED)
   include(${SlicerExecutionModel_USE_FILE})
+endif()
+
+if(USE_VTK)
+    add_definitions("-DUSE_VTK")
+    find_package(VTK REQUIRED)
+    include(${VTK_USE_FILE})
+endif()
+
+if(USE_SEM)
+  add_definitions("-DUSE_SEM")
   SEMMacroBuildCLI(
     NAME ${PROJECT_NAME}
     ADDITIONAL_SRCS ${shape4D_SOURCE}
-    TARGET_LIBRARIES ${FFTW_LIBRARIES}
+    TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
     INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
   )
-  target_compile_definitions(shape4DLib PRIVATE "-DSLICER_EXTENSION")
 else()
   # Build an independent executable without any dependency if outside of Slicer
   add_executable(shape4D ${shape4D_SOURCE})
-  target_link_libraries(shape4D ${FFTW_LIBRARIES})
+  target_link_libraries(shape4D ${FFTW_LIBRARIES} ${VTK_LIBRARIES})
 endif()
 
 add_custom_target(include SOURCES ${shape4D_INCLUDE})
