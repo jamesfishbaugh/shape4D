@@ -51,7 +51,7 @@ ExternalProject_Execute(${proj} \"build\" \"${_vs_bin_path}/lib.exe\" /machine:x
 ")
         set(FFTW_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
         
-        set(INSTALL_LIBRARIES
+        set(FFTW_INSTALL_LIBRARIES
             ${${proj}_ROOT}/libfftw3-3.dll
             ${${proj}_ROOT}/libfftw3-3.lib
         )
@@ -59,7 +59,7 @@ ExternalProject_Execute(${proj} \"build\" \"${_vs_bin_path}/lib.exe\" /machine:x
         # See Utilies/README to generate this package
         set(DOWNLOAD_URL "http://slicer.kitware.com/midas3/download/?items=296662,1")
         
-        set(INSTALL_LIBRARIES
+        set(FFTW_INSTALL_LIBRARIES
             ${${proj}_ROOT}/lib/libfftw3.3.dylib
             ${${proj}_ROOT}/lib/libfftw3.dylib
             ${${proj}_ROOT}/lib/libfftw3.la
@@ -101,7 +101,7 @@ ExternalProject_Execute(${proj} \"install\" make install)
         set(FFTW_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
         set(FFTW_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script})
 
-        set(INSTALL_LIBRARIES
+        set(FFTW_INSTALL_LIBRARIES
             ${${proj}_ROOT}/lib/libfftw3.so
             ${${proj}_ROOT}/lib/libfftw3.so.3
             ${${proj}_ROOT}/lib/libfftw3.so.3.5.6
@@ -127,3 +127,4 @@ else()
 endif()
 
 mark_as_superbuild(${proj}_ROOT:PATH)
+mark_as_superbuild(FFTW_INSTALL_LIBRARIES:STRING)

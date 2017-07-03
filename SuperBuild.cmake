@@ -1,4 +1,3 @@
-
 #-----------------------------------------------------------------------------
 # Git protocol option
 #-----------------------------------------------------------------------------
@@ -12,13 +11,18 @@ endif()
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
 #-----------------------------------------------------------------------------
-
 set(ep_common_c_flags "${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS}")
 set(ep_common_cxx_flags "${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS}")
 
 #-----------------------------------------------------------------------------
 # Project dependencies
 #-----------------------------------------------------------------------------
+find_package(Slicer REQUIRED)
+include(${Slicer_USE_FILE})
+mark_as_superbuild(Slicer_DIR)
+
+find_package(Git REQUIRED)
+mark_as_superbuild(GIT_EXECUTABLE)
 
 include(ExternalProject)
 
@@ -29,15 +33,33 @@ endforeach()
 set(proj ${SUPERBUILD_TOPLEVEL_PROJECT})
 list(APPEND ${proj}_DEPENDS FFTW)
 
+#-----------------------------------------------------------------------------
+# Slicer extension
+#-----------------------------------------------------------------------------
+if(shape4D_BUILD_SLICER_EXTENSION)
+  # The inner-build needs to know this to run 'make Experimental' from
+  # the inner-build folder (packaging is done in inner-build).
+  set(EXTENSION_SUPERBUILD_BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR})
+  mark_as_superbuild(EXTENSION_SUPERBUILD_BINARY_DIR)
+  # Inside the inner-build, we need to know if we are building a Slicer extension
+  # to know if we define the CMake `EXTENSION_*` variables.
+  mark_as_superbuild(${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL)
+endif()
+
+#-----------------------------------------------------------------------------
+# Set superbuild CMake variables
+#-----------------------------------------------------------------------------
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
   SUPERBUILD_VAR ${EXTENSION_NAME}_SUPERBUILD
   )
 
+#-----------------------------------------------------------------------------
+# Superbuild
+#-----------------------------------------------------------------------------
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   DOWNLOAD_COMMAND ""
-  INSTALL_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${EXTENSION_BUILD_SUBDIRECTORY}
   BUILD_ALWAYS 1
@@ -50,19 +72,13 @@ ExternalProject_Add(${proj}
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     -DCMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
-    -DINSTALL_RUNTIME_DEST:STRING=${Slicer_INSTALL_CLIMODULES_BIN_DIR}
-    -D${EXTENSION_NAME}_SUPERBUILD:BOOL=OFF
-    -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${EXTENSION_NAME}_BINARY_DIR}
+    # Do not forget to deactivate "Superbuild" inside "inner-build"
+    -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
+    # We need to use Slicer to use `ExternalProject_Include_Dependencies()`
+    # so we might as well use VTK and SEM
     -DUSE_VTK:BOOL=ON
     -DUSE_SEM:BOOL=ON
+  INSTALL_COMMAND ""
   DEPENDS
     ${${proj}_DEPENDS}
   )
-  
-# Slicer extension packaging
-if(Slicer_EXTENSION_CPACK)
-  install(FILES ${INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_LIB_DIR})
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${EXTENSION_BUILD_SUBDIRECTORY};${EXTENSION_NAME};ALL;/")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CMAKE_BINARY_DIR};${EXTENSION_NAME};ALL;/")
-  include(${Slicer_EXTENSION_CPACK})
-endif()
