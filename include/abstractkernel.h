@@ -1,0 +1,5 @@
+#ifndef ABSTRACTKERNEL_H
+#define ABSTRACTKERNEL_H
+
+#endif // ABSTRACTKERNEL_H
+
