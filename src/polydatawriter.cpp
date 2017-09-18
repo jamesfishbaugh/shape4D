@@ -96,25 +96,28 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
     vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
     // Convert points and triangles to polydata
     vtkSmartPointer<vtkPoints> vpts = vtkSmartPointer<vtkPoints>::New();
+    vpts->SetNumberOfPoints(numPts);
     double tmpPts[3];
-    for (int i=0; i<numPts; i++)
+    for (vtkIdType i=0; i<numPts; i++)
     {
        tmpPts[0] = pts(0,i);
        tmpPts[1] = pts(1,i);
        tmpPts[2] = pts(2,i);
-       vpts->SetPoint(i, tmpPts);
+       vpts->SetPoint(i, tmpPts[0], tmpPts[1], tmpPts[2]);
     }
     polydata->SetPoints(vpts);
+
     // Convert triangles to polydata
-    for (int i=0; i<numTris; i++)
+    vtkSmartPointer<vtkCellArray> polys = vtkSmartPointer<vtkCellArray>::New();
+    for (vtkIdType i=0; i<numTris; i++)
     {
-         vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-         idList->SetNumberOfIds(3);
-         idList->InsertId(0, tris(0,i));
-         idList->InsertId(1, tris(1,i));
-         idList->InsertId(2, tris(2,i));
-         polydata->InsertNextCell(VTK_TRIANGLE, idList);
+         polys->InsertNextCell(3);
+         polys->InsertCellPoint(tris(0,i));
+         polys->InsertCellPoint(tris(1,i));
+         polys->InsertCellPoint(tris(2,i));
     }
+    polydata->SetPolys(polys);
+
     // Save polydata
     vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
     writer->SetFileName(m_FileName.c_str());

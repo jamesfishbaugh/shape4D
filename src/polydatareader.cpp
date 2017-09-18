@@ -128,16 +128,19 @@ bool VTKPolyDataReader::ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tr
     vtkPoints* readerPoints = polydata->GetPoints();
     Array2D<double> tmpPts(3, polydata->GetNumberOfPoints() );
     double lpts[3];
+
     for(unsigned int j=0; j < polydata->GetNumberOfPoints() ; j++)
     {
         readerPoints->GetPoint(j, lpts);
-        pts(0,j) = lpts[0];
-        pts(1,j) = lpts[1];
-        pts(2,j) = lpts[2];
+        tmpPts(0,j) = lpts[0];
+        tmpPts(1,j) = lpts[1];
+        tmpPts(2,j) = lpts[2];
     }
+
     Array2D<int> tmpTris(3,polydata->GetNumberOfCells());
     vtkCell* cell;
     vtkIdList* ptsId;
+
     for(unsigned int j=0; j < polydata->GetNumberOfCells() ; j++)
     {
         cell = polydata->GetCell(j);
@@ -147,12 +150,13 @@ bool VTKPolyDataReader::ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tr
             exit(1);
         }
         ptsId = cell->GetPointIds();
-        tris(0,j) = ptsId->GetId(0);
-        tris(1,j) = ptsId->GetId(1);
-        tris(2,j) = ptsId->GetId(2);
+        tmpTris(0,j) = ptsId->GetId(0);
+        tmpTris(1,j) = ptsId->GetId(1);
+        tmpTris(2,j) = ptsId->GetId(2);
     }
     pts = tmpPts;
     tris = tmpTris;
+
 #else
     string line;
     char* charLine;

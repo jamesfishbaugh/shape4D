@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     }
     if (!inputXML.empty())
     {
-        experiment.StartExperiment(argv[1]);
+        experiment.StartExperiment(argv[2]);
     }
     else
     {

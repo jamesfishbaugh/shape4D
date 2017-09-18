@@ -28,7 +28,6 @@ class Optimizer
 
         // Interface for user of class to start the optimization
         virtual void Optimize(Array3D<double>& X) = 0;
-        virtual ~Optimizer() {};
 };
 
 #endif // OPTIMIZER_H

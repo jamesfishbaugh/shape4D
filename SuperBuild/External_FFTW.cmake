@@ -29,13 +29,13 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(${proj}_ROOT ${FFTW_SOURCE_DIR})
     
     # Needed to generate and run the configure/build/install scripts
-    include(ExternalProjectForNonCMakeProject)
+    include(ExternalProjectForNonCMakeProject RESULT_VARIABLE ExternalProjectForNonCMakeProject_path)
 
     # environment
     set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
     ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
-    
-    if(WIN32)
+
+    if(WIN32) #Windows
         # Assume that Slicer is always built in 64bits on Windows
         set(DOWNLOAD_URL ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip)
         # We need to create libfftw3-3.lib that is not included in the zip file
@@ -55,26 +55,18 @@ ExternalProject_Execute(${proj} \"build\" \"${_vs_bin_path}/lib.exe\" /machine:x
             ${${proj}_ROOT}/libfftw3-3.dll
             ${${proj}_ROOT}/libfftw3-3.lib
         )
-    elseif(APPLE)
-        # See Utilies/README to generate this package
-        set(DOWNLOAD_URL "http://slicer.kitware.com/midas3/download/?items=296662,1")
-        
-        set(FFTW_INSTALL_LIBRARIES
-            ${${proj}_ROOT}/lib/libfftw3.3.dylib
-            ${${proj}_ROOT}/lib/libfftw3.dylib
-            ${${proj}_ROOT}/lib/libfftw3.la
-        )
-        set(FFTW_BUILD_COMMAND "")
-    else()
+
+    else() # Linux or MAC
         set(FFTW_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/FFTW)
         set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
         set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
-    
+
         # configure step
         set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
         file(WRITE ${_configure_script}
-"include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
+"include(${ExternalProjectForNonCMakeProject_path})
+set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR})
+set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
 ExternalProject_Execute(${proj} \"configure\" sh configure
   --prefix=${FFTW_build}
   --enable-shared --enable-static=no
@@ -101,11 +93,32 @@ ExternalProject_Execute(${proj} \"install\" make install)
         set(FFTW_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
         set(FFTW_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script})
 
-        set(FFTW_INSTALL_LIBRARIES
-            ${${proj}_ROOT}/lib/libfftw3.so
-            ${${proj}_ROOT}/lib/libfftw3.so.3
-            ${${proj}_ROOT}/lib/libfftw3.so.3.5.6
-        )
+
+	if(APPLE)
+
+        	set(FFTW_INSTALL_LIBRARIES
+            	  ${FFTW_ROOT}/lib/libfftw3.3.dylib
+            	  ${FFTW_ROOT}/lib/libfftw3.dylib
+            	  ${FFTW_ROOT}/lib/libfftw3.la
+        	)
+
+		set(FFTW_LIB
+	    	  ${FFTW_ROOT}/lib/libfftw3.dylib)
+
+	else()
+        	set(FFTW_INSTALL_LIBRARIES
+            	  ${FFTW_ROOT}/lib/libfftw3.so
+            	  ${FFTW_ROOT}/lib/libfftw3.so.3
+            	  ${FFTW_ROOT}/lib/libfftw3.so.3.5.6
+        	)
+
+		set(FFTW_LIB
+	    	  ${FFTW_ROOT}/lib/libfftw3.so)
+
+	endif()
+
+	set(FFTW_INCLUDE_DIR 
+	    ${FFTW_ROOT}/include)
     endif()
     
     set(${proj}_BUILD_IN_SOURCE 1)
@@ -128,3 +141,5 @@ endif()
 
 mark_as_superbuild(${proj}_ROOT:PATH)
 mark_as_superbuild(FFTW_INSTALL_LIBRARIES:STRING)
+mark_as_superbuild(FFTW_INCLUDE_DIR:STRING)
+mark_as_superbuild(FFTW_LIB:STRING)
