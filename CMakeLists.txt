@@ -23,8 +23,8 @@ if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   set(EXTENSION_SCREENSHOTURLS "http://www.example.com/Slicer/Extensions/shape4D/Screenshots/1.png")
   # Required in Superbuild.cmake
   set(EXTENSION_DEPENDS "NA") # Specified as a space separated string, a list or 'NA' if any
-  set(SUPERBUILD_TOPLEVEL_PROJECT inner)
-  set(EXTENSION_BUILD_SUBDIRECTORY inner-build) # Required for packaging purposes
+  set(SUPERBUILD_TOPLEVEL_PROJECT ${PROJECT_NAME})
+  set(EXTENSION_BUILD_SUBDIRECTORY ${PROJECT_NAME}-build) # Required for packaging purposes
 endif()
 
 #-----------------------------------------------------------------------------
@@ -40,6 +40,6 @@ if(${PROJECT_NAME}_SUPERBUILD)
 endif()
 
 #-----------------------------------------------------------------------------
-# Inner-build
+# Shape4D-build
 #-----------------------------------------------------------------------------
-include("${CMAKE_CURRENT_SOURCE_DIR}/Inner.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.cmake")

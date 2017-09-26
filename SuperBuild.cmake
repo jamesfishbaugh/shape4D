@@ -37,11 +37,11 @@ list(APPEND ${proj}_DEPENDS FFTW)
 # Slicer extension
 #-----------------------------------------------------------------------------
 if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
-  # The inner-build needs to know this to run 'make Experimental' from
-  # the inner-build folder (packaging is done in inner-build).
+  # The inner build needs to know this to run 'make Experimental' from
+  # the shape4D-build folder (packaging is done in shape4D-build).
   set(EXTENSION_SUPERBUILD_BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR})
   mark_as_superbuild(EXTENSION_SUPERBUILD_BINARY_DIR)
-  # Inside the inner-build, we need to know if we are building a Slicer extension
+  # Inside the shape4D-build, we need to know if we are building a Slicer extension
   # to know if we define the CMake `EXTENSION_*` variables.
   mark_as_superbuild(${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL)
 endif()
@@ -72,7 +72,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     -DCMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
-    # Do not forget to deactivate "Superbuild" inside "inner-build"
+    # Do not forget to deactivate "Superbuild" inside “shape4D-build"
     -D${PROJECT_NAME}_SUPERBUILD:BOOL=OFF
     # We need to use Slicer to use `ExternalProject_Include_Dependencies()`
     # so we might as well use VTK and SEM
