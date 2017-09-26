@@ -46,9 +46,9 @@ include_directories(
   src/
   )
 
-FILE(GLOB_RECURSE shape4D_INCLUDE "include/*.h")
+FILE(GLOB_RECURSE ${PROJECT_NAME}_INCLUDE "include/*.h")
 
-set(shape4D_SOURCE
+set(${PROJECT_NAME}_SOURCE
   src/array1d.txx
   src/array2d.txx
   src/array3d.txx
@@ -86,18 +86,18 @@ if(USE_SEM)
   add_definitions("-DUSE_SEM")
   SEMMacroBuildCLI(
     NAME ${PROJECT_NAME}
-    ADDITIONAL_SRCS ${shape4D_SOURCE}
+    ADDITIONAL_SRCS ${${PROJECT_NAME}_SOURCE}
     TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
     INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     )
 else()
   # Build an independent executable
-  add_executable(shape4D ${shape4D_SOURCE})
-  target_link_libraries(shape4D ${FFTW_LIBRARIES} ${VTK_LIBRARIES})
+  add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCE})
+  target_link_libraries(${PROJECT_NAME} ${FFTW_LIBRARIES} ${VTK_LIBRARIES})
 endif()
 
 # Show header files in IDE
-add_custom_target(include SOURCES ${shape4D_INCLUDE})
+add_custom_target(include SOURCES ${${PROJECT_NAME}_INCLUDE})
 
 #-----------------------------------------------------------------------------
 # Tests

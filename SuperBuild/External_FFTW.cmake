@@ -12,7 +12,7 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 endif()
 
 # Sanity checks
-if(DEFINED FFTW_DIR AND NOT EXISTS ${FFTW_DIR})
+if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
   message(FATAL_ERROR "FFTW_DIR variable is defined but corresponds to nonexistent directory")
 endif()
 
@@ -22,11 +22,11 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
         set(git_protocol "git")
     endif()
 
-    set(FFTW_CONFIGURE_COMMAND "")
-    set(FFTW_INSTALL_COMMAND "")
+    set(${proj}_CONFIGURE_COMMAND "")
+    set(${proj}_INSTALL_COMMAND "")
 
-    set(FFTW_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-    set(${proj}_ROOT ${FFTW_SOURCE_DIR})
+    set(${proj}_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
+    set(${proj}_ROOT ${${proj}_SOURCE_DIR})
     
     # Needed to generate and run the configure/build/install scripts
     include(ExternalProjectForNonCMakeProject RESULT_VARIABLE ExternalProjectForNonCMakeProject_path)
@@ -45,80 +45,80 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
         # build step
         set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
         file(WRITE ${_build_script}
-"include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
-ExternalProject_Execute(${proj} \"build\" \"${_vs_bin_path}/lib.exe\" /machine:x64 /def:libfftw3-3.def)
-")
-        set(FFTW_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
+		"include(\"${_env_script}\")
+		set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
+		ExternalProject_Execute(${proj} \"build\" \"${_vs_bin_path}/lib.exe\" /machine:x64 /def:libfftw3-3.def)
+	")
+        set(${proj}_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
         
-        set(FFTW_INSTALL_LIBRARIES
+        set(${proj}_INSTALL_LIBRARIES
             ${${proj}_ROOT}/libfftw3-3.dll
             ${${proj}_ROOT}/libfftw3-3.lib
         )
 
     else() # Linux or MAC
-        set(FFTW_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/FFTW)
-        set(FFTW_build ${CMAKE_CURRENT_BINARY_DIR}/FFTW-build)
+        set(${proj}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
+        set(${proj}_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
         set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
 
         # configure step
         set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
         file(WRITE ${_configure_script}
-"include(${ExternalProjectForNonCMakeProject_path})
-set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR})
-set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
-ExternalProject_Execute(${proj} \"configure\" sh configure
-  --prefix=${FFTW_build}
-  --enable-shared --enable-static=no
-  )
-")
+		"include(${ExternalProjectForNonCMakeProject_path})
+		set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR})
+		set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
+		ExternalProject_Execute(${proj} \"configure\" sh configure
+		  --prefix=${${proj}_build}
+		  --enable-shared --enable-static=no
+		  )
+	")
 
         # build step
         set(_build_script ${CMAKE_BINARY_DIR}/${proj}_build_step.cmake)
         file(WRITE ${_build_script}
-"include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
-ExternalProject_Execute(${proj} \"build\" make)
-")
+		"include(\"${_env_script}\")
+		set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
+		ExternalProject_Execute(${proj} \"build\" make)
+	")
 
         # install step
         set(_install_script ${CMAKE_BINARY_DIR}/${proj}_install_step.cmake)
         file(WRITE ${_install_script}
-"include(\"${_env_script}\")
-set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
-ExternalProject_Execute(${proj} \"install\" make install)
-")
+		"include(\"${_env_script}\")
+		set(${proj}_WORKING_DIR \"${FFTW_SOURCE_DIR}\")
+		ExternalProject_Execute(${proj} \"install\" make install)
+	")
 
-        set(FFTW_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script})
-        set(FFTW_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
-        set(FFTW_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script})
+        set(${proj}_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${_configure_script})
+        set(${proj}_BUILD_COMMAND ${CMAKE_COMMAND} -P ${_build_script})
+        set(${proj}_INSTALL_COMMAND ${CMAKE_COMMAND} -P ${_install_script})
 
 
 	if(APPLE)
 
-        	set(FFTW_INSTALL_LIBRARIES
-            	  ${FFTW_ROOT}/lib/libfftw3.3.dylib
-            	  ${FFTW_ROOT}/lib/libfftw3.dylib
-            	  ${FFTW_ROOT}/lib/libfftw3.la
+        	set(${proj}_INSTALL_LIBRARIES
+            	  ${${proj}_ROOT}/lib/libfftw3.3.dylib
+            	  ${${proj}_ROOT}/lib/libfftw3.dylib
+            	  ${${proj}_ROOT}/lib/libfftw3.la
         	)
 
-		set(FFTW_LIB
-	    	  ${FFTW_ROOT}/lib/libfftw3.dylib)
+		set(${proj}_LIB
+	    	  ${${proj}_ROOT}/lib/libfftw3.dylib)
 
 	else()
-        	set(FFTW_INSTALL_LIBRARIES
-            	  ${FFTW_ROOT}/lib/libfftw3.so
-            	  ${FFTW_ROOT}/lib/libfftw3.so.3
-            	  ${FFTW_ROOT}/lib/libfftw3.so.3.5.6
+        	set(${proj}_INSTALL_LIBRARIES
+            	  ${${proj}_ROOT}/lib/libfftw3.so
+            	  ${${proj}_ROOT}/lib/libfftw3.so.3
+            	  ${${proj}_ROOT}/lib/libfftw3.so.3.5.6
         	)
 
-		set(FFTW_LIB
-	    	  ${FFTW_ROOT}/lib/libfftw3.so)
+		set(${proj}_LIB
+	    	  ${${proj}_ROOT}/lib/libfftw3.so)
 
 	endif()
 
-	set(FFTW_INCLUDE_DIR 
-	    ${FFTW_ROOT}/include)
+	set(${proj}_INCLUDE_DIR 
+	    ${${proj}_ROOT}/include)
     endif()
     
     set(${proj}_BUILD_IN_SOURCE 1)
@@ -127,11 +127,11 @@ ExternalProject_Execute(${proj} \"install\" make install)
         ${${proj}_EP_ARGS}
         URL ${DOWNLOAD_URL}
         UPDATE_COMMAND "" # Disable update
-        SOURCE_DIR ${FFTW_SOURCE_DIR}
-        BUILD_IN_SOURCE ${FFTW_BUILD_IN_SOURCE}
-        CONFIGURE_COMMAND "${FFTW_CONFIGURE_COMMAND}"
-        BUILD_COMMAND "${FFTW_BUILD_COMMAND}"
-        INSTALL_COMMAND "${FFTW_INSTALL_COMMAND}"
+        SOURCE_DIR ${${proj}_SOURCE_DIR}
+        BUILD_IN_SOURCE ${${proj}_BUILD_IN_SOURCE}
+        CONFIGURE_COMMAND "${${proj}_CONFIGURE_COMMAND}"
+        BUILD_COMMAND "${${proj}_BUILD_COMMAND}"
+        INSTALL_COMMAND "${${proj}_INSTALL_COMMAND}"
         DEPENDS
           ${${proj}_DEPENDS}
     )
@@ -140,6 +140,6 @@ else()
 endif()
 
 mark_as_superbuild(${proj}_ROOT:PATH)
-mark_as_superbuild(FFTW_INSTALL_LIBRARIES:STRING)
-mark_as_superbuild(FFTW_INCLUDE_DIR:STRING)
-mark_as_superbuild(FFTW_LIB:STRING)
+mark_as_superbuild(${proj}_INSTALL_LIBRARIES:STRING)
+mark_as_superbuild(${proj}_INCLUDE_DIR:STRING)
+mark_as_superbuild(${proj}_LIB:STRING)

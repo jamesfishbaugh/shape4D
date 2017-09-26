@@ -8,11 +8,11 @@ project(shape4D)
 
 # Superbuild is automatically set to ON in the outer-build if shape4D is built
 # as a Slicer extension.
-if(shape4D_BUILD_SLICER_EXTENSION AND NOT EXTENSION_SUPERBUILD_BINARY_DIR)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION AND NOT EXTENSION_SUPERBUILD_BINARY_DIR)
   set(${PROJECT_NAME}_SUPERBUILD ON CACHE BOOL "Build ${PROJECT_NAME} and the projects it depends on.")
 endif()
 
-if(shape4D_BUILD_SLICER_EXTENSION)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   #-----------------------------------------------------------------------------
   # Extension meta-information
   set(EXTENSION_HOMEPAGE "http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/shape4D")

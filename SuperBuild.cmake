@@ -36,7 +36,7 @@ list(APPEND ${proj}_DEPENDS FFTW)
 #-----------------------------------------------------------------------------
 # Slicer extension
 #-----------------------------------------------------------------------------
-if(shape4D_BUILD_SLICER_EXTENSION)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   # The inner-build needs to know this to run 'make Experimental' from
   # the inner-build folder (packaging is done in inner-build).
   set(EXTENSION_SUPERBUILD_BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR})
