@@ -68,7 +68,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(CMAKE_BINARY_DIR ${CMAKE_BINARY_DIR})
 		set(${proj}_WORKING_DIR \"${${proj}_SOURCE_DIR}\")
 		ExternalProject_Execute(${proj} \"configure\" sh configure
-		  --prefix=${${proj}_build}
+		  --prefix=${${proj}_build} --libdir=${${proj}_build}/${Slicer_THIRDPARTY_LIB_DIR}
 		  --enable-shared --enable-static=no
 		  )
 	")
@@ -96,14 +96,9 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 	if(APPLE)
 
-        	set(${proj}_INSTALL_LIBRARIES
-            	  ${${proj}_ROOT}/lib/libfftw3.3.dylib
-            	  ${${proj}_ROOT}/lib/libfftw3.dylib
-            	  ${${proj}_ROOT}/lib/libfftw3.la
-        	)
-
 		set(${proj}_LIB
-	    	  ${${proj}_ROOT}/lib/libfftw3.dylib)
+      ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.dylib
+      )
 
 	else()
         	set(${proj}_INSTALL_LIBRARIES
