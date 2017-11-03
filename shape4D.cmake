@@ -46,7 +46,7 @@ include_directories(
   src/
   )
 
-FILE(GLOB_RECURSE ${PROJECT_NAME}_INCLUDE "include/*.h")
+file(GLOB_RECURSE ${PROJECT_NAME}_INCLUDE "include/*.h")
 
 set(${PROJECT_NAME}_SOURCE
   src/array1d.txx
