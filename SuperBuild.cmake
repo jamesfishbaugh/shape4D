@@ -62,7 +62,6 @@ ExternalProject_Add(${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
   BINARY_DIR ${EXTENSION_BUILD_SUBDIRECTORY}
-  BUILD_ALWAYS 1
   CMAKE_CACHE_ARGS
     -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -82,3 +81,5 @@ ExternalProject_Add(${proj}
   DEPENDS
     ${${proj}_DEPENDS}
   )
+
+ExternalProject_AlwaysConfigure(${proj})
