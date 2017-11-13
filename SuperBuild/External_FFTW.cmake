@@ -56,6 +56,12 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_ROOT}/libfftw3-3.lib
     )
 
+    set(${proj}_LIB
+      ${${proj}_ROOT}/libfftw3-3.lib)
+
+    set(${proj}_INCLUDE_DIR
+      ${${proj}_ROOT})
+
   else() # Linux or MAC
     set(${proj}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
     set(${proj}_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)

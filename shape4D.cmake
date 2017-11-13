@@ -90,10 +90,22 @@ if(USE_SEM)
     TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
     INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     )
+  if(WIN32)
+    add_custom_command(TARGET shape4D POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+    COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INSTALL_LIBRARIES} ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+  )
+endif()
 else()
   # Build an independent executable
   add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCE})
   target_link_libraries(${PROJECT_NAME} ${FFTW_LIBRARIES} ${VTK_LIBRARIES})
+  if(WIN32)
+    add_custom_command(TARGET shape4D POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/$<CONFIG>
+      COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INCLUDE_DIR}/libfftw3-3.dll ${CMAKE_BINARY_DIR}/$<CONFIG>
+      )
+  endif()
 endif()
 
 # Show header files in IDE
