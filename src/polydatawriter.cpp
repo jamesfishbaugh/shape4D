@@ -11,6 +11,8 @@
 #include <vtkTriangle.h>
 #include <vtkIdList.h>
 #include <vtkCellType.h>
+#include <vtkDoubleArray.h>
+#include <vtkPointData.h>
 #endif
 
 
@@ -117,6 +119,23 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
          polys->InsertCellPoint(tris(2,i));
     }
     polydata->SetPolys(polys);
+
+    // Add the array
+    vtkSmartPointer<vtkPointData> pointData = vtkSmartPointer<vtkPointData>::New();
+    pointData = polydata->GetPointData();
+    for (unsigned int i = 0; i <_fields.size(); i++)
+    {
+        Array2D<double> field = _fields[i];
+        vtkSmartPointer<vtkDoubleArray> arrayToAdd = vtkSmartPointer<vtkDoubleArray>::New();
+        arrayToAdd->SetName(_fieldNames[i]);
+        arrayToAdd->SetNumberOfComponents(3);
+        arrayToAdd->SetNumberOfTuples(field.GetWidth());
+        for (unsigned int j = 0; j <field.GetWidth(); j++)
+        {
+            arrayToAdd->InsertTuple3(j,field.GetAt(0,j),field.GetAt(1,j),field.GetAt(2,j));
+        }
+        pointData->AddArray(arrayToAdd);
+    }
 
     // Save polydata
     vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
