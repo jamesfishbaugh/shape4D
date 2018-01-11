@@ -106,12 +106,12 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
     else()
       set(${proj}_INSTALL_LIBRARIES
-        ${${proj}_ROOT}/lib/libfftw3.so
-        ${${proj}_ROOT}/lib/libfftw3.so.3
-        ${${proj}_ROOT}/lib/libfftw3.so.3.5.6)
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so.3
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so.3.5.6)
 
       set(${proj}_LIB
-        ${${proj}_ROOT}/lib/libfftw3.so)
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so)
 
     endif()
 
