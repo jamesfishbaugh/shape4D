@@ -35,8 +35,8 @@ class Array2D
         // Getters
         //--------------------------------------------------------------------------
 
-        const int GetLength() const;
-        const int GetWidth() const;
+        int GetLength() const;
+        int GetWidth() const;
         datatype* GetArray();
 
         //--------------------------------------------------------------------------

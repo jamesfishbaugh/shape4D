@@ -5,6 +5,7 @@
 #ifndef HELPER_H
 #define HELPER_H
 
+
 class Helper
 {
 
@@ -39,7 +40,6 @@ class Helper
 
         static void Deallocate2DIntArray(int** array);
         static void Deallocate3DIntArray(int*** array);
-
 };
 
 #endif // HELPER_H

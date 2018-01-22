@@ -12,6 +12,10 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
+#ifdef USE_SEM
+#include "shape4DCLP.h"
+#endif
+
 //----------------------------------------------------------------
 // main
 //----------------------------------------------------------------
@@ -24,8 +28,11 @@
 //----------------------------------------------------------------
 // Entry point of application
 //----------------------------------------------------------------
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {	
+#ifdef USE_SEM
+    PARSE_ARGS;
+#endif
     printf("\n");
 
     // Some testing
@@ -60,19 +67,30 @@ int main(int argc, char **argv)
     multiObject.SetShapeAt(0, newObject);
     multiObject.SetShapeAt(1, anotherObject);
 
-    ShapeObject* firstObject = multiObject.GetShapeAt(0);
-    ShapeObject* secondObject = multiObject.GetShapeAt(1);
-
-    double matchValue = firstObject->Matching(secondObject->GetPoints());
-
+    RunExperiment experiment;
     // Check command line arguments
-    if (argc < 2)
+#ifdef USE_SEM
+    if( !(inputXML.empty()^progressFile.empty()) )
     {
-        printf("Usage:  exoshapeaccel driver_file.xml    OR\n        exoshapeaccel --continue progress_file.exo\n");
-        exit(1);
+        printf("Usage:  shape4D --input driver_file.xml    OR\n\
+        shape4D --continue progress_file.exo\n");
+        return 1;
+    }
+    if (!inputXML.empty())
+    {
+        experiment.StartExperiment(argv[2]);
+    }
+    else
+    {
+        experiment.ContinueExperiment(argv[2]);
     }
 
-    RunExperiment experiment;
+#else
+    if (argc < 2)
+    {
+        printf("Usage:  shape4D driver_file.xml    OR\n        shape4D --continue progress_file.exo\n");
+        exit(1);
+    }
     if (argc == 2)
     {
         experiment.StartExperiment(argv[1]);
@@ -81,6 +99,8 @@ int main(int argc, char **argv)
     {
         experiment.ContinueExperiment(argv[2]);
     }
+
+#endif
 
     return 0;
 }

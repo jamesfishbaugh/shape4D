@@ -93,7 +93,7 @@ Array1D<datatype>::~Array1D()
 // Returns the size of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array1D<datatype>::GetLength() const
+int Array1D<datatype>::GetLength() const
 {
     return this->_length;
 }
@@ -203,7 +203,7 @@ void Array1D<datatype>::FillArray(datatype* array)
 // Returns the sum of the array elements
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array1D<datatype>::Array1D::Sum()
+datatype Array1D<datatype>::Sum()
 {
     datatype sum = 0;
 

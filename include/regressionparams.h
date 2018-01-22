@@ -72,24 +72,24 @@ class RegressionParams
         // Getters
         //--------------------------------------------------------------------------
 
-        const  int GetNx() const;
+        int GetNx() const;
         const Array2D<double> GetX() const;
-        const double GetSigmaV() const;
-        const double GetGamma() const;
-        const double GetStdV() const;
-        const int GetT() const;
+        double GetSigmaV() const;
+        double GetGamma() const;
+        double GetStdV() const;
+        int GetT() const;
         const Array1D<double> GetXTime() const;
-        const bool ShouldUseInitV0() const;
-        const bool ShouldEstimateBaseline() const;
+        bool ShouldUseInitV0() const;
+        bool ShouldEstimateBaseline() const;
         const char* GetKernelType() const;
-        const int GetMaxIters() const;
-        const double GetBreakRatio() const;
+        int GetMaxIters() const;
+        double GetBreakRatio() const;
         const Array2D<double> GetInitV0() const;
-        const double GetV0Weight() const;
+        double GetV0Weight() const;
         Grid* GetGridAt(int index);
         const Grid* GetGridAt(int index) const;
-        const bool ShouldUseFista() const;
-        const double GetBaselineSmoothing() const;
+        bool ShouldUseFista() const;
+        double GetBaselineSmoothing() const;
 
         //--------------------------------------------------------------------------
         // Overloaded operators

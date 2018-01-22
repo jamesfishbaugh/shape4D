@@ -175,7 +175,7 @@ void TargetData::SetKernelType(char* kernelType)
 //----------------------------------------------------------------
 // Returns the number of target points
 //----------------------------------------------------------------
-const int TargetData::GetNy() const
+int TargetData::GetNy() const
 {
     return this->_ny;
 }
@@ -205,7 +205,7 @@ const Array2D<double> TargetData::GetY() const
 //----------------------------------------------------------------
 // Returns the number of target triangles
 //----------------------------------------------------------------
-const int TargetData::GetNvy() const
+int TargetData::GetNvy() const
 {
     return this->_nvy;
 }
@@ -237,7 +237,7 @@ const Array2D<int> TargetData::GetVy() const
 // Returns the number of source triangles corresponding to this
 // target
 //----------------------------------------------------------------
-const int TargetData::GetNvx() const
+int TargetData::GetNvx() const
 {
     return this->_nvx;
 }
@@ -268,7 +268,7 @@ const Array2D<int> TargetData::GetVx() const
 //----------------------------------------------------------------
 // Returns the scale of the norm on currents
 //----------------------------------------------------------------
-const double TargetData::GetSigmaW() const
+double TargetData::GetSigmaW() const
 {
     return this->_sigmaW;
 }
@@ -285,7 +285,7 @@ const double TargetData::GetSigmaW() const
 // Returns the time corresponding to this target in whatever
 // time units used in the experiment
 //----------------------------------------------------------------
-const double TargetData::GetTimept() const
+double TargetData::GetTimept() const
 {
     return this->_timept;
 }
@@ -300,7 +300,7 @@ const double TargetData::GetTimept() const
 //----------------------------------------------------------------
 // Returns the index into the time discretization array 
 //----------------------------------------------------------------
-const double TargetData::GetTimeIndex() const
+double TargetData::GetTimeIndex() const
 {
     return this->_timeIndex;
 }
@@ -315,7 +315,7 @@ const double TargetData::GetTimeIndex() const
 //----------------------------------------------------------------
 // Returns the importance of this target in the regression
 //----------------------------------------------------------------
-const double TargetData::GetWeight() const
+double TargetData::GetWeight() const
 {
     return this->_weight;
 }

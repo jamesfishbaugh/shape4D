@@ -1,68 +1,76 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1)
 
 project(shape4D)
 
-# External dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+#-----------------------------------------------------------------------------
+# Standalone vs Slicer extension option
+#-----------------------------------------------------------------------------
 
-find_package (FFTW REQUIRED)
-include_directories(${FFTW_INCLUDE_DIR})
+# This option should be named after the project name, it corresponds to the
+# option set to ON when the project is build by the Slicer Extension build
+# system.
 
-#set (CMAKE_CXX_FLAGS "-fopenmp")
+set(_default OFF)
+set(_reason "${PROJECT_NAME}_BUILD_SLICER_EXTENSION is ON")
+if(NOT DEFINED ${PROJECT_NAME}_BUILD_SLICER_EXTENSION AND DEFINED Slicer_DIR)
+  set(_default ON)
+  set(_reason "Slicer_DIR is SET")
+endif()
+option(${PROJECT_NAME}_BUILD_SLICER_EXTENSION "Build as a Slicer Extension" ${_default})
 
-#find_package(MPI REQUIRED)
+set(_msg "Checking if building as a Slicer extension")
+message(STATUS ${_msg})
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
+  message(STATUS "${_msg} - yes (${_reason})")
+else()
+  message(STATUS "${_msg} - no (${PROJECT_NAME}_BUILD_SLICER_EXTENSION is OFF)")
+endif()
 
-#SET(CMAKE_C_COMPILER mpicc)
-#SET(CMAKE_CXX_COMPILER mpicxx)
 
-#set(CMAKE_CXX_COMPILE_FLAGS ${CMAKE_CXX_COMPILE_FLAGS} ${MPI_COMPILE_FLAGS})
-#set(CMAKE_CXX_LINK_FLAGS ${CMAKE_CXX_LINK_FLAGS} ${MPI_LINK_FLAGS})
+#-----------------------------------------------------------------------------
+# Set a default build type if none was specified
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'Release' as none was specified.")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+#-----------------------------------------------------------------------------
+# Extension meta-information
+#-----------------------------------------------------------------------------
+
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
+  set(EXTENSION_HOMEPAGE "http://slicer.org/slicerWiki/index.php/Documentation/Nightly/Extensions/shape4D")
+  set(EXTENSION_CATEGORY "Shape Analysis")
+  set(EXTENSION_CONTRIBUTORS "Francois Budin (Kitware Inc.), James Fishbaugh (NYU), Laura Pascal (Kitware Inc.)")
+  set(EXTENSION_DESCRIPTION "shape4D is an extension for estimating continuous evolution from a discrete collection of shapes, designed to produce realistic anatomical trajectories.")
+  set(EXTENSION_ICONURL "http://www.example.com/Slicer/Extensions/shape4D.png")
+  set(EXTENSION_SCREENSHOTURLS "http://www.example.com/Slicer/Extensions/shape4D/Screenshots/1.png")
+  # Required in Superbuild.cmake
+  set(EXTENSION_DEPENDS "NA") # Specified as a space separated string, a list or 'NA' if any
+  set(SUPERBUILD_TOPLEVEL_PROJECT ${PROJECT_NAME})
+  set(EXTENSION_BUILD_SUBDIRECTORY ${PROJECT_NAME}-build) # Required for packaging purposes
+endif()
 
 
+#-----------------------------------------------------------------------------
+# Superbuild
+#-----------------------------------------------------------------------------
 
-# Include directories
-include_directories(
-  include/
-  src/
-  #${MPI_INCLUDE_PATH}
-)
+# Set to OFF by default, to avoid changing behavior (backward compatibility).
+set(_default "OFF")
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
+  set(_default "ON")
+endif()
+option(${PROJECT_NAME}_SUPERBUILD "Build ${PROJECT_NAME} and the projects it depends on." ${_default})
+mark_as_advanced(${PROJECT_NAME}_SUPERBUILD)
+if(${PROJECT_NAME}_SUPERBUILD)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake")
+  return()
+endif()
 
-FILE(GLOB_RECURSE shape4D_INCLUDE "include/*.h")
-
-set(shape4D_SOURCE 	
-   src/array1d.txx		
-   src/array2d.txx
-   src/array3d.txx
-   src/adaptivegradientdescent.cpp
-   src/algorithm.cpp
-   src/shape4dstate.cpp
-   src/grid.cpp
-   src/gridoptimize.cpp
-   src/helper.cpp
-   src/landmarks.cpp
-   src/optimizer.cpp
-   src/regressionacceleration.cpp
-   src/regression.cpp
-   src/regressionparams.cpp
-   src/regressionvelocity.cpp	
-   src/runexperiment.cpp
-   src/saveshapesandvectors.cpp
-   src/surfacecurrent.cpp
-   src/targetdata.cpp
-   src/shapeobject.cpp
-   src/tmplandmark.cpp
-   src/tmpsurfacecurrent.cpp
-   src/multiobjectcomplex.cpp
-   src/vtkpolydatareader.cpp
-   src/vtkpolydatawriter.cpp
-   src/tinystr.cpp
-   src/tinyxml.cpp
-   src/tinyxmlerror.cpp
-   src/tinyxmlparser.cpp
-   src/main.cpp
-)
-
-add_executable(shape4D ${shape4D_SOURCE})
-target_link_libraries(shape4D ${FFTW_LIBRARIES})
-add_custom_target(include SOURCES ${shape4D_INCLUDE})
-
+#-----------------------------------------------------------------------------
+# Shape4D-build
+#-----------------------------------------------------------------------------
+include("${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.cmake")

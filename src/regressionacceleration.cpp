@@ -546,8 +546,6 @@ Array3D<double> RegressionAcceleration::ComputeGradient(const Array3D<double>& i
     Array3D<double> G(dim,nx,T+2);
     G.FillArray(0.0f);
 
-    double gammaTimesTwo = 2.0f*this->_source.GetGamma();
-
     // Compute the final value of the gradient
     //#pragma omp parallel for collapse(3)
     for (int i=0; i<dim; i++)
@@ -597,7 +595,7 @@ Array3D<double> RegressionAcceleration::ComputeGradient(const Array3D<double>& i
 // Computes the gradient of regression functional.  Used to
 // update impulse and initial velocity.
 //----------------------------------------------------------------
-void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
+void RegressionAcceleration::ComputeGradient(const Array3D<double>& impulse, const Array2D<double>&, const Array2D<double>& V0,
                                              Array3D<double>& gradImpulse, Array2D<double>& gradX0, Array2D<double>& gradV0)
 {
     int dim = this->_X.GetLength();
@@ -1046,8 +1044,6 @@ void RegressionAcceleration::ComputeTrajectories(const Array3D<double>& impulse,
 {
     int dim = this->_X.GetLength();
     int nx = this->_source.GetNx();
-    int T = this->_source.GetT();
-    double tau2 = pow(this->_tau,2);
 
     if (this->_source.ShouldEstimateBaseline())
     {
@@ -1671,7 +1667,7 @@ void RegressionAcceleration::GradientDescent(Array3D<double>& impulse, Array2D<d
 //----------------------------------------------------------------
 void RegressionAcceleration::GradientDescentStep(Array3D<double>& impulseTest, Array2D<double>& X0Test, Array2D<double>& V0Test,
                                                  const Array3D<double>& impulse, const Array2D<double>& X0, const Array2D<double>& V0,
-                                                 const Array3D<double>& gradImpulse, const Array2D<double>& gradX0, const Array2D<double>& gradV0,
+                                                 const Array3D<double>& gradImpulse, const Array2D<double>&, const Array2D<double>& gradV0,
                                                  double stepImpulse, double stepX0andV0)
 {
     // Update the impulse

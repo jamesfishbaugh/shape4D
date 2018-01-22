@@ -100,7 +100,7 @@ Array2D<datatype>::~Array2D()
 // Returns the length of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array2D<datatype>::GetLength() const
+int Array2D<datatype>::GetLength() const
 {
     return this->_length;
 }
@@ -116,7 +116,7 @@ const int Array2D<datatype>::GetLength() const
 // Returns the width of the array
 //----------------------------------------------------------------
 template <class datatype>
-const int Array2D<datatype>::GetWidth() const
+int Array2D<datatype>::GetWidth() const
 {
     return this->_width;
 }
@@ -253,7 +253,7 @@ void Array2D<datatype>::FillArray(datatype** array)
 // Returns the sum of the array elements
 //----------------------------------------------------------------
 template <class datatype>
-datatype Array2D<datatype>::Array2D::Sum()
+datatype Array2D<datatype>::Sum()
 {
     datatype sum = 0;
 

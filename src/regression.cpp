@@ -6,7 +6,6 @@
 #include <stdio.h>		// For printf
 #include <math.h>		// For pow
 #include <stdlib.h>		// For free
-#include <omp.h>
 
 #include "regression.h"
 

@@ -14,7 +14,6 @@ class Algorithm
     private:
 
         virtual void WriteSelf() = 0;
-
     public:
 
         //--------------------------------------------------------------------------
@@ -23,6 +22,7 @@ class Algorithm
 
         virtual double ComputeFunctional(const Array3D<double>& X, double &dataMatching, double &regularity) = 0;
         virtual Array3D<double> ComputeGradient(const Array3D<double>& X) = 0;
+        virtual ~Algorithm() {};
 
 };
 

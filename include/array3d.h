@@ -40,9 +40,9 @@ class Array3D
         // Getters
         //--------------------------------------------------------------------------
 
-        const int GetLength() const;
-        const int GetWidth() const;
-        const int GetHeight() const;
+        int GetLength() const;
+        int GetWidth() const;
+        int GetHeight() const;
         datatype* GetArray();
 
         //--------------------------------------------------------------------------
