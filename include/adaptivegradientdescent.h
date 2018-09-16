@@ -19,7 +19,7 @@ class AdaptiveGradientDescent : public Optimizer
 
         AdaptiveGradientDescent();
         AdaptiveGradientDescent(Algorithm* algorithm);
-        ~AdaptiveGradientDescent();
+        virtual ~AdaptiveGradientDescent();
 
         //--------------------------------------------------------------------------
         // Setters

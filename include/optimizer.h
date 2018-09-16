@@ -21,6 +21,8 @@ class Optimizer
         Algorithm* _algorithm;
 
     public:
+        Optimizer(){}
+        virtual ~Optimizer(){}
 
         virtual void SetMaxIterations(int maxIters) = 0;
         virtual void SetBreakRatio(double breakRatio) = 0;
