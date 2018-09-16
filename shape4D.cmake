@@ -123,6 +123,13 @@ endif()
 if(EXTENSION_SUPERBUILD_BINARY_DIR)
   if(NOT APPLE)
     install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR} COMPONENT RuntimeLibraries)
+  else()
+    get_filename_component(FFTW_RUNTIME_DIRECTORY ${FFTW_LIB} DIRECTORY)
+    set(${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES ${FFTW_RUNTIME_DIRECTORY} CACHE STRING "List of fixup bundle library directories" FORCE)
+
+    set(${EXTENSION_NAME}_CUSTOM_CONFIG "
+      set(${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES \"${FFTW_RUNTIME_DIRECTORY}\")
+")
   endif()
 
   #-----------------------------------------------------------------------------
