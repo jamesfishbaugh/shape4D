@@ -17,10 +17,6 @@ endif()
 
 if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
-  endif()
-
   set(${proj}_CONFIGURE_COMMAND "")
   set(${proj}_INSTALL_COMMAND "")
 

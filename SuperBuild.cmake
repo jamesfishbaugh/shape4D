@@ -1,12 +1,3 @@
-#-----------------------------------------------------------------------------
-# Git protocol option
-#-----------------------------------------------------------------------------
-option(Slicer_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
-
-set(git_protocol "git")
-if(NOT Slicer_USE_GIT_PROTOCOL)
-  set(git_protocol "http")
-endif()
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
@@ -28,26 +19,11 @@ mark_as_superbuild(GIT_EXECUTABLE)
 # Top-level "external" project
 #-----------------------------------------------------------------------------
 
-include(ExternalProject)
-
 foreach(dep ${EXTENSION_DEPENDS})
   mark_as_superbuild(${dep}_DIR)
 endforeach()
 
 set(proj ${SUPERBUILD_TOPLEVEL_PROJECT})
-
-#-----------------------------------------------------------------------------
-# Slicer extension
-#-----------------------------------------------------------------------------
-if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
-  # The inner build needs to know this to run 'make Experimental' from
-  # the shape4D-build folder (packaging is done in shape4D-build).
-  set(EXTENSION_SUPERBUILD_BINARY_DIR ${${PROJECT_NAME}_BINARY_DIR})
-  mark_as_superbuild(EXTENSION_SUPERBUILD_BINARY_DIR)
-  # Inside the shape4D-build, we need to know if we are building a Slicer extension
-  # to know if we define the CMake `EXTENSION_*` variables.
-  mark_as_superbuild(${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL)
-endif()
 
 # Project dependencies
 set(${proj}_DEPENDS
@@ -73,12 +49,13 @@ ExternalProject_Add(${proj}
     -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
     -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
     # Output directories
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     -DCMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH=${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}
     # Superbuild
     -D${EXTENSION_NAME}_SUPERBUILD:BOOL=OFF # Do not forget to deactivate "Superbuild" inside “shape4D-build"
+    -DEXTENSION_SUPERBUILD_BINARY_DIR:PATH=${${EXTENSION_NAME}_BINARY_DIR}
+    -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
     # We need to use Slicer to use `ExternalProject_Include_Dependencies()`
     # so we might as well use VTK and SEM
     -DUSE_VTK:BOOL=ON
