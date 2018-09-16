@@ -1099,7 +1099,7 @@ void RegressionAcceleration::FISTA(Array3D<double>& impulse, Array2D<double>& X0
 {
     int maxIters = this->_source.GetMaxIters();
     double breakRatio = this->_source.GetBreakRatio();
-    int maxLineIters = 40;
+    unsigned int maxLineIters = 40;
     double stepImpulse = 0.05f;
     double stepX0andV0 = 0.05f;
     double stepIncrease = 1.2f;
@@ -1456,7 +1456,7 @@ void RegressionAcceleration::GradientDescent(Array3D<double>& impulse, Array2D<d
 {
     int maxIters = this->_source.GetMaxIters();
     double breakRatio = this->_source.GetBreakRatio();
-    int maxLineIters = 40;
+    unsigned int maxLineIters = 40;
     double stepImpulse = 0.05f;
     double stepX0andV0 = 0.05f;
     double stepIncrease = 1.2f;
