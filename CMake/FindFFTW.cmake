@@ -33,7 +33,7 @@ if(NOT FFTW_INCLUDE_DIR OR NOT FFTW_LIBRARIES)
     )
 endif()
 
-set(FFTW_LIBRARIES ${FFTW_LIB} ${FFTWF_LIB})
+set(FFTW_LIBRARIES ${FFTW_LIB})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(FFTW DEFAULT_MSG
@@ -45,5 +45,4 @@ mark_as_advanced(
   FFTW_INCLUDE_DIR
   FFTW_LIBRARIES
   FFTW_LIB
-  FFTWF_LIB
   )
