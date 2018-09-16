@@ -39,6 +39,8 @@ endif()
 # shape4D application
 #-----------------------------------------------------------------------------
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Include directories
 include_directories(
   include/
@@ -78,6 +80,7 @@ set(${PROJECT_NAME}_SOURCE
   src/tinyxmlerror.cpp
   src/tinyxmlparser.cpp
   src/main.cpp
+  ${${PROJECT_NAME}_INCLUDE}
   )
 
 if(USE_SEM)
@@ -87,7 +90,6 @@ if(USE_SEM)
     NAME ${PROJECT_NAME}
     ADDITIONAL_SRCS ${${PROJECT_NAME}_SOURCE}
     TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
-    INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     )
   if(WIN32)
     add_custom_command(TARGET shape4D POST_BUILD
@@ -106,9 +108,6 @@ else()
       )
   endif()
 endif()
-
-# Show header files in IDE
-add_custom_target(include SOURCES ${${PROJECT_NAME}_INCLUDE})
 
 #-----------------------------------------------------------------------------
 # Tests
