@@ -91,10 +91,10 @@ if(USE_SEM)
     )
   if(WIN32)
     add_custom_command(TARGET shape4D POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
-    COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INSTALL_LIBRARIES} ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
-  )
-endif()
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+      COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INSTALL_LIBRARIES} ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+      )
+  endif()
 else()
   # Build an independent executable
   add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCE})
@@ -117,7 +117,6 @@ if(BUILD_TESTING)
   include(CTest)
   add_subdirectory(testing)
 endif()
-
 
 #-----------------------------------------------------------------------------
 # Slicer extension packaging

@@ -30,11 +30,11 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # Needed to generate and run the configure/build/install scripts
   include(ExternalProjectForNonCMakeProject RESULT_VARIABLE ExternalProjectForNonCMakeProject_path)
 
-  # environment
+  # Environment
   set(_env_script ${CMAKE_BINARY_DIR}/${proj}_Env.cmake)
   ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
-  if(WIN32) #Windows
+  if(WIN32) # Windows
     # Assume that Slicer is always built in 64bits on Windows
     set(DOWNLOAD_URL ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip)
     # We need to create libfftw3-3.lib that is not included in the zip file
@@ -54,15 +54,17 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(${proj}_INSTALL_LIBRARIES
       ${${proj}_ROOT}/libfftw3-3.dll
       ${${proj}_ROOT}/libfftw3-3.lib
-    )
+      )
 
     set(${proj}_LIB
-      ${${proj}_ROOT}/libfftw3-3.lib)
+      ${${proj}_ROOT}/libfftw3-3.lib
+      )
 
     set(${proj}_INCLUDE_DIR
-      ${${proj}_ROOT})
+      ${${proj}_ROOT}
+      )
 
-  else() # Linux or MAC
+  else() # Linux or macOS
     set(${proj}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
     set(${proj}_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
     set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
@@ -102,38 +104,39 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
     if(APPLE)
       set(${proj}_LIB
-        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.dylib)
-
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.dylib
+        )
     else()
       set(${proj}_INSTALL_LIBRARIES
         ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so
         ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so.3
-        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so.3.5.6)
-
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so.3.5.6
+        )
       set(${proj}_LIB
-        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so)
-
+        ${${proj}_ROOT}/${Slicer_THIRDPARTY_LIB_DIR}/libfftw3.so
+        )
     endif()
 
     set(${proj}_INCLUDE_DIR
-      ${${proj}_ROOT}/include)
+      ${${proj}_ROOT}/include
+      )
 
   endif()
 
   set(${proj}_BUILD_IN_SOURCE 1)
 
   ExternalProject_Add(${proj}
-  ${${proj}_EP_ARGS}
-  URL ${DOWNLOAD_URL}
-  UPDATE_COMMAND "" # Disable update
-  SOURCE_DIR ${${proj}_SOURCE_DIR}
-  BUILD_IN_SOURCE ${${proj}_BUILD_IN_SOURCE}
-  CONFIGURE_COMMAND "${${proj}_CONFIGURE_COMMAND}"
-  BUILD_COMMAND "${${proj}_BUILD_COMMAND}"
-  INSTALL_COMMAND "${${proj}_INSTALL_COMMAND}"
-  DEPENDS
-  ${${proj}_DEPENDS}
-  )
+    ${${proj}_EP_ARGS}
+    URL ${DOWNLOAD_URL}
+    UPDATE_COMMAND "" # Disable update
+    SOURCE_DIR ${${proj}_SOURCE_DIR}
+    BUILD_IN_SOURCE ${${proj}_BUILD_IN_SOURCE}
+    CONFIGURE_COMMAND "${${proj}_CONFIGURE_COMMAND}"
+    BUILD_COMMAND "${${proj}_BUILD_COMMAND}"
+    INSTALL_COMMAND "${${proj}_INSTALL_COMMAND}"
+    DEPENDS
+      ${${proj}_DEPENDS}
+    )
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDS})
 endif()
