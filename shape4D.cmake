@@ -122,7 +122,7 @@ endif()
 #-----------------------------------------------------------------------------
 if(EXTENSION_SUPERBUILD_BINARY_DIR)
   if(NOT APPLE)
-    install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR})
+    install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR} COMPONENT RuntimeLibraries)
   endif()
 
   #-----------------------------------------------------------------------------
