@@ -1225,7 +1225,7 @@ void RegressionAcceleration::FISTA(Array3D<double>& impulse, Array2D<double>& X0
                 Array2D<double> X0Prime3(dim, nx);
                 Array2D<double> V0Prime3(dim, nx);
                 double dataMatching3, regularity3;
-                double functCase3;
+                double functCase3 = 0.0;
                 double QDiffTermCase3;
 
                 if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
@@ -1248,7 +1248,7 @@ void RegressionAcceleration::FISTA(Array3D<double>& impulse, Array2D<double>& X0
                 Array2D<double> X0Prime4(dim, nx);
                 Array2D<double> V0Prime4(dim, nx);
                 double dataMatching4, regularity4;
-                double functCase4;
+                double functCase4 = 0.0;
                 double QDiffTermCase4;
 
                 if ((this->_source.GetV0Weight() != 0) || (this->_source.ShouldEstimateBaseline() == true))
