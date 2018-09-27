@@ -130,7 +130,7 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
         arrayToAdd->SetName(_fieldNames[i]);
         arrayToAdd->SetNumberOfComponents(3);
         arrayToAdd->SetNumberOfTuples(field.GetWidth());
-        for (unsigned int j = 0; j <field.GetWidth(); j++)
+        for (int j = 0; j <field.GetWidth(); j++)
         {
             arrayToAdd->InsertTuple3(j,field.GetAt(0,j),field.GetAt(1,j),field.GetAt(2,j));
         }

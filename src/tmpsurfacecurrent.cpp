@@ -33,16 +33,8 @@ tmpSurfaceCurrent::tmpSurfaceCurrent()
 //----------------------------------------------------------------
 // Copy constructor
 //----------------------------------------------------------------
-tmpSurfaceCurrent::tmpSurfaceCurrent(const tmpSurfaceCurrent& shape)
+tmpSurfaceCurrent::tmpSurfaceCurrent(const tmpSurfaceCurrent& shape):ShapeObject(shape)
 {
-    this->_points = shape._points;
-    this->_numPoints = shape._numPoints;
-    this->_edges = shape._edges;
-    this->_numEdges = shape._numEdges;
-    this->_sigmaW = shape._sigmaW;
-    this->_weight = shape._weight;
-    this->_timept = shape._timept;
-    this->_timeIndex = shape._timeIndex;
 }
 
 //----------------------------------------------------------------

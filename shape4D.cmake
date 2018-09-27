@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 #-----------------------------------------------------------------------------
 # Slicer extension
@@ -40,6 +39,8 @@ endif()
 # shape4D application
 #-----------------------------------------------------------------------------
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
 # Include directories
 include_directories(
   include/
@@ -79,6 +80,7 @@ set(${PROJECT_NAME}_SOURCE
   src/tinyxmlerror.cpp
   src/tinyxmlparser.cpp
   src/main.cpp
+  ${${PROJECT_NAME}_INCLUDE}
   )
 
 if(USE_SEM)
@@ -88,14 +90,13 @@ if(USE_SEM)
     NAME ${PROJECT_NAME}
     ADDITIONAL_SRCS ${${PROJECT_NAME}_SOURCE}
     TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
-    INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
     )
   if(WIN32)
     add_custom_command(TARGET shape4D POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
-    COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INSTALL_LIBRARIES} ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
-  )
-endif()
+      COMMAND ${CMAKE_COMMAND} -E make_directory ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+      COMMAND ${CMAKE_COMMAND} -E copy ${FFTW_INSTALL_LIBRARIES} ${Slicer_CLIMODULES_BIN_DIR}/$<CONFIG>
+      )
+  endif()
 else()
   # Build an independent executable
   add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCE})
@@ -108,9 +109,6 @@ else()
   endif()
 endif()
 
-# Show header files in IDE
-add_custom_target(include SOURCES ${${PROJECT_NAME}_INCLUDE})
-
 #-----------------------------------------------------------------------------
 # Tests
 #-----------------------------------------------------------------------------
@@ -119,14 +117,28 @@ if(BUILD_TESTING)
   add_subdirectory(testing)
 endif()
 
-
 #-----------------------------------------------------------------------------
 # Slicer extension packaging
 #-----------------------------------------------------------------------------
 if(EXTENSION_SUPERBUILD_BINARY_DIR)
   if(NOT APPLE)
-    install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR})
+    install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR} COMPONENT RuntimeLibraries)
+  else()
+    get_filename_component(FFTW_RUNTIME_DIRECTORY ${FFTW_LIB} DIRECTORY)
+    set(${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES ${FFTW_RUNTIME_DIRECTORY} CACHE STRING "List of fixup bundle library directories" FORCE)
+
+    set(${EXTENSION_NAME}_CUSTOM_CONFIG "
+      set(${EXTENSION_NAME}_FIXUP_BUNDLE_LIBRARY_DIRECTORIES \"${FFTW_RUNTIME_DIRECTORY}\")
+")
   endif()
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CMAKE_BINARY_DIR};${EXTENSION_NAME};ALL;/")
+
+  #-----------------------------------------------------------------------------
+  set(EXTENSION_CPACK_INSTALL_CMAKE_PROJECTS)
+  set(${EXTENSION_NAME}_CPACK_INSTALL_CMAKE_PROJECTS "${EXTENSION_CPACK_INSTALL_CMAKE_PROJECTS}" CACHE STRING "List of external projects to install" FORCE)
+
+  #-----------------------------------------------------------------------------
+  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS "${CMAKE_BINARY_DIR};${EXTENSION_NAME};ALL;/")
+  list(APPEND CPACK_INSTALL_CMAKE_PROJECTS "${${EXTENSION_NAME}_CPACK_INSTALL_CMAKE_PROJECTS}")
+  include(${Slicer_EXTENSION_GENERATE_CONFIG})
   include(${Slicer_EXTENSION_CPACK})
 endif()
