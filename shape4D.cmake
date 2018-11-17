@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Slicer extension
 #-----------------------------------------------------------------------------
-if(EXTENSION_SUPERBUILD_BINARY_DIR)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
 endif()
@@ -120,7 +120,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Slicer extension packaging
 #-----------------------------------------------------------------------------
-if(EXTENSION_SUPERBUILD_BINARY_DIR)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   if(NOT APPLE)
     install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR} COMPONENT RuntimeLibraries)
   else()
