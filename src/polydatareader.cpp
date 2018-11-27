@@ -5,6 +5,7 @@
 
 #include "polydatareader.h"
 #include "helper.h"
+#include "shape4Dconfig.h" // For USE_VTK
 
 #ifdef USE_VTK
 #include <vtkPolyDataReader.h>

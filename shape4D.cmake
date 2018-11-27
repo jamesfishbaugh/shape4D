@@ -21,7 +21,6 @@ include_directories(${FFTW_INCLUDE_DIR})
 # If we build a Slicer CLI module
 # This needs to be before `find_package(VTK REQUIRED)`
 if(USE_SEM)
-  add_definitions("-DUSE_SEM")
   find_package(SlicerExecutionModel REQUIRED)
   include(${SlicerExecutionModel_USE_FILE})
 endif()
@@ -30,7 +29,6 @@ endif()
 # This needs to be before `SEMMacroBuildCLI(...)` to include
 # ${VTK_LIBRARIES}
 if(USE_VTK)
-    add_definitions("-DUSE_VTK")
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
 endif()
@@ -40,6 +38,11 @@ endif()
 #-----------------------------------------------------------------------------
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+configure_file(
+  include/shape4Dconfig.h.in
+  shape4Dconfig.h
+  )
 
 # Include directories
 include_directories(
@@ -85,7 +88,6 @@ set(${PROJECT_NAME}_SOURCE
 
 if(USE_SEM)
   # Build a Slicer CLI
-  add_definitions("-DUSE_SEM")
   SEMMacroBuildCLI(
     NAME ${PROJECT_NAME}
     ADDITIONAL_SRCS ${${PROJECT_NAME}_SOURCE}

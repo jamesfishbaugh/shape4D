@@ -1,0 +1,7 @@
+#ifndef SHAPE4DCONFIG_H
+#define SHAPE4DCONFIG_H
+
+#cmakedefine USE_SEM
+#cmakedefine USE_VTK
+
+#endif

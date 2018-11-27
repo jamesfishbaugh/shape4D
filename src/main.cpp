@@ -12,6 +12,8 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
+#include "shape4Dconfig.h" // For USE_SEM
+
 #ifdef USE_SEM
 #include "shape4DCLP.h"
 #endif

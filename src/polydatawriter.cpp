@@ -4,6 +4,7 @@
 //--------------------------------------------------------------------------
 
 #include "polydatawriter.h"
+#include "shape4Dconfig.h" // For USE_VTK
 #ifdef USE_VTK
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>

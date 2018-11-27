@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "array2d.h"
+#include "shape4Dconfig.h" // For USE_VTK
 
 using namespace std;
 
