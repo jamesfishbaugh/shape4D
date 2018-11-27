@@ -12,7 +12,9 @@
 #include "tmpsurfacecurrent.h"
 #include "multiobjectcomplex.h"
 
-#ifdef USE_SEM
+#include "shape4Dconfig.h" // For shape4D_USE_SEM
+
+#ifdef shape4D_USE_SEM
 #include "shape4DCLP.h"
 #endif
 
@@ -30,7 +32,7 @@
 //----------------------------------------------------------------
 int main(int argc, char *argv[])
 {	
-#ifdef USE_SEM
+#ifdef shape4D_USE_SEM
     PARSE_ARGS;
 #endif
     printf("\n");
@@ -69,7 +71,7 @@ int main(int argc, char *argv[])
 
     RunExperiment experiment;
     // Check command line arguments
-#ifdef USE_SEM
+#ifdef shape4D_USE_SEM
     if( !(inputXML.empty()^progressFile.empty()) )
     {
         printf("Usage:  shape4D --input driver_file.xml    OR\n\

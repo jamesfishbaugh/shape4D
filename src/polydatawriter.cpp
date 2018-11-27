@@ -4,7 +4,8 @@
 //--------------------------------------------------------------------------
 
 #include "polydatawriter.h"
-#ifdef USE_VTK
+#include "shape4Dconfig.h" // For shape4D_USE_VTK
+#ifdef shape4D_USE_VTK
 #include <vtkPolyDataWriter.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -32,7 +33,7 @@
 //----------------------------------------------------------------
 VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 {
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
     m_FileName = filename;
 #else
     this->_vtkFile = new ofstream(filename);
@@ -50,7 +51,7 @@ VTKPolyDataWriter::VTKPolyDataWriter(char* filename)
 //----------------------------------------------------------------
 VTKPolyDataWriter::~VTKPolyDataWriter()
 {
-#ifndef USE_VTK
+#ifndef shape4D_USE_VTK
     delete this->_vtkFile;
 #endif
 }
@@ -94,7 +95,7 @@ bool VTKPolyDataWriter::WritePointsAndTris(const Array2D<double>& pts, const Arr
 {
     int numPts = pts.GetWidth();
     int numTris = tris.GetWidth();
-    #ifdef USE_VTK
+    #ifdef shape4D_USE_VTK
     vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
     // Convert points and triangles to polydata
     vtkSmartPointer<vtkPoints> vpts = vtkSmartPointer<vtkPoints>::New();

@@ -12,6 +12,7 @@
 #include <stdio.h>
 
 #include "array2d.h"
+#include "shape4Dconfig.h" // For shape4D_USE_VTK
 
 using namespace std;
 
@@ -23,7 +24,7 @@ class VTKPolyDataReader
         //--------------------------------------------------------------------------
         // Private member variables
         //--------------------------------------------------------------------------
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
         string m_FileName;
 #else
         ifstream* _vtkFile;			// For reading from a file

@@ -31,8 +31,11 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Write_SetBuildEnv_Commands(${_env_script})
 
   if(WIN32) # Windows
+
+    set(_version "3.3.5")
+
     # Assume that Slicer is always built in 64bits on Windows
-    set(DOWNLOAD_URL ftp://ftp.fftw.org/pub/fftw/fftw-3.3.5-dll64.zip)
+    set(DOWNLOAD_URL ftp://ftp.fftw.org/pub/fftw/fftw-${_version}-dll64.zip)
     # We need to create libfftw3-3.lib that is not included in the zip file
     # See https://stackoverflow.com/questions/38095244/\
     # how-to-get-path-to-provided-visual-studio-lib-exe-executable-in-cmake
@@ -61,9 +64,12 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
 
   else() # Linux or macOS
-    set(${proj}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
-    set(${proj}_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
-    set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
+
+    set(_version "3.3.6")
+
+    set(${proj}_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+    set(${proj}_build ${CMAKE_BINARY_DIR}/${proj}-build)
+    set(DOWNLOAD_URL http://fftw.org/fftw-${_version}-pl2.tar.gz)
 
     # configure step
     set(_configure_script ${CMAKE_BINARY_DIR}/${proj}_configure_step.cmake)
@@ -124,6 +130,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     URL ${DOWNLOAD_URL}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     UPDATE_COMMAND "" # Disable update
     SOURCE_DIR ${${proj}_SOURCE_DIR}
     BUILD_IN_SOURCE ${${proj}_BUILD_IN_SOURCE}
@@ -132,6 +139,10 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     INSTALL_COMMAND "${${proj}_INSTALL_COMMAND}"
     DEPENDS
       ${${proj}_DEPENDS}
+    )
+
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${_version}
     )
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDS})

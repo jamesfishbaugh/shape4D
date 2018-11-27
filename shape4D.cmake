@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Slicer extension
 #-----------------------------------------------------------------------------
-if(EXTENSION_SUPERBUILD_BINARY_DIR)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   find_package(Slicer REQUIRED)
   include(${Slicer_USE_FILE})
 endif()
@@ -12,16 +12,15 @@ endif()
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH} )
 
-option(USE_VTK "Use VTK instead of built-in vtk polydata reader/writer" OFF)
-option(USE_SEM "Use SlicerExecutionModel as CLI" OFF)
+option(shape4D_USE_VTK "Use VTK instead of built-in vtk polydata reader/writer" OFF)
+option(shape4D_USE_SEM "Use SlicerExecutionModel as CLI" OFF)
 
 find_package (FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
 # If we build a Slicer CLI module
 # This needs to be before `find_package(VTK REQUIRED)`
-if(USE_SEM)
-  add_definitions("-DUSE_SEM")
+if(shape4D_USE_SEM)
   find_package(SlicerExecutionModel REQUIRED)
   include(${SlicerExecutionModel_USE_FILE})
 endif()
@@ -29,8 +28,7 @@ endif()
 # If we use VTK file reader instead of custom file reader
 # This needs to be before `SEMMacroBuildCLI(...)` to include
 # ${VTK_LIBRARIES}
-if(USE_VTK)
-    add_definitions("-DUSE_VTK")
+if(shape4D_USE_VTK)
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
 endif()
@@ -40,6 +38,11 @@ endif()
 #-----------------------------------------------------------------------------
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+configure_file(
+  include/shape4Dconfig.h.in
+  shape4Dconfig.h
+  )
 
 # Include directories
 include_directories(
@@ -83,13 +86,13 @@ set(${PROJECT_NAME}_SOURCE
   ${${PROJECT_NAME}_INCLUDE}
   )
 
-if(USE_SEM)
+if(shape4D_USE_SEM)
   # Build a Slicer CLI
-  add_definitions("-DUSE_SEM")
   SEMMacroBuildCLI(
     NAME ${PROJECT_NAME}
     ADDITIONAL_SRCS ${${PROJECT_NAME}_SOURCE}
     TARGET_LIBRARIES ${FFTW_LIBRARIES} ${VTK_LIBRARIES}
+    EXECUTABLE_ONLY
     )
   if(WIN32)
     add_custom_command(TARGET shape4D POST_BUILD
@@ -112,7 +115,10 @@ endif()
 #-----------------------------------------------------------------------------
 # Tests
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(NOT DEFINED shape4D_BUILD_TESTING)
+  set(shape4D_BUILD_TESTING ${BUILD_TESTING})
+endif()
+if(shape4D_BUILD_TESTING)
   include(CTest)
   add_subdirectory(testing)
 endif()
@@ -120,7 +126,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Slicer extension packaging
 #-----------------------------------------------------------------------------
-if(EXTENSION_SUPERBUILD_BINARY_DIR)
+if(${PROJECT_NAME}_BUILD_SLICER_EXTENSION)
   if(NOT APPLE)
     install(FILES ${FFTW_INSTALL_LIBRARIES} DESTINATION ${Slicer_INSTALL_THIRDPARTY_LIB_DIR} COMPONENT RuntimeLibraries)
   else()
