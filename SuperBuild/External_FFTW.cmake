@@ -61,8 +61,8 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
 
   else() # Linux or macOS
-    set(${proj}_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj})
-    set(${proj}_build ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
+    set(${proj}_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
+    set(${proj}_build ${CMAKE_BINARY_DIR}/${proj}-build)
     set(DOWNLOAD_URL http://fftw.org/fftw-3.3.6-pl2.tar.gz)
 
     # configure step
@@ -124,6 +124,7 @@ if(NOT DEFINED ${proj}_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     URL ${DOWNLOAD_URL}
+    DOWNLOAD_DIR ${CMAKE_BINARY_DIR}
     UPDATE_COMMAND "" # Disable update
     SOURCE_DIR ${${proj}_SOURCE_DIR}
     BUILD_IN_SOURCE ${${proj}_BUILD_IN_SOURCE}
