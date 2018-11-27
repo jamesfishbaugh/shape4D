@@ -114,7 +114,10 @@ endif()
 #-----------------------------------------------------------------------------
 # Tests
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING)
+if(NOT DEFINED shape4D_BUILD_TESTING)
+  set(shape4D_BUILD_TESTING ${BUILD_TESTING})
+endif()
+if(shape4D_BUILD_TESTING)
   include(CTest)
   add_subdirectory(testing)
 endif()
