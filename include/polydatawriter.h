@@ -15,7 +15,7 @@
 
 #include "array2d.h"
 #include "array3d.h"
-#include "shape4Dconfig.h" // For USE_VTK
+#include "shape4Dconfig.h" // For shape4D_USE_VTK
 
 using namespace std;
 
@@ -27,7 +27,7 @@ class VTKPolyDataWriter
         //--------------------------------------------------------------------------
         // Private member variables
         //--------------------------------------------------------------------------
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
         string m_FileName;
 #else
         ofstream* _vtkFile;		// For writing to a file

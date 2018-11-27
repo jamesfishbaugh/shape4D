@@ -58,8 +58,8 @@ ExternalProject_Add(${proj}
     -D${EXTENSION_NAME}_BUILD_SLICER_EXTENSION:BOOL=ON
     # We need to use Slicer to use `ExternalProject_Include_Dependencies()`
     # so we might as well use VTK and SEM
-    -DUSE_VTK:BOOL=ON
-    -DUSE_SEM:BOOL=ON
+    -Dshape4D_USE_VTK:BOOL=ON
+    -Dshape4D_USE_SEM:BOOL=ON
   INSTALL_COMMAND ""
   DEPENDS
     ${${proj}_DEPENDS}

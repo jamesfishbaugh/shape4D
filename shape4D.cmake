@@ -12,15 +12,15 @@ endif()
 #-----------------------------------------------------------------------------
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake" ${CMAKE_MODULE_PATH} )
 
-option(USE_VTK "Use VTK instead of built-in vtk polydata reader/writer" OFF)
-option(USE_SEM "Use SlicerExecutionModel as CLI" OFF)
+option(shape4D_USE_VTK "Use VTK instead of built-in vtk polydata reader/writer" OFF)
+option(shape4D_USE_SEM "Use SlicerExecutionModel as CLI" OFF)
 
 find_package (FFTW REQUIRED)
 include_directories(${FFTW_INCLUDE_DIR})
 
 # If we build a Slicer CLI module
 # This needs to be before `find_package(VTK REQUIRED)`
-if(USE_SEM)
+if(shape4D_USE_SEM)
   find_package(SlicerExecutionModel REQUIRED)
   include(${SlicerExecutionModel_USE_FILE})
 endif()
@@ -28,7 +28,7 @@ endif()
 # If we use VTK file reader instead of custom file reader
 # This needs to be before `SEMMacroBuildCLI(...)` to include
 # ${VTK_LIBRARIES}
-if(USE_VTK)
+if(shape4D_USE_VTK)
     find_package(VTK REQUIRED)
     include(${VTK_USE_FILE})
 endif()
@@ -86,7 +86,7 @@ set(${PROJECT_NAME}_SOURCE
   ${${PROJECT_NAME}_INCLUDE}
   )
 
-if(USE_SEM)
+if(shape4D_USE_SEM)
   # Build a Slicer CLI
   SEMMacroBuildCLI(
     NAME ${PROJECT_NAME}

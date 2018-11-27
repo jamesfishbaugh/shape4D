@@ -5,9 +5,9 @@
 
 #include "polydatareader.h"
 #include "helper.h"
-#include "shape4Dconfig.h" // For USE_VTK
+#include "shape4Dconfig.h" // For shape4D_USE_VTK
 
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
 #include <vtkPolyDataReader.h>
 #include <vtkSmartPointer.h>
 #include <vtkPolyData.h>
@@ -30,7 +30,7 @@
 //----------------------------------------------------------------
 VTKPolyDataReader::VTKPolyDataReader(char* filename)
 {
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
 m_FileName = filename ;
 #else
     this->_vtkFile = new ifstream(filename);
@@ -48,7 +48,7 @@ m_FileName = filename ;
 //----------------------------------------------------------------
 VTKPolyDataReader::~VTKPolyDataReader()
 {
-#ifndef USE_VTK
+#ifndef shape4D_USE_VTK
     delete this->_vtkFile;
 #endif
 }
@@ -70,7 +70,7 @@ VTKPolyDataReader::~VTKPolyDataReader()
 // Returns the absolute position of the keyword in the file or
 // -1 if the keyword is not found
 //----------------------------------------------------------------
-#ifndef USE_VTK
+#ifndef shape4D_USE_VTK
 int VTKPolyDataReader::GotoKeyword(string keyword)
 {
     int kewordLocation = -1;
@@ -117,7 +117,7 @@ int VTKPolyDataReader::GotoKeyword(string keyword)
 //----------------------------------------------------------------
 bool VTKPolyDataReader::ReadPointsAndTris(Array2D<double> &pts, Array2D<int> &tris)
 {
-#ifdef USE_VTK
+#ifdef shape4D_USE_VTK
     vtkSmartPointer<vtkPolyDataReader> reader = vtkSmartPointer<vtkPolyDataReader>::New();
     reader->SetFileName(m_FileName.c_str());
     reader->Update();

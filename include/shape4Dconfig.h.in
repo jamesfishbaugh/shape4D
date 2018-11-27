@@ -1,7 +1,7 @@
 #ifndef SHAPE4DCONFIG_H
 #define SHAPE4DCONFIG_H
 
-#cmakedefine USE_SEM
-#cmakedefine USE_VTK
+#cmakedefine shape4D_USE_SEM
+#cmakedefine shape4D_USE_VTK
 
 #endif
